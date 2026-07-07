@@ -2,6 +2,7 @@
 to-be-deleted-before-commit/
 *.rds
 !inst/extdata/*.rds
+!tests/testthat/fixtures/*.rds
 *.RData
 image/
 
