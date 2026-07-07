@@ -1,0 +1,137 @@
+---
+title: "Getting started with gbtmkit"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting started with gbtmkit}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7, fig.height = 4.5)
+# The estimation engine (trajeR) is an optional dependency; only run the fitting
+# chunks when it is available so the vignette also builds without it.
+has_trajer <- requireNamespace("trajeR", quietly = TRUE)
+has_ggplot <- requireNamespace("ggplot2", quietly = TRUE)
+```
+
+`gbtmkit` turns group-based trajectory modeling (GBTM) into a reproducible
+pipeline that follows the GRoLTS reporting checklist. Estimation is delegated to
+interchangeable backends behind one interface, so the same workflow handles
+binary and continuous outcomes, and the fit diagnostics (entropy, APPA, OCC,
+group proportions) are computed the same way regardless of engine.
+
+```{r setup}
+library(gbtmkit)
+```
+
+## The data
+
+The package ships two entirely synthetic datasets with known ground-truth
+groups. `sim_binary` has a binary outcome measured on four occasions, with four
+latent trajectory shapes (stable-high, falling, rising, stable-low):
+
+```{r}
+data("sim_binary", package = "gbtmkit")
+head(sim_binary)
+```
+
+## 1. Describe the model with a spec
+
+`gbtm_spec()` records *what* to model -- the outcome and time columns (by name),
+the id, and the outcome family -- and validates it, independent of which engine
+will fit it.
+
+```{r}
+spec <- gbtm_spec(
+  sim_binary,
+  outcomes = c("y1", "y2", "y3", "y4"),
+  time     = c("t1", "t2", "t3", "t4"),
+  id       = "id",
+  family   = "binomial"
+)
+spec
+```
+
+## 2. Run the whole pipeline in one call
+
+`run_gbtm_pipeline()` performs algorithm selection (when the engine offers a
+choice), group-number selection, the polynomial-shape search with GRoLTS
+acceptance criteria, and the final Hessian-on fit. Here we use a small search to
+keep the vignette quick.
+
+```{r, eval = has_trajer}
+res <- run_gbtm_pipeline(
+  spec,
+  candidates = 2:5,     # consider 2 to 5 groups
+  degree     = 1,       # linear shapes while choosing the number of groups
+  method     = "L",     # fix the algorithm (skip stage 1) for speed
+  max_degree = 2,       # allow up to quadratic in the shape search
+  seed       = 1,
+  verbose    = FALSE
+)
+res
+```
+
+The pipeline recovers the four planted groups. Everything each stage produced is
+kept on the result object:
+
+```{r, eval = has_trajer}
+res$group_selection      # BIC for each candidate number of groups
+```
+
+```{r, eval = has_trajer}
+summary(res)
+```
+
+## 3. Inspect and plot
+
+`gbtm_diagnostics()` gives the GRoLTS classification diagnostics, and
+`plot_trajectories()` draws the fitted group trajectories with the observed
+per-group means overlaid.
+
+```{r, eval = has_trajer}
+res$diagnostics$groups
+```
+
+```{r, eval = has_trajer && has_ggplot, fig.alt = "Fitted group trajectories"}
+plot_trajectories(res$final_fit)
+```
+
+Per-subject group assignment (the analogue of exporting a group column) is in
+`res$assignment`:
+
+```{r, eval = has_trajer}
+head(res$assignment)
+```
+
+## Continuous outcomes
+
+The same pipeline handles continuous outcomes: switch the family to
+`"gaussian"` (mapped to a censored-normal model) and point the spec at a
+continuous dataset. `sim_continuous` has the same four shape types on a
+continuous scale.
+
+```{r, eval = has_trajer}
+data("sim_continuous", package = "gbtmkit")
+cspec <- gbtm_spec(
+  sim_continuous,
+  outcomes = c("y1", "y2", "y3", "y4"),
+  time     = c("t1", "t2", "t3", "t4"),
+  id       = "id",
+  family   = "gaussian"
+)
+cfit <- fit_gbtm(cspec, n_groups = 4, degrees = rep(1, 4), method = "L")
+gbtm_diagnostics(cfit)$entropy
+```
+
+## Notes
+
+* **Engine-agnostic.** The pipeline talks only to a small set of accessors
+  (`gbtm_bic()`, `gbtm_posterior()`, `gbtm_group_sizes()`, ...), so additional
+  backends can be added without changing the workflow.
+* **Built to scale.** The shape search runs the fits with the Hessian off
+  (needed only for the final model's standard errors), defaults to a greedy
+  stepwise strategy, and supports a `time_budget`, `max_fits`, and on-disk
+  `checkpoint`ing so large problems run unattended and bounded.
+```

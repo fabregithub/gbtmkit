@@ -17,6 +17,11 @@ image/
 .DS_Store
 .claude/
 
+# --- knitr/vignette artifacts ---
+/figure/
+/vignettes/figure/
+inst/doc/
+
 # --- Build artifacts ---
 *.tar.gz
 ..Rcheck/
