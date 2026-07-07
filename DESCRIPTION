@@ -1,0 +1,37 @@
+Package: gbtmkit
+Title: Engine-Agnostic Pipeline for Group-Based Trajectory Modeling
+Version: 0.0.0.9000
+Authors@R:
+    person(given = "First",
+           family = "Last",
+           role = c("aut", "cre"),
+           email = "nies.sfn@gmail.com")
+Description: A generic, reproducible pipeline for group-based trajectory
+    modeling (GBTM) that follows the GRoLTS reporting checklist by
+    construction. Model estimation is delegated to interchangeable backends
+    (currently 'trajeR') behind a single interface, so binary and continuous
+    outcomes are handled through one specification. The package provides
+    algorithm and group-number selection, polynomial-shape search with GRoLTS
+    fit diagnostics (entropy, average posterior probability, odds of correct
+    classification, group sizes), and trajectory plotting.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+Depends:
+    R (>= 4.1)
+Suggests:
+    trajeR,
+    flexmix,
+    lcmm,
+    future.apply,
+    progressr,
+    ggplot2,
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown
+Config/testthat/edition: 3
+LazyData: true
+VignetteBuilder: knitr
+URL: https://github.com/fabregithub/gbtmkit
+BugReports: https://github.com/fabregithub/gbtmkit/issues
+Config/roxygen2/version: 8.0.0

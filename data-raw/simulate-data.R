@@ -110,11 +110,10 @@ simulate_continuous <- function(n      = 1200,
   .assemble(base, Y, times)
 }
 
-# --- Build & cache the standard test fixtures --------------------------------
+# --- Build the shipped package datasets --------------------------------------
+# Run from the package root:  Rscript data-raw/simulate-data.R
+# Writes data/sim_binary.rda and data/sim_continuous.rda (documented in R/data.R).
 if (sys.nframe() == 0L) {                        # only when run as a script
-  out_dir <- file.path("tests", "testthat", "fixtures")
-  dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
-
   report <- function(sim, label, ycols) {
     cat(sprintf("\n== %s ==\n  dim: %s\n", label, paste(dim(sim), collapse = " x ")))
     cat("  true group sizes:\n"); print(table(sim$true_group))
@@ -122,13 +121,10 @@ if (sys.nframe() == 0L) {                        # only when run as a script
     cat("  outcome mean by group x time:\n"); print(round(agg, 2))
   }
 
-  simB <- simulate_binary()
-  saveRDS(simB, file.path(out_dir, "sim_binary.rds"))
-  report(simB, "binary", c("y1", "y2", "y3", "y4"))
+  sim_binary     <- simulate_binary()
+  sim_continuous <- simulate_continuous()
+  report(sim_binary,     "binary",     c("y1", "y2", "y3", "y4"))
+  report(sim_continuous, "continuous", c("y1", "y2", "y3", "y4"))
 
-  simC <- simulate_continuous()
-  saveRDS(simC, file.path(out_dir, "sim_continuous.rds"))
-  report(simC, "continuous", c("y1", "y2", "y3", "y4"))
-
-  cat("\nSaved fixtures to", out_dir, "\n")
+  usethis::use_data(sim_binary, sim_continuous, overwrite = TRUE)
 }

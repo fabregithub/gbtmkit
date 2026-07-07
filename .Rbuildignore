@@ -1,0 +1,12 @@
+^gbtmkit\.Rproj$
+^\.Rproj\.user$
+^LICENSE\.md$
+^data-raw$
+^docs$
+^\.claude$
+^to-be-deleted-before-commit$
+^\.git$
+^\.gitignore$
+^\.github$
+^\.DS_Store$
+^.*\.DS_Store$
