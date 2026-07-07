@@ -1,0 +1,23 @@
+# --- Private / unpublishable material — never commit ---
+to-be-deleted-before-commit/
+*.rds
+!inst/extdata/*.rds
+*.RData
+image/
+
+# --- R / RStudio ---
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj
+
+# --- OS / editor ---
+.DS_Store
+.claude/
+
+# --- Build artifacts ---
+*.tar.gz
+..Rcheck/
+/doc/
+/docs/_site/
