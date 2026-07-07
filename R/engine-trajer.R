@@ -119,3 +119,31 @@ gbtm_group_sizes.gbtm_fit_trajer <- function(fit, ...) {
   names(sizes) <- paste0("group", seq_len(fit$n_groups))
   sizes
 }
+
+#' @export
+gbtm_predict.gbtm_fit_trajer <- function(fit, times = NULL, n = 100L, ...) {
+  degre <- as.integer(fit$raw$degre)
+  beta  <- as.numeric(fit$raw$beta)
+  K     <- fit$n_groups
+  A     <- .spec_A(fit$spec)
+  if (is.null(times)) times <- seq(min(A), max(A), length.out = n)
+
+  # Inverse link mapping the polynomial predictor back to the outcome scale.
+  inv_link <- switch(fit$family,
+    binomial = stats::plogis,
+    beta     = stats::plogis,
+    poisson  = exp,
+    gaussian = function(x) x
+  )
+
+  idx <- 1L
+  out <- vector("list", K)
+  for (k in seq_len(K)) {
+    nc <- degre[k] + 1L
+    b  <- beta[idx:(idx + nc - 1L)]
+    idx <- idx + nc
+    eta <- vapply(times, function(t) sum(b * t^(0:(nc - 1L))), numeric(1))
+    out[[k]] <- data.frame(group = k, time = times, fitted = inv_link(eta))
+  }
+  do.call(rbind, out)
+}

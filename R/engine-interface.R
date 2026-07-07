@@ -138,6 +138,22 @@ gbtm_n_groups <- function(fit, ...) UseMethod("gbtm_n_groups")
 #' @export
 gbtm_degrees <- function(fit, ...) UseMethod("gbtm_degrees")
 
+#' Fitted group trajectories over time
+#'
+#' Returns each group's fitted trajectory on the outcome scale (probability for
+#' binomial, mean for gaussian, rate for poisson) over a grid of times, computed
+#' from the model coefficients -- engine-neutral, so it drives
+#' [plot_trajectories()] for any backend.
+#'
+#' @param fit A [gbtm_fit] object.
+#' @param times Optional numeric vector of times; defaults to a grid spanning the
+#'   observed range.
+#' @param n Number of grid points when `times` is `NULL`.
+#' @param ... Unused.
+#' @return A data frame with columns `group`, `time`, and `fitted`.
+#' @export
+gbtm_predict <- function(fit, times = NULL, n = 100L, ...) UseMethod("gbtm_predict")
+
 # --- Base methods: fields the wrapper stores identically for every engine ----
 
 #' @export
