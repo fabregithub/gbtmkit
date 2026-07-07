@@ -1,43 +1,47 @@
 # GBTM Pipeline — Design Document
 
 **Status:** Draft for review
-**Goal:** Turn the one-off `01-trajectory-wheeze.R` analysis into a generic, engine-agnostic
-R package for group-based trajectory modeling (GBTM) that follows the GRoLTS reporting
-checklist by construction.
+**Goal:** Turn a one-off group-based-trajectory analysis script into a generic,
+engine-agnostic R package for group-based trajectory modeling (GBTM) that follows the GRoLTS
+reporting checklist by construction.
 
 **Resolved decisions (2026-07-07):**
 - Package name: **`gbtmkit`** — confirmed free on CRAN (404), GitHub, Bioconductor. Folder
-  `gbtm-pipeline/` to be renamed `gbtmkit/` as the first scaffolding step.
+  renamed `gbtm-pipeline/` → `gbtmkit/` (done); git initialized on `main`.
 - Scope: **engine-agnostic** (trajeR → flexmix → lcmm behind one interface).
-- Demo data: real cohort data **cannot** be published. Use (a) `geepack::ohio` (public,
-  GPL, binary childhood wheeze at ages 7–10 + maternal smoking — a structural twin of the
-  private wheeze data) for the vignette, and (b) a **simulated look-alike** with known
-  ground-truth groups (built in `data-raw/`) for regression tests.
+- Outcome types: binary (LOGIT) **and continuous (CNORM)** first-class in v0.1.
+- Data: **entirely synthetic and domain-neutral.** No real cohort data and no external
+  published dataset are used anywhere. Two generated datasets ship as package data —
+  `sim_binary` and `sim_continuous` (built by `data-raw/simulate-data.R`, known ground-truth
+  groups) — and drive the tests, examples, and vignette. The original private data stays out
+  of the repo entirely.
+- Tests assert recovery of the **synthetic** ground truth; the original paper's result is
+  **not** reproduced in the suite (its data cannot ship).
 - Performance is a first-class requirement: the shape search must scale to ~80k rows. See §11.
-- License: to be added (MIT or GPL-3).
+- License: **MIT**.
 
 ---
 
 ## 1. Objectives
 
 - **Generic:** any dataset, any outcome column layout, configurable time/covariate columns.
-- **Multiple outcome types:** binary (LOGIT, e.g. wheeze) **and continuous (CNORM, e.g. BMI)**
-  from v0.1, plus count (POIS/ZIP) and proportion (BETA) via the same spec.
+- **Multiple outcome types:** binary (LOGIT) **and continuous (CNORM)** from v0.1, plus
+  count (POIS/ZIP) and proportion (BETA) via the same spec.
 - **Engine-agnostic:** one interface, multiple estimation backends (`trajeR` first, then
   `lcmm`, `flexmix`). Swapping engines should not change the calling code.
 - **GRoLTS-aligned:** the diagnostics the script computes by hand (BIC/AIC, entropy, APPA,
   OCC, PMS, mismatch) become first-class, tested outputs, with the standard thresholds as
   documented defaults.
-- **Reproducible:** the published wheeze result (optimal degree `c(1,3,3,1)`, 4 groups) is
-  captured as a regression test so refactoring cannot silently change scientific output.
-- **Maintainable:** small pure functions, tidy return types, unit tests, roxygen docs, a
-  vignette that reproduces the paper.
+- **Reproducible:** the synthetic datasets have *known* ground-truth groups, so regression
+  tests can assert the pipeline recovers them and refactoring cannot silently change output.
+- **Maintainable:** small pure functions, tidy return types, unit tests, roxygen docs, and a
+  vignette that walks through a full analysis on the synthetic data.
 
 ---
 
 ## 2. What we are migrating from
 
-The current script runs four stages, all hard-coded to the wheeze data:
+The original script runs four stages, all hard-coded to one dataset:
 
 | Stage | Script lines | What it does | To become |
 |-------|-------------|--------------|-----------|
@@ -82,18 +86,19 @@ gbtmkit/                      # proposed package name (see §9)
 │   └── parallel.R            # backend setup helper
 ├── man/                      # generated
 ├── tests/testthat/
+│   ├── fixtures/             # cached synthetic datasets for tests
 │   ├── test-spec.R
 │   ├── test-trajer-adapter.R
 │   ├── test-diagnostics.R
 │   ├── test-grolts-criteria.R
-│   └── test-wheeze-regression.R   # reproduces the published result
+│   └── test-recovery.R       # asserts recovery of synthetic ground truth
 ├── vignettes/
-│   └── wheeze.Rmd            # the paper's analysis, start to finish
-├── inst/extdata/
-│   └── ohio.rds              # public geepack::ohio, cached for the vignette
+│   └── getting-started.Rmd  # full analysis walkthrough on synthetic data
+├── data/                     # lazy-loaded package data (below)
+│   ├── sim_binary.rda
+│   └── sim_continuous.rda
 └── data-raw/
-    ├── make-ohio.R          # prepares the public demo dataset
-    └── simulate-wheeze.R    # generates the ground-truth test fixture
+    └── simulate-data.R      # generates sim_binary + sim_continuous (ground truth known)
 ```
 
 ---
@@ -110,16 +115,16 @@ define a thin S3 adapter. The pipeline only ever talks to this interface.
 
 ```r
 spec <- gbtm_spec(
-  data,
-  outcomes  = c("e1ywheeze","c2ywheeze","c3ywheeze","c4ywheeze"),  # by NAME, not index
-  time      = c("T1","T2","T3","T4"),
-  id        = "NO",
+  sim_binary,
+  outcomes  = c("y1", "y2", "y3", "y4"),   # by NAME, not index
+  time      = c("t1", "t2", "t3", "t4"),
+  id        = "id",
   family    = "binomial",   # binomial | gaussian | poisson | beta  (mapped per-engine)
   covariates = NULL
 )
 ```
 
-This removes every hard-coded `4:7` / `8:11` from the workflow. Column selection is by name
+This removes every hard-coded column index from the workflow. Column selection is by name
 with validation (types, missingness, equal lengths of outcomes vs time).
 
 ### 4.2 The adapter contract
@@ -143,7 +148,7 @@ gbtm_supported_methods(engine)  -> character   (e.g. trajeR: L/EM/EMIRLS; others
 
 All GRoLTS diagnostics (entropy, APPA, OCC, PMS, mismatch) are then computed **once** in
 `diagnostics.R` from `gbtm_posterior()` + `gbtm_group_sizes()`, rather than re-derived per
-engine. This is the payoff of the abstraction: the wheeze script's bespoke `AvePP`/`OCC`/
+engine. This is the payoff of the abstraction: the original script's bespoke `AvePP`/`OCC`/
 `GroupProb` calls (trajeR-specific) get replaced by engine-neutral math on the posterior
 matrix. Where an engine ships its own diagnostic, the adapter may override.
 
@@ -151,23 +156,25 @@ matrix. Where an engine ships its own diagnostic, the adapter may override.
 
 | neutral `family` | trajeR `Model` | lcmm | flexmix |
 |---------|--------|------|---------|
-| `binomial` (binary wheeze) | `LOGIT` | `hlme`/`lcmm` link | `FLXMRglm(family="binomial")` |
-| `gaussian` (continuous, e.g. **BMI**) | `CNORM` | `hlme` | `FLXMRglm(family="gaussian")` |
+| `binomial` (binary) | `LOGIT` | `hlme`/`lcmm` link | `FLXMRglm(family="binomial")` |
+| `gaussian` (continuous) | `CNORM` | `hlme` | `FLXMRglm(family="gaussian")` |
 | `poisson` / zero-inflated count | `POIS` / `ZIP` | — | `FLXMRglm(family="poisson")` |
 | `beta` (proportions) | `BETA` | — | — |
 | algorithm choice | `L`/`EM`/`EMIRLS` | fixed | fixed (EM) |
 | polynomial degree | `degre=` vector | `mixture=` formula | formula |
 
-**Continuous outcomes (BMI) are first-class in v0.1, not deferred.** trajeR's `CNORM`
-(censored-normal) model is confirmed working (smoke-tested on `dataNORM01`). BMI-specific
+**Continuous outcomes are first-class in v0.1, not deferred.** trajeR's `CNORM`
+(censored-normal) model is confirmed working (smoke-tested on `dataNORM01` and on the
+synthetic continuous fixture, which recovers its ground truth exactly). Continuous-specific
 knobs surface through `gbtm_spec()`:
-- `ymin` / `ymax` — censoring bounds (BMI is naturally bounded; CNORM handles floor/ceiling
-  censoring, which plain Gaussian mixtures ignore).
+- `ymin` / `ymax` — censoring bounds (for outcomes with a floor/ceiling; CNORM handles
+  censoring that a plain Gaussian mixture ignores).
 - `ssigma` — whether variance is shared across groups (trajeR `ssigma=`).
 
-So the same pipeline runs binary wheeze (`family="binomial"` → LOGIT) and continuous BMI
-(`family="gaussian"` → CNORM) with only the spec changing. The diagnostics layer (§4.2) is
-already family-neutral because it operates on the posterior matrix, not the outcome scale.
+So the same pipeline runs a binary outcome (`family="binomial"` → LOGIT) and a continuous
+outcome (`family="gaussian"` → CNORM) with only the spec changing. The diagnostics layer
+(§4.2) is already family-neutral because it operates on the posterior matrix, not the outcome
+scale.
 
 The adapter translates the neutral `family`/`degrees` into each engine's idiom and advertises
 which methods it supports (so stage 1 no-ops for engines without algorithm choice).
@@ -239,9 +246,11 @@ package and directly serves your reporting goal.
    behavior).
 2. **Adapter conformance test:** a shared test that any registered engine must pass
    (returns finite BIC, posterior rows sum to 1, group sizes sum to 1).
-3. **Regression test (`test-wheeze-regression.R`):** run the trajeR pipeline on the demo data
-   with the paper's settings and assert optimal degree `c(1,3,3,1)`, `n_groups = 4`, and
-   stable group counts. Capture the reference now, before refactoring.
+3. **Recovery test (`test-recovery.R`):** run the pipeline on `sim_binary` and
+   `sim_continuous` and assert it recovers the planted `n_groups = 4` and the correct shape
+   ordering. Ground truth is known by construction, so no historical reference is needed.
+   (Verified during data design: binary recovers `ng=4` by BIC; continuous recovers `ng=4`
+   with ~100% classification.)
 4. **CI:** GitHub Actions `R CMD check` on macOS/Windows/Linux; `trajeR`/`lcmm`/`flexmix` in
    Suggests so check passes without all engines installed.
 
@@ -250,8 +259,9 @@ package and directly serves your reporting goal.
 ## 8. Milestones
 
 - **v0.1 — trajeR feature parity.** Package skeleton, `gbtm_spec()`, trajeR adapter, all four
-  stages, diagnostics, criteria, plotting, wheeze regression test + vignette. Reproduces the
-  paper. *This is the first shippable, publishable repo.*
+  stages, diagnostics, criteria, plotting, synthetic recovery tests + vignette, for both
+  binary (LOGIT) and continuous (CNORM) outcomes. *This is the first shippable, publishable
+  repo.*
 - **v0.2 — GRoLTS reporter.** `grolts_report()` mapping outputs to checklist items.
 - **v0.3 — second engine.** `flexmix` adapter (already installed here) to prove the interface
   generalizes; adjust the contract where trajeR assumptions leaked.
@@ -259,17 +269,22 @@ package and directly serves your reporting goal.
 
 ---
 
-## 9. Demo & test data
+## 9. Data — synthetic and domain-neutral only
 
-- **Vignette / demonstration → `geepack::ohio`** (public, GPL). 537 children, binary wheeze
-  at ages 7/8/9/10, maternal-smoking covariate — the same structure and clinical domain as
-  the private data, so the worked example is realistic. Cached to `inst/extdata/ohio.rds`
-  via `data-raw/make-ohio.R`; `geepack` in `Suggests`.
-- **Regression / unit tests → simulated look-alike** with *known* group membership, built by
-  `data-raw/simulate-wheeze.R` (fixed seed). Because ground truth is known, tests assert the
-  pipeline recovers the planted number of groups and shapes — stronger than matching an
-  opaque historical result, and ships no real cohort data.
-- The private `wheeze.rds` stays out of the repo entirely (`.gitignore`).
+No real data and no external published dataset are used anywhere. Two synthetic datasets are
+generated by `data-raw/simulate-data.R` (fixed seed) and ship as lazy-loaded package data:
+
+- **`sim_binary`** (n = 1500) — binary outcomes, four occasions, four planted groups
+  (stable-high / falling / rising / stable-low). Recovers `ng = 4` by BIC.
+- **`sim_continuous`** (n = 1200) — continuous outcomes, same four shape types, wider
+  separation so the single-start CNORM fit avoids local optima. Recovers `ng = 4` with ~100%
+  classification.
+
+Both use neutral columns: `id`, covariates `x1`/`x2`, outcomes `y1..y4`, times `t1..t4`, and
+a `true_group` label the pipeline never sees. They drive the tests, the examples, and the
+vignette. Because ground truth is known, tests assert the pipeline recovers the planted groups
+and shapes — no real cohort data, and nothing that hints at the original study's domain. The
+original private data stays out of the repo entirely (`.gitignore`).
 
 ## 9b. Remaining housekeeping
 
@@ -289,7 +304,7 @@ descending order of expected payoff:
 1. **Hessian only on the final model, not during search — empirically verified.** In trajeR
    `hessian=TRUE` computes standard errors (Fisher information); the SAS-Traj/GRoLTS workflow
    needs those SEs to report coefficient CIs and judge term significance on the **final**
-   model. But model *selection* does not: on the wheeze data a `ng=2` LOGIT fit gave
+   model. But model *selection* does not: in a quick `ng=2` LOGIT benchmark the fit gave
    **identical** results either way — BIC 6893.918 (TRUE) vs 6893.919 (FALSE), same converged
    log-likelihood, and `AvePP`/posterior diagnostics work under `FALSE` — while `hessian=FALSE`
    ran in **2.62 s vs 6.78 s (~2.6× faster)**. So the pipeline runs the whole search with
@@ -351,11 +366,13 @@ either let it finish or accept the best-within-budget answer. No day-long runs, 
 
 ---
 
-## 10. Immediate next actions (once this plan is approved)
+## 10. Build sequence (step by step, confirmed at each stage)
 
-1. `git init`, add `.gitignore` (exclude `to-be-deleted-before-commit/`, `*.RData`, `.DS_Store`).
-2. Capture the current wheeze outputs as the regression fixture.
-3. Scaffold the package (`DESCRIPTION`, `NAMESPACE`, `R/`, `tests/`, `usethis` setup).
+1. ✅ Rename folder → `gbtmkit/`, `git init`, `.gitignore` (excludes `to-be-deleted-before-commit/`,
+   `*.RData`, `.DS_Store`, private `*.rds`).
+2. ✅ Synthetic data generator + `sim_binary` / `sim_continuous` fixtures, recovery verified.
+3. Scaffold the package (`DESCRIPTION`, `NAMESPACE`, `R/`, `tests/`, MIT `LICENSE`,
+   `usethis`-style metadata); wire the fixtures in as lazy-loaded package data.
 4. Implement `gbtm_spec()` + trajeR adapter + diagnostics with tests (the riskiest core).
 5. Port stages 1–4 on top of the adapter; delete the buggy duplicated logic.
 6. Vignette + `R CMD check` + CI, then create the GitHub repo.
