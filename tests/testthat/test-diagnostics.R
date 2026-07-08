@@ -64,6 +64,7 @@ test_that("entropy is undefined for a single group", {
 # --- on a real fit -----------------------------------------------------------
 
 test_that("diagnostics on a fitted model are coherent", {
+  skip_on_cran()
   skip_if_not_installed("trajeR")
   data("sim_binary", package = "gbtmkit", envir = environment())
   spec <- gbtm_spec(sim_binary, c("y1", "y2", "y3", "y4"),

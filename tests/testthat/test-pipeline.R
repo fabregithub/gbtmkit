@@ -8,6 +8,7 @@ bspec <- function() {
 }
 
 test_that("fit_gbtm computes the Hessian by default", {
+  skip_on_cran()
   skip_if_not_installed("trajeR")
   fit <- fit_gbtm(bspec(), n_groups = 3, degrees = c(1, 1, 1),
                   method = "L", itermax = 80, seed = 1)
@@ -16,6 +17,7 @@ test_that("fit_gbtm computes the Hessian by default", {
 })
 
 test_that("gbtm_predict returns fitted trajectories on the outcome scale", {
+  skip_on_cran()
   skip_if_not_installed("trajeR")
   fit <- fit_gbtm(bspec(), n_groups = 3, degrees = c(1, 2, 1),
                   method = "L", hessian = FALSE, itermax = 80, seed = 1)
@@ -30,6 +32,7 @@ test_that("gbtm_predict returns fitted trajectories on the outcome scale", {
 })
 
 test_that("gbtm_predict accepts explicit times", {
+  skip_on_cran()
   skip_if_not_installed("trajeR")
   fit <- fit_gbtm(bspec(), n_groups = 2, degrees = c(1, 1),
                   method = "L", hessian = FALSE, itermax = 60, seed = 1)
@@ -38,6 +41,7 @@ test_that("gbtm_predict accepts explicit times", {
 })
 
 test_that("plot_trajectories returns a ggplot", {
+  skip_on_cran()
   skip_if_not_installed("trajeR")
   skip_if_not_installed("ggplot2")
   fit <- fit_gbtm(bspec(), n_groups = 3, degrees = c(1, 1, 1),
@@ -47,6 +51,7 @@ test_that("plot_trajectories returns a ggplot", {
 })
 
 test_that("run_gbtm_pipeline runs end-to-end and returns a full result", {
+  skip_on_cran()
   skip_if_not_installed("trajeR")
   # Reduced settings keep this fast: method fixed (skip stage 1), narrow
   # candidate range, degree search fixed at 1 (single shape).
@@ -70,6 +75,7 @@ test_that("run_gbtm_pipeline runs end-to-end and returns a full result", {
 })
 
 test_that("pipeline falls back to lowest-BIC shape when no shape passes", {
+  skip_on_cran()
   skip_if_not_installed("trajeR")
   # Impossible OCC threshold -> nothing passes -> fallback + warning + flag.
   expect_warning(

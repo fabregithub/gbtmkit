@@ -7,6 +7,7 @@ bspec <- function() {
 }
 
 test_that("select_algorithm compares methods and picks a finite-BIC winner", {
+  skip_on_cran()
   skip_if_not_installed("trajeR")
   sel <- select_algorithm(bspec(), n_groups = 3, degrees = c(1, 1, 1),
                           itermax = 80, seed = 1)
@@ -21,6 +22,7 @@ test_that("select_algorithm compares methods and picks a finite-BIC winner", {
 })
 
 test_that("select_n_groups sweeps candidates and recovers the planted 4", {
+  skip_on_cran()
   skip_if_not_installed("trajeR")
   sel <- select_n_groups(bspec(), candidates = 2:5, degree = 1,
                          method = "L", itermax = 100, seed = 1)
@@ -32,6 +34,7 @@ test_that("select_n_groups sweeps candidates and recovers the planted 4", {
 })
 
 test_that("select_n_groups accepts a per-candidate degrees list", {
+  skip_on_cran()
   skip_if_not_installed("trajeR")
   sel <- select_n_groups(bspec(), candidates = c(2, 3),
                          degrees = list(c(1, 1), c(1, 1, 1)),
@@ -40,6 +43,7 @@ test_that("select_n_groups accepts a per-candidate degrees list", {
 })
 
 test_that("by = 'aic' selects on AIC", {
+  skip_on_cran()
   skip_if_not_installed("trajeR")
   sel <- select_n_groups(bspec(), candidates = 2:4, degree = 1,
                          method = "L", by = "aic", itermax = 80, seed = 1)

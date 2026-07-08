@@ -41,6 +41,7 @@ expect_valid_fit <- function(fit, n_groups) {
 }
 
 test_that("trajeR LOGIT fit satisfies the engine contract", {
+  skip_on_cran()
   skip_if_not_installed("trajeR")
   fit <- gbtm_fit(binary_spec(), engine = "trajeR",
                   n_groups = 3, degrees = c(1, 1, 1),
@@ -51,6 +52,7 @@ test_that("trajeR LOGIT fit satisfies the engine contract", {
 })
 
 test_that("trajeR CNORM (continuous) fit satisfies the engine contract", {
+  skip_on_cran()
   skip_if_not_installed("trajeR")
   fit <- gbtm_fit(continuous_spec(), engine = "trajeR",
                   n_groups = 4, degrees = rep(1, 4),
@@ -60,6 +62,7 @@ test_that("trajeR CNORM (continuous) fit satisfies the engine contract", {
 })
 
 test_that("group sizes match mean posterior at convergence", {
+  skip_on_cran()
   skip_if_not_installed("trajeR")
   fit <- gbtm_fit(binary_spec(), engine = "trajeR",
                   n_groups = 3, degrees = c(1, 1, 1), seed = 1, itermax = 80)
@@ -69,6 +72,7 @@ test_that("group sizes match mean posterior at convergence", {
 })
 
 test_that("seed makes fits reproducible", {
+  skip_on_cran()
   skip_if_not_installed("trajeR")
   f1 <- gbtm_fit(binary_spec(), n_groups = 3, degrees = c(1, 1, 1),
                  seed = 42, itermax = 60)

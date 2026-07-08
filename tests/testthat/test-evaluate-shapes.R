@@ -155,6 +155,7 @@ test_that("criteria errors on a missing required column", {
 # --- one real end-to-end -----------------------------------------------------
 
 test_that("evaluate_shapes runs end-to-end on real data", {
+  skip_on_cran()
   skip_if_not_installed("trajeR")
   sh <- evaluate_shapes(fake_spec(), n_groups = 4, method = "L",
                         strategy = "stepwise", min_degree = 1, max_degree = 2,
