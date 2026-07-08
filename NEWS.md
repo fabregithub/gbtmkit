@@ -1,8 +1,7 @@
-# gbtmkit (development version)
+# gbtmkit 0.0.0.9000
 
-First working version: an engine-agnostic pipeline for group-based trajectory
-modeling (GBTM) that follows the GRoLTS reporting checklist.
-
+* First working version: an engine-agnostic pipeline for group-based trajectory
+  modeling (GBTM) that follows the GRoLTS reporting checklist.
 * `gbtm_spec()` describes the data and model (columns by name, outcome family)
   with validation.
 * An engine interface (`gbtm_fit()` and accessors) with a `trajeR` adapter
@@ -16,8 +15,3 @@ modeling (GBTM) that follows the GRoLTS reporting checklist.
 * `run_gbtm_pipeline()` runs the whole workflow in one call and returns a
   `gbtm_result`; `plot_trajectories()` draws fitted trajectories.
 * Two synthetic example datasets, `sim_binary` and `sim_continuous`.
-
-## Notes
-
-* The `DESCRIPTION` `Authors@R` field must be completed with the real author
-  name before a public or CRAN release.

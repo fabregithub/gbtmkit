@@ -73,4 +73,4 @@ included.
 
 ## License
 
-MIT © gbtmkit authors
+MIT © Shoji F. Nakayama
