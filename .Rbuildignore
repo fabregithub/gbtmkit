@@ -1,6 +1,7 @@
 ^gbtmkit\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
+^NOTES\.md$
 ^data-raw$
 ^docs$
 ^\.claude$
