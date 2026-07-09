@@ -62,7 +62,8 @@ head(res$assignment)          # per-subject group membership
 
 You can also run the stages individually: `select_algorithm()`,
 `select_n_groups()`, `evaluate_shapes()` + `apply_grolts_criteria()`, then
-`fit_gbtm()`. See the *Getting started* vignette.
+`fit_gbtm()`. See the
+[Getting started vignette](vignettes/getting-started.Rmd) for a full walkthrough.
 
 ## Data
 
