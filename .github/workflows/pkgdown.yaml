@@ -3,6 +3,12 @@
 on:
   push:
     branches: [main, master]
+    paths-ignore:
+      - 'NOTES.md'
+      - 'dev/**'
+      - 'tests/**'
+      - 'data-raw/**'
+      - '.github/workflows/R-CMD-check.yaml'
   release:
     types: [published]
   workflow_dispatch:
