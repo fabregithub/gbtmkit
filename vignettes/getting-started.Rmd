@@ -105,6 +105,47 @@ Per-subject group assignment (the analogue of exporting a group column) is in
 head(res$assignment)
 ```
 
+## 4. Or run the stages individually
+
+`run_gbtm_pipeline()` is a convenience wrapper. For full control you can run each
+GRoLTS stage yourself and inspect the result before moving on -- this is exactly
+what the wrapper does internally.
+
+**Stage 1 -- choose the estimation algorithm.** trajeR offers `"L"`, `"EM"` and
+`"EMIRLS"`; the one with the lowest BIC is selected. (Engines with a single
+optimizer skip this stage.)
+
+```{r, eval = has_trajer}
+algo <- select_algorithm(spec, n_groups = 2, degrees = c(1, 1))
+algo
+```
+
+**Stage 2 -- choose the number of groups** by BIC over a set of candidates:
+
+```{r, eval = has_trajer}
+groups <- select_n_groups(spec, candidates = 2:5, degree = 1, method = "L")
+groups
+```
+
+**Stage 3 -- search polynomial shapes** for the chosen number of groups, then
+apply the GRoLTS acceptance criteria (PMS > 0.05, APPA > 0.70, OCC >= 5):
+
+```{r, eval = has_trajer}
+shapes <- evaluate_shapes(spec, n_groups = groups$best, method = "L",
+                          max_degree = 2, verbose = FALSE)
+apply_grolts_criteria(shapes)
+```
+
+**Stage 4 -- fit the final model** (Hessian on, so the fit carries standard
+errors) and read off the diagnostics and per-subject assignment. Here we use the
+lowest-BIC shape found by the search:
+
+```{r, eval = has_trajer}
+fit <- fit_gbtm(spec, n_groups = groups$best, degrees = shapes$best, method = "L")
+gbtm_diagnostics(fit)
+head(gbtm_assign(fit))
+```
+
 ## Continuous outcomes
 
 The same pipeline handles continuous outcomes: switch the family to
@@ -123,6 +164,14 @@ cspec <- gbtm_spec(
 )
 cfit <- fit_gbtm(cspec, n_groups = 4, degrees = rep(1, 4), method = "L")
 gbtm_diagnostics(cfit)$entropy
+```
+
+`plot_trajectories()` works the same way; for a continuous outcome the fitted
+lines and the observed points are on the outcome's own scale (means, not
+probabilities):
+
+```{r, eval = has_trajer && has_ggplot, fig.alt = "Fitted continuous group trajectories"}
+plot_trajectories(cfit)
 ```
 
 ## Notes
