@@ -1,0 +1,42 @@
+url: https://fabregithub.github.io/gbtmkit
+
+# Build into a dedicated directory so the site does not collide with the
+# hand-written design document in docs/.
+destination: pkgdown-site
+
+template:
+  bootstrap: 5
+
+reference:
+- title: Specification
+  contents:
+  - gbtm_spec
+  - gbtm_families
+- title: Fitting and engines
+  contents:
+  - gbtm_fit
+  - fit_gbtm
+  - gbtm_engines
+  - gbtm_engine_families
+  - gbtm_engine_methods
+  - gbtm_accessors
+  - gbtm_predict
+- title: Diagnostics
+  contents:
+  - gbtm_diagnostics
+  - gbtm_assign
+- title: Pipeline stages
+  contents:
+  - select_algorithm
+  - select_n_groups
+  - evaluate_shapes
+  - apply_grolts_criteria
+  - grolts_recommended
+- title: Orchestration and plotting
+  contents:
+  - run_gbtm_pipeline
+  - plot_trajectories
+- title: Data
+  contents:
+  - sim_binary
+  - sim_continuous

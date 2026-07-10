@@ -22,6 +22,9 @@ image/
 /vignettes/figure/
 inst/doc/
 
+# --- pkgdown built site ---
+/pkgdown-site/
+
 # --- Build artifacts ---
 *.tar.gz
 ..Rcheck/

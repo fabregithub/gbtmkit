@@ -33,8 +33,9 @@ Suggests:
     knitr,
     rmarkdown
 Config/testthat/edition: 3
+Config/Needs/website: pkgdown
 LazyData: true
 VignetteBuilder: knitr
-URL: https://github.com/fabregithub/gbtmkit
+URL: https://github.com/fabregithub/gbtmkit, https://fabregithub.github.io/gbtmkit/
 BugReports: https://github.com/fabregithub/gbtmkit/issues
 Config/roxygen2/version: 8.0.0

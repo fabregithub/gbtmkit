@@ -2,12 +2,17 @@
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/fabregithub/gbtmkit/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/fabregithub/gbtmkit/actions/workflows/R-CMD-check.yaml)
+[![pkgdown](https://github.com/fabregithub/gbtmkit/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/fabregithub/gbtmkit/actions/workflows/pkgdown.yaml)
 <!-- badges: end -->
 
 **gbtmkit** turns group-based trajectory modeling (GBTM) into a reproducible,
 engine-agnostic pipeline that follows the
 [GRoLTS](https://doi.org/10.1080/10705511.2016.1247646) reporting checklist by
 construction.
+
+📖 **Documentation site:** <https://fabregithub.github.io/gbtmkit/> — including the
+[Getting started](https://fabregithub.github.io/gbtmkit/articles/getting-started.html)
+walkthrough and the full function reference.
 
 - **One workflow, any outcome.** Binary (LOGIT) and continuous (CNORM) outcomes
   run through the same specification; count and proportion families are mapped
@@ -63,7 +68,8 @@ head(res$assignment)          # per-subject group membership
 You can also run the stages individually: `select_algorithm()`,
 `select_n_groups()`, `evaluate_shapes()` + `apply_grolts_criteria()`, then
 `fit_gbtm()`. See the
-[Getting started vignette](vignettes/getting-started.Rmd) for a full walkthrough.
+[Getting started vignette](https://fabregithub.github.io/gbtmkit/articles/getting-started.html)
+for a full walkthrough.
 
 ## Data
 

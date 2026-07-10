@@ -2,6 +2,9 @@
 ^\.Rproj\.user$
 ^LICENSE\.md$
 ^NOTES\.md$
+^_pkgdown\.yml$
+^pkgdown-site$
+^pkgdown$
 ^data-raw$
 ^docs$
 ^\.claude$
