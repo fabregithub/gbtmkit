@@ -15,6 +15,8 @@ any backend, and binary and continuous outcomes run through one
 specification.
 
 - Repo: <https://github.com/fabregithub/gbtmkit> (public, MIT)
+- Docs site: <https://fabregithub.github.io/gbtmkit/> (pkgdown,
+  auto-deployed)
 - Author: Shoji F. Nakayama (ORCID 0000-0001-7772-0389)
 - Full design rationale: `dev/DESIGN.md`
 
@@ -83,6 +85,11 @@ Built step by step, confirming each stage, with `R CMD check` kept at
 | 436b139 | 2026-07-08 | GitHub Actions R-CMD-check workflow + NEWS |
 | 29516b3 | 2026-07-08 | Set package author; fix NEWS formatting |
 | bfe805f | 2026-07-09 | Speed up CI: `skip_on_cran()` on real-fit tests; `checkout@v5` |
+| c1cff38 | 2026-07-09 | Add this NOTES.md project history |
+| 70429c1 | 2026-07-10 | Link the Getting started vignette from the README |
+| 4344d33 | 2026-07-10 | Add pkgdown site + GitHub Pages deploy workflow |
+| 8addca6 | 2026-07-10 | Fix pkgdown build: default `docs/` output, move design doc to `dev/DESIGN.md` |
+| f8f297d | 2026-07-10 | Expand vignette: stage-by-stage flow + continuous plot |
 
 ### Build stages (as executed)
 
@@ -107,6 +114,12 @@ Built step by step, confirming each stage, with `R CMD check` kept at
     then the public GitHub repo was created and pushed.
 7.  **CI** — green on ubuntu (release/devel/oldrel-1), macOS, Windows;
     then a CI speed/cleanup pass.
+8.  **Docs site** — pkgdown site published to GitHub Pages, auto-rebuilt
+    on every push to `main` (deploy workflow -\> `gh-pages` branch). The
+    design doc was moved from `docs/` to `dev/DESIGN.md` so pkgdown can
+    own the conventional `docs/` output. The vignette was later expanded
+    with a stage-by-stage GRoLTS walkthrough and a continuous-outcome
+    plot.
 
 ## Current state
 
@@ -115,6 +128,10 @@ Built step by step, confirming each stage, with `R CMD check` kept at
 - Tests: fast logic/mock/validation tests run everywhere (~1s); the 16
   real-fit integration tests run locally (`devtools`, `NOT_CRAN=true`)
   and skip on CI/CRAN.
+- Documentation site live at <https://fabregithub.github.io/gbtmkit/>
+  with the Getting started article (one-call pipeline, stage-by-stage
+  flow, and binary + continuous examples) and the full function
+  reference.
 
 ## Possible next steps (not done)
 
@@ -123,5 +140,6 @@ Built step by step, confirming each stage, with `R CMD check` kept at
   the adapter conformance test is already set up for it.
 - `grolts_report()` mapping outputs to GRoLTS checklist item numbers.
 - Multi-start initialization for CNORM.
-- pkgdown site.
-- Complete author details / consider a CRAN submission.
+- Consider a CRAN submission.
+- Optional: bump `JamesIves/github-pages-deploy-action` to clear its
+  Node 20 deprecation warning.

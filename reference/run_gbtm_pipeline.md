@@ -480,7 +480,7 @@ if (requireNamespace("trajeR", quietly = TRUE)) {
 #> iter  49 value 3148.274597
 #> final  value 3148.274597 
 #> converged
-#> ~18 shapes planned, est. 186 s remaining (12.41 s/fit).
+#> ~18 shapes planned, est. 189 s remaining (12.62 s/fit).
 #> Starting Values
 #> 0.3333333333333330.3333333333333330.333333333333333-50-0.252669040518694002.403355740238520
 #> 
@@ -675,7 +675,7 @@ if (requireNamespace("trajeR", quietly = TRUE)) {
 #> iter  43 value 3165.808788
 #> final  value 3165.808788 
 #> converged
-#> evaluated 7 shapes in 94 s.
+#> evaluated 7 shapes in 95 s.
 #> Stage 4: fitting final model (degrees 1,1,1, Hessian on) ...
 #> Starting Values
 #> 0.3333333333333330.3333333333333330.333333333333333-50-0.25266904051869402.403355740238520
@@ -821,6 +821,8 @@ if (requireNamespace("trajeR", quietly = TRUE)) {
 #> iter  69 value 
 #> 3149.728444
 #> iter  70 value 
+#> 3149.728444
+#> iter  71 value 
 #> 3149.728444
 #> <gbtm_result>
 #>   engine/family : trajeR / binomial

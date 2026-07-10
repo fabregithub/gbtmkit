@@ -43,6 +43,7 @@
 <h2 id="what-this-package-is">What this package is<a class="anchor" aria-label="anchor" href="#what-this-package-is"></a></h2>
 <p><code>gbtmkit</code> generalizes a one-off group-based trajectory modeling (GBTM) analysis script into a reproducible, <strong>engine-agnostic</strong> R package that follows the GRoLTS reporting checklist. The estimation engine is pluggable (trajeR now; flexmix/lcmm designed for) behind a small accessor interface, so the diagnostics and plotting work the same for any backend, and binary and continuous outcomes run through one specification.</p>
 <ul><li>Repo: <a href="https://github.com/fabregithub/gbtmkit" class="external-link uri">https://github.com/fabregithub/gbtmkit</a> (public, MIT)</li>
+<li>Docs site: <a href="https://fabregithub.github.io/gbtmkit/" class="uri">https://fabregithub.github.io/gbtmkit/</a> (pkgdown, auto-deployed)</li>
 <li>Author: Shoji F. Nakayama (ORCID 0000-0001-7772-0389)</li>
 <li>Full design rationale: <code>dev/DESIGN.md</code>
 </li>
@@ -137,6 +138,22 @@
 <td>2026-07-09</td>
 <td>Speed up CI: <code>skip_on_cran()</code> on real-fit tests; <code>checkout@v5</code>
 </td>
+</tr><tr><td>c1cff38</td>
+<td>2026-07-09</td>
+<td>Add this NOTES.md project history</td>
+</tr><tr><td>70429c1</td>
+<td>2026-07-10</td>
+<td>Link the Getting started vignette from the README</td>
+</tr><tr><td>4344d33</td>
+<td>2026-07-10</td>
+<td>Add pkgdown site + GitHub Pages deploy workflow</td>
+</tr><tr><td>8addca6</td>
+<td>2026-07-10</td>
+<td>Fix pkgdown build: default <code>docs/</code> output, move design doc to <code>dev/DESIGN.md</code>
+</td>
+</tr><tr><td>f8f297d</td>
+<td>2026-07-10</td>
+<td>Expand vignette: stage-by-stage flow + continuous plot</td>
 </tr></tbody></table><div class="section level3">
 <h3 id="build-stages-as-executed">Build stages (as executed)<a class="anchor" aria-label="anchor" href="#build-stages-as-executed"></a></h3>
 <ol style="list-style-type: decimal"><li>
@@ -155,6 +172,8 @@
 <strong>Release prep</strong> — (6a) vignette + README, (6b) CI workflow + NEWS, then the public GitHub repo was created and pushed.</li>
 <li>
 <strong>CI</strong> — green on ubuntu (release/devel/oldrel-1), macOS, Windows; then a CI speed/cleanup pass.</li>
+<li>
+<strong>Docs site</strong> — pkgdown site published to GitHub Pages, auto-rebuilt on every push to <code>main</code> (deploy workflow -&gt; <code>gh-pages</code> branch). The design doc was moved from <code>docs/</code> to <code>dev/DESIGN.md</code> so pkgdown can own the conventional <code>docs/</code> output. The vignette was later expanded with a stage-by-stage GRoLTS walkthrough and a continuous-outcome plot.</li>
 </ol></div>
 </div>
 <div class="section level2">
@@ -163,6 +182,7 @@
 <li>
 <code>R CMD check</code> 0/0/0 locally (including the pandoc-built vignette).</li>
 <li>Tests: fast logic/mock/validation tests run everywhere (~1s); the 16 real-fit integration tests run locally (<code>devtools</code>, <code>NOT_CRAN=true</code>) and skip on CI/CRAN.</li>
+<li>Documentation site live at <a href="https://fabregithub.github.io/gbtmkit/" class="uri">https://fabregithub.github.io/gbtmkit/</a> with the Getting started article (one-call pipeline, stage-by-stage flow, and binary + continuous examples) and the full function reference.</li>
 </ul></div>
 <div class="section level2">
 <h2 id="possible-next-steps-not-done">Possible next steps (not done)<a class="anchor" aria-label="anchor" href="#possible-next-steps-not-done"></a></h2>
@@ -171,8 +191,8 @@
 <li>
 <code>grolts_report()</code> mapping outputs to GRoLTS checklist item numbers.</li>
 <li>Multi-start initialization for CNORM.</li>
-<li>pkgdown site.</li>
-<li>Complete author details / consider a CRAN submission.</li>
+<li>Consider a CRAN submission.</li>
+<li>Optional: bump <code>JamesIves/github-pages-deploy-action</code> to clear its Node 20 deprecation warning.</li>
 </ul></div>
 </div>
 
