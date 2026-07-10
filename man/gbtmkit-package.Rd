@@ -12,7 +12,7 @@ interchangeable backends behind a single interface, so binary and continuous
 outcomes are handled through one specification.
 }
 \details{
-See the design document (\code{docs/DESIGN.md}) for the architecture, and the
+See the design document (\code{dev/DESIGN.md}) for the architecture, and the
 \code{getting-started} vignette for a worked example on the synthetic datasets
 \link{sim_binary} and \link{sim_continuous}.
 }
@@ -20,16 +20,17 @@ See the design document (\code{docs/DESIGN.md}) for the architecture, and the
 Useful links:
 \itemize{
   \item \url{https://github.com/fabregithub/gbtmkit}
+  \item \url{https://fabregithub.github.io/gbtmkit/}
   \item Report bugs at \url{https://github.com/fabregithub/gbtmkit/issues}
 }
 
 }
 \author{
-\strong{Maintainer}: First Last \email{nies.sfn@gmail.com}
+\strong{Maintainer}: Shoji F. Nakayama \email{nies.sfn@gmail.com} (\href{https://orcid.org/0000-0001-7772-0389}{ORCID})
 
 Authors:
 \itemize{
-  \item First Last \email{nies.sfn@gmail.com}
+  \item Shoji F. Nakayama \email{nies.sfn@gmail.com} (\href{https://orcid.org/0000-0001-7772-0389}{ORCID})
 }
 
 }

@@ -5,7 +5,7 @@
 # each candidate (Hessian off -- selection needs only BIC and posteriors), and
 # record the GRoLTS diagnostics. Returns one tidy row per evaluated shape.
 #
-# Designed to run unattended and bounded (see docs/DESIGN.md sec.11):
+# Designed to run unattended and bounded (see dev/DESIGN.md sec.11):
 #   * strategy   : "stepwise" (greedy coordinate descent, ~linear in groups) by
 #                  default, or "grid" (full Cartesian product) for small cases.
 #   * max_degree : caps the per-group polynomial degree.

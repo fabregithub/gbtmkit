@@ -14,7 +14,7 @@ run through one specification.
 
 - Repo: https://github.com/fabregithub/gbtmkit (public, MIT)
 - Author: Shoji F. Nakayama (ORCID 0000-0001-7772-0389)
-- Full design rationale: `docs/DESIGN.md`
+- Full design rationale: `dev/DESIGN.md`
 
 ## Key decisions
 

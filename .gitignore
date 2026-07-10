@@ -23,6 +23,7 @@ image/
 inst/doc/
 
 # --- pkgdown built site ---
+/docs/
 /pkgdown-site/
 
 # --- Build artifacts ---

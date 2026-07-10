@@ -1,9 +1,5 @@
 url: https://fabregithub.github.io/gbtmkit
 
-# Build into a dedicated directory so the site does not collide with the
-# hand-written design document in docs/.
-destination: pkgdown-site
-
 template:
   bootstrap: 5
 

@@ -3,9 +3,9 @@
 ^LICENSE\.md$
 ^NOTES\.md$
 ^_pkgdown\.yml$
-^pkgdown-site$
 ^pkgdown$
 ^data-raw$
+^dev$
 ^docs$
 ^\.claude$
 ^to-be-deleted-before-commit$
