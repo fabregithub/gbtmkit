@@ -122,6 +122,7 @@ gbtm_group_sizes.gbtm_fit_trajer <- function(fit, ...) {
 
 #' @export
 gbtm_predict.gbtm_fit_trajer <- function(fit, times = NULL, n = 100L, ...) {
+  .warn_empty_groups(fit)
   degre <- as.integer(fit$raw$degre)
   beta  <- as.numeric(fit$raw$beta)
   K     <- fit$n_groups

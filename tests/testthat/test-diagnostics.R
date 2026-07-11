@@ -61,6 +61,26 @@ test_that("entropy is undefined for a single group", {
   expect_true(is.na(gbtmkit:::.entropy(matrix(1, 5, 1))))
 })
 
+test_that("empty groups are detected and warned about", {
+  # posterior where group 2 never wins the argmax -> group 2 is empty
+  local_mocked_bindings(
+    gbtm_posterior = function(fit, ...)
+      rbind(c(0.9, 0.1, 0.0), c(0.7, 0.2, 0.1), c(0.2, 0.1, 0.7))
+  )
+  fit <- structure(list(), class = "gbtm_fit")
+  expect_equal(gbtmkit:::.empty_groups(fit), 2L)
+  expect_warning(gbtmkit:::.warn_empty_groups(fit), "no assigned members")
+})
+
+test_that("no empty-group warning when every group is populated", {
+  local_mocked_bindings(
+    gbtm_posterior = function(fit, ...) rbind(c(0.9, 0.1), c(0.1, 0.9))
+  )
+  fit <- structure(list(), class = "gbtm_fit")
+  expect_length(gbtmkit:::.empty_groups(fit), 0)
+  expect_no_warning(gbtmkit:::.warn_empty_groups(fit))
+})
+
 # --- on a real fit -----------------------------------------------------------
 
 test_that("diagnostics on a fitted model are coherent", {

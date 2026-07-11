@@ -175,11 +175,34 @@ print.gbtm_fit <- function(x, ...) {
   invisible(x)
 }
 
-# --- shared helper -----------------------------------------------------------
+# --- shared helpers ----------------------------------------------------------
 
 # Numerically stable softmax over a vector.
 .softmax <- function(z) {
   z <- z - max(z)
   e <- exp(z)
   e / sum(e)
+}
+
+# Indices of groups with no hard-assigned members. An empty group is a sign of a
+# degenerate fit (often a local optimum): its trajectory is unconstrained and can
+# look extreme. Engine-neutral -- works off the posterior accessor.
+.empty_groups <- function(fit) {
+  post     <- gbtm_posterior(fit)
+  assigned <- max.col(post, ties.method = "first")
+  which(tabulate(assigned, nbins = ncol(post)) == 0L)
+}
+
+# Warn (once) if a fit has empty groups. Called by prediction/plotting so a
+# degenerate fit announces itself rather than silently drawing a wild line.
+.warn_empty_groups <- function(fit) {
+  empty <- .empty_groups(fit)
+  if (length(empty)) {
+    warning(sprintf(
+      paste0("group(s) %s have no assigned members; their fitted trajectory is ",
+             "unconstrained and may look extreme. This usually indicates a ",
+             "degenerate fit -- try method = \"EM\" or a different number of groups."),
+      paste(empty, collapse = ", ")), call. = FALSE)
+  }
+  invisible(empty)
 }

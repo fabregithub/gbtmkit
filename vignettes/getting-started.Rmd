@@ -153,6 +153,14 @@ The same pipeline handles continuous outcomes: switch the family to
 continuous dataset. `sim_continuous` has the same four shape types on a
 continuous scale.
 
+We fit with `method = "EM"` here. For this censored-normal problem the default
+`"L"` (maximum-likelihood) optimizer lands in a degenerate local optimum where
+one group ends up empty -- its trajectory is then unconstrained and looks
+extreme. `"EM"` recovers all four groups with a much lower BIC, and is exactly
+what [`select_algorithm()`](../reference/select_algorithm.html) would choose. If
+a group ever does come out empty, `plot_trajectories()` / `gbtm_predict()` warn
+you.
+
 ```{r, eval = has_trajer}
 data("sim_continuous", package = "gbtmkit")
 cspec <- gbtm_spec(
@@ -162,7 +170,7 @@ cspec <- gbtm_spec(
   id       = "id",
   family   = "gaussian"
 )
-cfit <- fit_gbtm(cspec, n_groups = 4, degrees = rep(1, 4), method = "L")
+cfit <- fit_gbtm(cspec, n_groups = 4, degrees = rep(1, 4), method = "EM")
 gbtm_diagnostics(cfit)$entropy
 ```
 

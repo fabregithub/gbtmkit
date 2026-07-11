@@ -40,6 +40,18 @@ test_that("gbtm_predict accepts explicit times", {
   expect_equal(sort(unique(pred$time)), c(1, 2, 3, 4))
 })
 
+test_that("gbtm_predict warns when a fit has a degenerate empty group", {
+  skip_on_cran()
+  skip_if_not_installed("trajeR")
+  data("sim_continuous", package = "gbtmkit", envir = environment())
+  cspec <- gbtm_spec(sim_continuous, c("y1", "y2", "y3", "y4"),
+                     c("t1", "t2", "t3", "t4"), id = "id", family = "gaussian")
+  # method "L" lands in a degenerate solution (one empty group) on this data
+  dfit <- fit_gbtm(cspec, n_groups = 4, degrees = rep(1, 4),
+                   method = "L", seed = 1)
+  expect_warning(gbtm_predict(dfit), "no assigned members")
+})
+
 test_that("plot_trajectories returns a ggplot", {
   skip_on_cran()
   skip_if_not_installed("trajeR")
