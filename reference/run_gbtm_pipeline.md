@@ -480,7 +480,7 @@ if (requireNamespace("trajeR", quietly = TRUE)) {
 #> iter  49 value 3148.274597
 #> final  value 3148.274597 
 #> converged
-#> ~18 shapes planned, est. 189 s remaining (12.62 s/fit).
+#> ~18 shapes planned, est. 225 s remaining (15.01 s/fit).
 #> Starting Values
 #> 0.3333333333333330.3333333333333330.333333333333333-50-0.252669040518694002.403355740238520
 #> 
@@ -675,7 +675,7 @@ if (requireNamespace("trajeR", quietly = TRUE)) {
 #> iter  43 value 3165.808788
 #> final  value 3165.808788 
 #> converged
-#> evaluated 7 shapes in 95 s.
+#> evaluated 7 shapes in 114 s.
 #> Stage 4: fitting final model (degrees 1,1,1, Hessian on) ...
 #> Starting Values
 #> 0.3333333333333330.3333333333333330.333333333333333-50-0.25266904051869402.403355740238520
