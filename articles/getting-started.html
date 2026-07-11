@@ -956,7 +956,10 @@ trajectories with the observed per-group means overlaid.</p>
 <span><span class="co">#&gt; 3     3        656     0.4373333 4.328634e-01 -4.469911e-03 0.9806229 66.30567</span></span>
 <span><span class="co">#&gt; 4     4          0     0.0000000 2.334749e-10  2.334749e-10        NA       NA</span></span></code></pre></div>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_trajectories.html">plot_trajectories</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">final_fit</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_trajectories.html">plot_trajectories</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">final_fit</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: group(s) 4 have no assigned members; their fitted trajectory is</span></span>
+<span><span class="co">#&gt; unconstrained and may look extreme. This usually indicates a degenerate fit --</span></span>
+<span><span class="co">#&gt; try method = "EM" or a different number of groups.</span></span></code></pre></div>
 <p><img src="getting-started_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="Fitted group trajectories" width="672"></p>
 <p>Per-subject group assignment (the analogue of exporting a group
 column) is in <code>res$assignment</code>:</p>
@@ -1960,6 +1963,14 @@ search:</p>
 <code>"gaussian"</code> (mapped to a censored-normal model) and point
 the spec at a continuous dataset. <code>sim_continuous</code> has the
 same four shape types on a continuous scale.</p>
+<p>We fit with <code>method = "EM"</code> here. For this censored-normal
+problem the default <code>"L"</code> (maximum-likelihood) optimizer
+lands in a degenerate local optimum where one group ends up empty – its
+trajectory is then unconstrained and looks extreme. <code>"EM"</code>
+recovers all four groups with a much lower BIC, and is exactly what <a href="../reference/select_algorithm.html"><code>select_algorithm()</code></a>
+would choose. If a group ever does come out empty,
+<code><a href="../reference/plot_trajectories.html">plot_trajectories()</a></code> / <code><a href="../reference/gbtm_predict.html">gbtm_predict()</a></code> warn
+you.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sim_continuous"</span>, package <span class="op">=</span> <span class="st">"gbtmkit"</span><span class="op">)</span></span>
 <span><span class="va">cspec</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gbtm_spec.html">gbtm_spec</a></span><span class="op">(</span></span>
@@ -1969,197 +1980,23 @@ same four shape types on a continuous scale.</p>
 <span>  id       <span class="op">=</span> <span class="st">"id"</span>,</span>
 <span>  family   <span class="op">=</span> <span class="st">"gaussian"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="va">cfit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_gbtm.html">fit_gbtm</a></span><span class="op">(</span><span class="va">cspec</span>, n_groups <span class="op">=</span> <span class="fl">4</span>, degrees <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"L"</span><span class="op">)</span></span>
+<span><span class="va">cfit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_gbtm.html">fit_gbtm</a></span><span class="op">(</span><span class="va">cspec</span>, n_groups <span class="op">=</span> <span class="fl">4</span>, degrees <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"EM"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Starting Values</span></span>
 <span><span class="co">#&gt; 0.250.250.250.2515.5031856751151021.5258653283097026.1406055050237032.163285158218207.241321535574517.241321535574517.241321535574517.24132153557451</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Likelihood</span></span>
-<span><span class="co">#&gt; iter   1 value</span></span>
-<span><span class="co">#&gt; 15970.102137</span></span>
-<span><span class="co">#&gt; iter   2 value</span></span>
-<span><span class="co">#&gt; 15970.101054</span></span>
-<span><span class="co">#&gt; iter   3 value</span></span>
-<span><span class="co">#&gt; 15970.099970</span></span>
-<span><span class="co">#&gt; iter   4 value</span></span>
-<span><span class="co">#&gt; 15970.097007</span></span>
-<span><span class="co">#&gt; iter   5 value</span></span>
-<span><span class="co">#&gt; 15970.094044</span></span>
-<span><span class="co">#&gt; iter   6 value</span></span>
-<span><span class="co">#&gt; 15970.085154</span></span>
-<span><span class="co">#&gt; iter   7 value</span></span>
-<span><span class="co">#&gt; 15970.076264</span></span>
-<span><span class="co">#&gt; iter   8 value</span></span>
-<span><span class="co">#&gt; 15970.049595</span></span>
-<span><span class="co">#&gt; iter   9 value</span></span>
-<span><span class="co">#&gt; 15970.022926</span></span>
-<span><span class="co">#&gt; iter  10 value</span></span>
-<span><span class="co">#&gt; 15969.942917</span></span>
-<span><span class="co">#&gt; iter  11 value</span></span>
-<span><span class="co">#&gt; 15969.862905</span></span>
-<span><span class="co">#&gt; iter  12 value</span></span>
-<span><span class="co">#&gt; 15969.622857</span></span>
-<span><span class="co">#&gt; iter  13 value</span></span>
-<span><span class="co">#&gt; 15969.382790</span></span>
-<span><span class="co">#&gt; iter  14 value</span></span>
-<span><span class="co">#&gt; 15968.662469</span></span>
-<span><span class="co">#&gt; iter  15 value</span></span>
-<span><span class="co">#&gt; 15967.941973</span></span>
-<span><span class="co">#&gt; iter  16 value</span></span>
-<span><span class="co">#&gt; 15965.779431</span></span>
-<span><span class="co">#&gt; iter  17 value</span></span>
-<span><span class="co">#&gt; 15963.615321</span></span>
-<span><span class="co">#&gt; iter  18 value</span></span>
-<span><span class="co">#&gt; 15957.113713</span></span>
-<span><span class="co">#&gt; iter  19 value</span></span>
-<span><span class="co">#&gt; 15950.598469</span></span>
-<span><span class="co">#&gt; iter  20 value</span></span>
-<span><span class="co">#&gt; 15930.974473</span></span>
-<span><span class="co">#&gt; iter  21 value</span></span>
-<span><span class="co">#&gt; 15911.240816</span></span>
-<span><span class="co">#&gt; iter  22 value</span></span>
-<span><span class="co">#&gt; 15851.481510</span></span>
-<span><span class="co">#&gt; iter  23 value</span></span>
-<span><span class="co">#&gt; 15791.103155</span></span>
-<span><span class="co">#&gt; iter  24 value</span></span>
-<span><span class="co">#&gt; 15609.039904</span></span>
-<span><span class="co">#&gt; iter  25 value</span></span>
-<span><span class="co">#&gt; 15431.190370</span></span>
-<span><span class="co">#&gt; iter  26 value</span></span>
-<span><span class="co">#&gt; 14955.099962</span></span>
-<span><span class="co">#&gt; iter  27 value</span></span>
-<span><span class="co">#&gt; 14771.901457</span></span>
-<span><span class="co">#&gt; iter  28 value</span></span>
-<span><span class="co">#&gt; 14703.226197</span></span>
-<span><span class="co">#&gt; iter  29 value</span></span>
-<span><span class="co">#&gt; 14594.377993</span></span>
-<span><span class="co">#&gt; iter  30 value</span></span>
-<span><span class="co">#&gt; 14493.432806</span></span>
-<span><span class="co">#&gt; iter  31 value</span></span>
-<span><span class="co">#&gt; 14475.251830</span></span>
-<span><span class="co">#&gt; iter  32 value</span></span>
-<span><span class="co">#&gt; 14433.318538</span></span>
-<span><span class="co">#&gt; iter  33 value</span></span>
-<span><span class="co">#&gt; 14387.111496</span></span>
-<span><span class="co">#&gt; iter  34 value</span></span>
-<span><span class="co">#&gt; 14260.791573</span></span>
-<span><span class="co">#&gt; iter  35 value</span></span>
-<span><span class="co">#&gt; 13901.200796</span></span>
-<span><span class="co">#&gt; iter  36 value</span></span>
-<span><span class="co">#&gt; 13734.753677</span></span>
-<span><span class="co">#&gt; iter  37 value</span></span>
-<span><span class="co">#&gt; 13562.860538</span></span>
-<span><span class="co">#&gt; iter  38 value</span></span>
-<span><span class="co">#&gt; 13293.417867</span></span>
-<span><span class="co">#&gt; iter  39 value</span></span>
-<span><span class="co">#&gt; 12967.500971</span></span>
-<span><span class="co">#&gt; iter  40 value</span></span>
-<span><span class="co">#&gt; 12906.725779</span></span>
-<span><span class="co">#&gt; iter  41 value</span></span>
-<span><span class="co">#&gt; 12490.871310</span></span>
-<span><span class="co">#&gt; iter  42 value</span></span>
-<span><span class="co">#&gt; 12317.496994</span></span>
-<span><span class="co">#&gt; iter  43 value</span></span>
-<span><span class="co">#&gt; 12173.546141</span></span>
-<span><span class="co">#&gt; iter  44 value</span></span>
-<span><span class="co">#&gt; 12080.016371</span></span>
-<span><span class="co">#&gt; iter  45 value</span></span>
-<span><span class="co">#&gt; 12044.537122</span></span>
-<span><span class="co">#&gt; iter  46 value</span></span>
-<span><span class="co">#&gt; 12011.225055</span></span>
-<span><span class="co">#&gt; iter  47 value</span></span>
-<span><span class="co">#&gt; 11986.095516</span></span>
-<span><span class="co">#&gt; iter  48 value</span></span>
-<span><span class="co">#&gt; 11978.004492</span></span>
-<span><span class="co">#&gt; iter  49 value</span></span>
-<span><span class="co">#&gt; 11974.243616</span></span>
-<span><span class="co">#&gt; iter  50 value</span></span>
-<span><span class="co">#&gt; 11974.022785</span></span>
-<span><span class="co">#&gt; iter  51 value</span></span>
-<span><span class="co">#&gt; 11973.920444</span></span>
-<span><span class="co">#&gt; iter  52 value</span></span>
-<span><span class="co">#&gt; 11973.544336</span></span>
-<span><span class="co">#&gt; iter  53 value</span></span>
-<span><span class="co">#&gt; 11973.238964</span></span>
-<span><span class="co">#&gt; iter  54 value</span></span>
-<span><span class="co">#&gt; 11972.952340</span></span>
-<span><span class="co">#&gt; iter  55 value</span></span>
-<span><span class="co">#&gt; 11972.321049</span></span>
-<span><span class="co">#&gt; iter  56 value</span></span>
-<span><span class="co">#&gt; 11972.004958</span></span>
-<span><span class="co">#&gt; iter  57 value</span></span>
-<span><span class="co">#&gt; 11971.879000</span></span>
-<span><span class="co">#&gt; iter  58 value</span></span>
-<span><span class="co">#&gt; 11971.818867</span></span>
-<span><span class="co">#&gt; iter  59 value</span></span>
-<span><span class="co">#&gt; 11971.779473</span></span>
-<span><span class="co">#&gt; iter  60 value</span></span>
-<span><span class="co">#&gt; 11971.754496</span></span>
-<span><span class="co">#&gt; iter  61 value</span></span>
-<span><span class="co">#&gt; 11971.744018</span></span>
-<span><span class="co">#&gt; iter  62 value</span></span>
-<span><span class="co">#&gt; 11971.739624</span></span>
-<span><span class="co">#&gt; iter  63 value</span></span>
-<span><span class="co">#&gt; 11971.736769</span></span>
-<span><span class="co">#&gt; iter  64 value</span></span>
-<span><span class="co">#&gt; 11971.735024</span></span>
-<span><span class="co">#&gt; iter  65 value</span></span>
-<span><span class="co">#&gt; 11971.734231</span></span>
-<span><span class="co">#&gt; iter  66 value</span></span>
-<span><span class="co">#&gt; 11971.733893</span></span>
-<span><span class="co">#&gt; iter  67 value</span></span>
-<span><span class="co">#&gt; 11971.733693</span></span>
-<span><span class="co">#&gt; iter  68 value</span></span>
-<span><span class="co">#&gt; 11971.733576</span></span>
-<span><span class="co">#&gt; iter  69 value</span></span>
-<span><span class="co">#&gt; 11971.733521</span></span>
-<span><span class="co">#&gt; iter  70 value</span></span>
-<span><span class="co">#&gt; 11971.733497</span></span>
-<span><span class="co">#&gt; iter  71 value</span></span>
-<span><span class="co">#&gt; 11971.733483</span></span>
-<span><span class="co">#&gt; iter  72 value</span></span>
-<span><span class="co">#&gt; 11971.733475</span></span>
-<span><span class="co">#&gt; iter  73 value</span></span>
-<span><span class="co">#&gt; 11971.733472</span></span>
-<span><span class="co">#&gt; iter  74 value</span></span>
-<span><span class="co">#&gt; 11971.733470</span></span>
-<span><span class="co">#&gt; iter  75 value</span></span>
-<span><span class="co">#&gt; 11971.733469</span></span>
-<span><span class="co">#&gt; iter  76 value</span></span>
-<span><span class="co">#&gt; 11971.733469</span></span>
-<span><span class="co">#&gt; iter  77 value</span></span>
-<span><span class="co">#&gt; 11971.733468</span></span>
-<span><span class="co">#&gt; iter  78 value</span></span>
-<span><span class="co">#&gt; 11971.733468</span></span>
-<span><span class="co">#&gt; iter  79 value</span></span>
-<span><span class="co">#&gt; 11971.733468</span></span>
-<span><span class="co">#&gt; iter  80 value</span></span>
-<span><span class="co">#&gt; 11971.733468</span></span>
-<span><span class="co">#&gt; iter  81 value</span></span>
-<span><span class="co">#&gt; 11971.733468</span></span>
-<span><span class="co">#&gt; iter  82 value</span></span>
-<span><span class="co">#&gt; 11971.733468</span></span>
-<span><span class="co">#&gt; iter  83 value</span></span>
-<span><span class="co">#&gt; 11971.733468</span></span>
-<span><span class="co">#&gt; iter  84 value</span></span>
-<span><span class="co">#&gt; 11971.733468</span></span>
-<span><span class="co">#&gt; iter  85 value</span></span>
-<span><span class="co">#&gt; 11971.733468</span></span>
-<span><span class="co">#&gt; iter  86 value</span></span>
-<span><span class="co">#&gt; 11971.733468</span></span>
-<span><span class="co">#&gt; iter  87 value</span></span>
-<span><span class="co">#&gt; 11971.733468</span></span>
-<span><span class="co">#&gt; iter  88 value</span></span>
-<span><span class="co">#&gt; 11971.733468</span></span>
-<span><span class="co">#&gt; iter  89 value</span></span>
-<span><span class="co">#&gt; 11971.733468</span></span>
-<span><span class="co">#&gt; iter  90 value</span></span>
-<span><span class="co">#&gt; 11971.733468</span></span>
-<span><span class="co">#&gt; iter  91 value</span></span>
-<span><span class="co">#&gt; 11971.733468</span></span>
-<span><span class="co">#&gt; iter  92 value</span></span>
-<span><span class="co">#&gt; 11971.733468</span></span>
+<span><span class="co">#&gt; iter   1 value 15970.102137</span></span>
+<span><span class="co">#&gt; iter   2 value 14381.202179</span></span>
+<span><span class="co">#&gt; iter   3 value 13528.599431</span></span>
+<span><span class="co">#&gt; iter   4 value 13499.287653</span></span>
+<span><span class="co">#&gt; iter   5 value 13379.584454</span></span>
+<span><span class="co">#&gt; iter   6 value 12626.874008</span></span>
+<span><span class="co">#&gt; iter   7 value 10994.627500</span></span>
+<span><span class="co">#&gt; iter   8 value 10418.124636</span></span>
+<span><span class="co">#&gt; iter   9 value 10415.740249</span></span>
+<span><span class="co">#&gt; iter  10 value 10415.740249</span></span>
 <span><span class="fu"><a href="../reference/gbtm_diagnostics.html">gbtm_diagnostics</a></span><span class="op">(</span><span class="va">cfit</span><span class="op">)</span><span class="op">$</span><span class="va">entropy</span></span>
-<span><span class="co">#&gt; [1] 0.9999981</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 0.9999979</span></span></code></pre></div>
 <p><code><a href="../reference/plot_trajectories.html">plot_trajectories()</a></code> works the same way; for a continuous
 outcome the fitted lines and the observed points are on the outcome’s
 own scale (means, not probabilities):</p>

@@ -916,6 +916,9 @@ res$diagnostics$groups
 ``` r
 
 plot_trajectories(res$final_fit)
+#> Warning: group(s) 4 have no assigned members; their fitted trajectory is
+#> unconstrained and may look extreme. This usually indicates a degenerate fit --
+#> try method = "EM" or a different number of groups.
 ```
 
 ![Fitted group
@@ -1940,6 +1943,18 @@ The same pipeline handles continuous outcomes: switch the family to
 continuous dataset. `sim_continuous` has the same four shape types on a
 continuous scale.
 
+We fit with `method = "EM"` here. For this censored-normal problem the
+default `"L"` (maximum-likelihood) optimizer lands in a degenerate local
+optimum where one group ends up empty – its trajectory is then
+unconstrained and looks extreme. `"EM"` recovers all four groups with a
+much lower BIC, and is exactly what
+[`select_algorithm()`](https://fabregithub.github.io/gbtmkit/reference/select_algorithm.md)
+would choose. If a group ever does come out empty,
+[`plot_trajectories()`](https://fabregithub.github.io/gbtmkit/reference/plot_trajectories.md)
+/
+[`gbtm_predict()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_predict.md)
+warn you.
+
 ``` r
 
 data("sim_continuous", package = "gbtmkit")
@@ -1950,197 +1965,23 @@ cspec <- gbtm_spec(
   id       = "id",
   family   = "gaussian"
 )
-cfit <- fit_gbtm(cspec, n_groups = 4, degrees = rep(1, 4), method = "L")
+cfit <- fit_gbtm(cspec, n_groups = 4, degrees = rep(1, 4), method = "EM")
 #> Starting Values
 #> 0.250.250.250.2515.5031856751151021.5258653283097026.1406055050237032.163285158218207.241321535574517.241321535574517.241321535574517.24132153557451
 #> 
 #> Likelihood
-#> iter   1 value
-#> 15970.102137
-#> iter   2 value
-#> 15970.101054
-#> iter   3 value
-#> 15970.099970
-#> iter   4 value
-#> 15970.097007
-#> iter   5 value
-#> 15970.094044
-#> iter   6 value
-#> 15970.085154
-#> iter   7 value
-#> 15970.076264
-#> iter   8 value
-#> 15970.049595
-#> iter   9 value
-#> 15970.022926
-#> iter  10 value
-#> 15969.942917
-#> iter  11 value
-#> 15969.862905
-#> iter  12 value
-#> 15969.622857
-#> iter  13 value
-#> 15969.382790
-#> iter  14 value
-#> 15968.662469
-#> iter  15 value
-#> 15967.941973
-#> iter  16 value
-#> 15965.779431
-#> iter  17 value
-#> 15963.615321
-#> iter  18 value
-#> 15957.113713
-#> iter  19 value
-#> 15950.598469
-#> iter  20 value
-#> 15930.974473
-#> iter  21 value
-#> 15911.240816
-#> iter  22 value
-#> 15851.481510
-#> iter  23 value
-#> 15791.103155
-#> iter  24 value
-#> 15609.039904
-#> iter  25 value
-#> 15431.190370
-#> iter  26 value
-#> 14955.099962
-#> iter  27 value
-#> 14771.901457
-#> iter  28 value
-#> 14703.226197
-#> iter  29 value
-#> 14594.377993
-#> iter  30 value
-#> 14493.432806
-#> iter  31 value
-#> 14475.251830
-#> iter  32 value
-#> 14433.318538
-#> iter  33 value
-#> 14387.111496
-#> iter  34 value
-#> 14260.791573
-#> iter  35 value
-#> 13901.200796
-#> iter  36 value
-#> 13734.753677
-#> iter  37 value
-#> 13562.860538
-#> iter  38 value
-#> 13293.417867
-#> iter  39 value
-#> 12967.500971
-#> iter  40 value
-#> 12906.725779
-#> iter  41 value
-#> 12490.871310
-#> iter  42 value
-#> 12317.496994
-#> iter  43 value
-#> 12173.546141
-#> iter  44 value
-#> 12080.016371
-#> iter  45 value
-#> 12044.537122
-#> iter  46 value
-#> 12011.225055
-#> iter  47 value
-#> 11986.095516
-#> iter  48 value
-#> 11978.004492
-#> iter  49 value
-#> 11974.243616
-#> iter  50 value
-#> 11974.022785
-#> iter  51 value
-#> 11973.920444
-#> iter  52 value
-#> 11973.544336
-#> iter  53 value
-#> 11973.238964
-#> iter  54 value
-#> 11972.952340
-#> iter  55 value
-#> 11972.321049
-#> iter  56 value
-#> 11972.004958
-#> iter  57 value
-#> 11971.879000
-#> iter  58 value
-#> 11971.818867
-#> iter  59 value
-#> 11971.779473
-#> iter  60 value
-#> 11971.754496
-#> iter  61 value
-#> 11971.744018
-#> iter  62 value
-#> 11971.739624
-#> iter  63 value
-#> 11971.736769
-#> iter  64 value
-#> 11971.735024
-#> iter  65 value
-#> 11971.734231
-#> iter  66 value
-#> 11971.733893
-#> iter  67 value
-#> 11971.733693
-#> iter  68 value
-#> 11971.733576
-#> iter  69 value
-#> 11971.733521
-#> iter  70 value
-#> 11971.733497
-#> iter  71 value
-#> 11971.733483
-#> iter  72 value
-#> 11971.733475
-#> iter  73 value
-#> 11971.733472
-#> iter  74 value
-#> 11971.733470
-#> iter  75 value
-#> 11971.733469
-#> iter  76 value
-#> 11971.733469
-#> iter  77 value
-#> 11971.733468
-#> iter  78 value
-#> 11971.733468
-#> iter  79 value
-#> 11971.733468
-#> iter  80 value
-#> 11971.733468
-#> iter  81 value
-#> 11971.733468
-#> iter  82 value
-#> 11971.733468
-#> iter  83 value
-#> 11971.733468
-#> iter  84 value
-#> 11971.733468
-#> iter  85 value
-#> 11971.733468
-#> iter  86 value
-#> 11971.733468
-#> iter  87 value
-#> 11971.733468
-#> iter  88 value
-#> 11971.733468
-#> iter  89 value
-#> 11971.733468
-#> iter  90 value
-#> 11971.733468
-#> iter  91 value
-#> 11971.733468
-#> iter  92 value
-#> 11971.733468
+#> iter   1 value 15970.102137
+#> iter   2 value 14381.202179
+#> iter   3 value 13528.599431
+#> iter   4 value 13499.287653
+#> iter   5 value 13379.584454
+#> iter   6 value 12626.874008
+#> iter   7 value 10994.627500
+#> iter   8 value 10418.124636
+#> iter   9 value 10415.740249
+#> iter  10 value 10415.740249
 gbtm_diagnostics(cfit)$entropy
-#> [1] 0.9999981
+#> [1] 0.9999979
 ```
 
 [`plot_trajectories()`](https://fabregithub.github.io/gbtmkit/reference/plot_trajectories.md)
