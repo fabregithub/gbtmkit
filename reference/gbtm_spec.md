@@ -75,8 +75,8 @@ An object of class `gbtm_spec`: a list with the validated `data`,
 data("sim_binary", package = "gbtmkit")
 spec <- gbtm_spec(
   sim_binary,
-  outcomes = c("y1", "y2", "y3", "y4"),
-  time     = c("t1", "t2", "t3", "t4"),
+  outcomes = paste0("y", 1:10),
+  time     = paste0("t", 1:10),
   id       = "id",
   family   = "binomial"
 )
@@ -84,8 +84,8 @@ spec
 #> <gbtm_spec>
 #>   family     : binomial
 #>   subjects   : 1500
-#>   occasions  : 4
-#>   outcomes   : y1, y2, y3, y4
-#>   time       : t1, t2, t3, t4
+#>   occasions  : 10
+#>   outcomes   : y1, y2, y3, y4, y5, y6, y7, y8, y9, y10
+#>   time       : t1, t2, t3, t4, t5, t6, t7, t8, t9, t10
 #>   id         : id
 ```

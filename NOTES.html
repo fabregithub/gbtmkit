@@ -73,6 +73,18 @@
 <strong>Binary is low-information</strong>: 4 binary occasions cap per-subject classification (~0.83) even when BIC recovers the right group count; the synthetic binary fixture uses wide separation so recovery is reliable.</li>
 </ul></div>
 <div class="section level2">
+<h2 id="findings-from-the-data-redesign-2026-07-10-occasions-mixed-degree-shapes">Findings from the data redesign (2026-07: 10 occasions, mixed-degree shapes)<a class="anchor" aria-label="anchor" href="#findings-from-the-data-redesign-2026-07-10-occasions-mixed-degree-shapes"></a></h2>
+<p>The fixtures were rebuilt to be more realistic: ten occasions, two linear groups (rising G1, falling G4) and two cubic groups (peak G2, trough G3), with the shapes crossing mid-study. Lessons:</p>
+<ul><li>
+<strong>Linear-only group-number selection under-selects on curved data</strong>: with cubic planted shapes, <code>select_n_groups(degree = 1)</code> picks 3 groups; degree 2 is needed for BIC to find the planted 4. Tests and the vignette select with <code>degree = 2</code>.</li>
+<li>
+<strong>Mixed per-group degrees are fragile in single-start fits</strong>: fixing <code>degrees = c(1, 3, 3, 1)</code> (the truth) pins each degree to an arbitrary initialization slot; with method “L” this lands in local optima (empty or merged groups) on both fixtures. Uniform <code>rep(3, 4)</code> recovers cleanly, so examples use it and per-group degrees are left to the shape search.</li>
+<li>
+<strong>Binary separation must stay wide even with 10 occasions</strong>: crossing trajectories put several groups at similar probabilities mid-study; below <code>sep = 3</code> (log-odds) the 4-group fit collapses. At <code>sep = 3</code> the full pipeline recovers 4 groups (0.89 assignment recovery, entropy 0.76).</li>
+<li>
+<strong>trajeR’s EMIRLS</strong> fails numerically (“solve(): solution not found”) on the 10-occasion binary fixture; <code><a href="reference/select_algorithm.html">select_algorithm()</a></code> records it and moves on, as designed.</li>
+</ul></div>
+<div class="section level2">
 <h2 id="bugs-in-the-original-script-that-the-port-fixes">Bugs in the original script that the port fixes<a class="anchor" aria-label="anchor" href="#bugs-in-the-original-script-that-the-port-fixes"></a></h2>
 <ul><li>Duplicated, mutually inconsistent PMS filters -&gt; single robust min-across-group summary columns in <code><a href="reference/apply_grolts_criteria.html">apply_grolts_criteria()</a></code>.</li>
 <li>

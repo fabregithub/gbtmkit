@@ -51,6 +51,32 @@ specification.
   the synthetic binary fixture uses wide separation so recovery is
   reliable.
 
+## Findings from the data redesign (2026-07: 10 occasions, mixed-degree shapes)
+
+The fixtures were rebuilt to be more realistic: ten occasions, two
+linear groups (rising G1, falling G4) and two cubic groups (peak G2,
+trough G3), with the shapes crossing mid-study. Lessons:
+
+- **Linear-only group-number selection under-selects on curved data**:
+  with cubic planted shapes, `select_n_groups(degree = 1)` picks 3
+  groups; degree 2 is needed for BIC to find the planted 4. Tests and
+  the vignette select with `degree = 2`.
+- **Mixed per-group degrees are fragile in single-start fits**: fixing
+  `degrees = c(1, 3, 3, 1)` (the truth) pins each degree to an arbitrary
+  initialization slot; with method “L” this lands in local optima (empty
+  or merged groups) on both fixtures. Uniform `rep(3, 4)` recovers
+  cleanly, so examples use it and per-group degrees are left to the
+  shape search.
+- **Binary separation must stay wide even with 10 occasions**: crossing
+  trajectories put several groups at similar probabilities mid-study;
+  below `sep = 3` (log-odds) the 4-group fit collapses. At `sep = 3` the
+  full pipeline recovers 4 groups (0.89 assignment recovery, entropy
+  0.76).
+- **trajeR’s EMIRLS** fails numerically (“solve(): solution not found”)
+  on the 10-occasion binary fixture;
+  [`select_algorithm()`](https://fabregithub.github.io/gbtmkit/reference/select_algorithm.md)
+  records it and moves on, as designed.
+
 ## Bugs in the original script that the port fixes
 
 - Duplicated, mutually inconsistent PMS filters -\> single robust

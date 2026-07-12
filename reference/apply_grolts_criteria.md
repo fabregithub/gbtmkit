@@ -50,671 +50,873 @@ attribute `"recommended"` (its first row, or `NULL` if none qualify) and
 ``` r
 # \donttest{
 data("sim_binary", package = "gbtmkit")
-spec <- gbtm_spec(sim_binary, c("y1","y2","y3","y4"),
-                  c("t1","t2","t3","t4"), id = "id", family = "binomial")
+spec <- gbtm_spec(sim_binary, paste0("y", 1:10),
+                  paste0("t", 1:10), id = "id", family = "binomial")
 if (requireNamespace("trajeR", quietly = TRUE)) {
   sh <- evaluate_shapes(spec, n_groups = 4, method = "L", verbose = FALSE)
   apply_grolts_criteria(sh)
 }
 #> Starting Values
-#> 0.250.250.250.25-50-0.94894612107369700.3856559360520410-50
+#> 0.250.250.250.25-50-0.47756445827387600.8490727400115340-50
 #> 
 #> 
 #> Likelihood
-#> initial  value 3889.644459 
-#> iter   2 value 3686.500786
-#> iter   3 value 3605.669041
-#> iter   4 value 3476.798584
-#> iter   5 value 3463.604944
-#> iter   6 value 3364.300839
-#> iter   7 value 3293.207267
-#> iter   8 value 3288.003410
-#> iter   9 value 3255.318374
-#> iter  10 value 3238.305472
-#> iter  11 value 3207.819092
-#> iter  12 value 3172.603149
-#> iter  13 value 3164.655958
-#> iter  14 value 3158.339294
-#> iter  15 value 3154.316268
-#> iter  16 value 3147.480475
-#> iter  17 value 3141.047569
-#> iter  18 value 3138.714029
-#> iter  19 value 3137.704408
-#> iter  20 value 3137.256644
-#> iter  21 value 3137.058930
-#> iter  22 value 3136.895103
-#> iter  23 value 3136.715689
-#> iter  24 value 3136.474564
-#> iter  25 value 3136.406977
-#> iter  26 value 3136.349818
-#> iter  27 value 3136.246247
-#> iter  28 value 3136.225298
-#> iter  29 value 3136.090264
-#> iter  30 value 3135.675899
-#> iter  31 value 3135.426328
-#> iter  32 value 3135.033194
-#> iter  33 value 3134.684070
-#> iter  34 value 3134.288829
-#> iter  35 value 3134.058545
-#> iter  36 value 3133.787293
-#> iter  37 value 3133.313530
-#> iter  38 value 3132.792135
-#> iter  39 value 3132.585801
-#> iter  40 value 3132.464281
-#> iter  41 value 3132.182210
-#> iter  42 value 3131.961313
-#> iter  43 value 3130.705631
-#> iter  44 value 3130.625574
-#> iter  45 value 3130.470530
-#> iter  46 value 3130.414801
-#> iter  47 value 3130.334164
-#> iter  48 value 3130.309852
-#> iter  49 value 3130.077779
-#> iter  50 value 3129.571736
-#> iter  51 value 3128.687810
-#> iter  52 value 3128.611177
-#> iter  53 value 3128.262066
-#> iter  54 value 3128.211748
-#> iter  55 value 3128.202360
-#> iter  56 value 3128.037359
-#> iter  57 value 3127.911980
-#> iter  58 value 3127.817608
-#> iter  59 value 3127.581595
-#> iter  60 value 3126.770200
-#> iter  61 value 3126.624897
-#> iter  62 value 3126.510753
-#> iter  63 value 3126.468151
-#> iter  64 value 3126.435579
-#> iter  65 value 3126.430714
-#> iter  66 value 3126.427093
-#> iter  67 value 3126.393073
-#> iter  68 value 3126.368812
-#> iter  69 value 3126.331335
-#> iter  70 value 3126.306524
-#> iter  71 value 3126.296714
-#> iter  72 value 3126.291394
-#> iter  73 value 3126.287285
-#> iter  74 value 3126.285094
-#> iter  74 value 3126.285093
-#> final  value 3126.285093 
+#> initial  value 10985.536114 
+#> iter   2 value 10858.137188
+#> iter   3 value 9950.868337
+#> iter   4 value 9604.010268
+#> iter   5 value 9523.410887
+#> iter   6 value 9424.342436
+#> iter   7 value 9352.321409
+#> iter   8 value 9286.441113
+#> iter   9 value 9210.792735
+#> iter  10 value 9175.171325
+#> iter  11 value 9140.418239
+#> iter  12 value 8942.384509
+#> iter  13 value 8890.026663
+#> iter  14 value 8856.759064
+#> iter  15 value 8827.460274
+#> iter  16 value 8807.414078
+#> iter  17 value 8801.288694
+#> iter  18 value 8792.357282
+#> iter  19 value 8788.725740
+#> iter  20 value 8787.870797
+#> iter  21 value 8786.613241
+#> iter  22 value 8785.812000
+#> iter  23 value 8785.542198
+#> iter  24 value 8785.498141
+#> iter  25 value 8785.497116
+#> iter  26 value 8785.496879
+#> iter  27 value 8785.496464
+#> iter  28 value 8785.466852
+#> iter  29 value 8785.454730
+#> iter  30 value 8785.401997
+#> iter  31 value 8785.337041
+#> iter  32 value 8785.325229
+#> iter  33 value 8785.187009
+#> iter  34 value 8785.146106
+#> iter  35 value 8785.082182
+#> iter  36 value 8785.025301
+#> iter  37 value 8784.991490
+#> iter  38 value 8784.876299
+#> iter  39 value 8784.686230
+#> iter  40 value 8784.482840
+#> iter  41 value 8784.378795
+#> iter  42 value 8784.081436
+#> iter  43 value 8784.042734
+#> iter  44 value 8783.552654
+#> iter  45 value 8783.445591
+#> iter  46 value 8782.872342
+#> iter  47 value 8782.448203
+#> iter  48 value 8782.171581
+#> iter  49 value 8782.074688
+#> iter  50 value 8782.042333
+#> iter  51 value 8782.038646
+#> iter  52 value 8781.951582
+#> iter  53 value 8781.890176
+#> iter  54 value 8781.853451
+#> iter  55 value 8781.588346
+#> iter  56 value 8781.516054
+#> iter  57 value 8780.682039
+#> iter  58 value 8780.337291
+#> iter  59 value 8779.850009
+#> iter  60 value 8779.651352
+#> iter  61 value 8779.544711
+#> iter  62 value 8779.364064
+#> iter  63 value 8779.179306
+#> iter  64 value 8778.852676
+#> iter  65 value 8778.770623
+#> iter  66 value 8778.672801
+#> iter  67 value 8778.578332
+#> iter  68 value 8778.539880
+#> iter  69 value 8778.486867
+#> iter  70 value 8778.447743
+#> iter  71 value 8778.447384
+#> iter  72 value 8778.446945
+#> iter  73 value 8778.443635
+#> iter  74 value 8778.442132
+#> iter  74 value 8778.442011
+#> iter  75 value 8778.441777
+#> iter  75 value 8778.441729
+#> iter  75 value 8778.441724
+#> final  value 8778.441724 
 #> converged
 #> Starting Values
-#> 0.250.250.250.25-500-0.94894612107369700.3856559360520410-50
+#> 0.250.250.250.25-500-0.47756445827387600.8490727400115340-50
 #> 
 #> 
 #> Likelihood
-#> initial  value 3889.644459 
-#> iter   2 value 3857.444972
-#> iter   3 value 3783.473808
-#> iter   4 value 3680.804027
-#> iter   5 value 3491.084065
-#> iter   6 value 3361.755992
-#> iter   7 value 3344.207242
-#> iter   8 value 3329.220859
-#> iter   9 value 3295.486305
-#> iter  10 value 3238.837914
-#> iter  11 value 3220.787575
-#> iter  12 value 3188.710403
-#> iter  13 value 3157.044498
-#> iter  14 value 3152.906952
-#> iter  15 value 3149.245157
-#> iter  16 value 3144.284678
-#> iter  17 value 3137.140987
-#> iter  18 value 3135.536958
-#> iter  19 value 3133.843911
-#> iter  20 value 3132.739516
-#> iter  21 value 3132.366299
-#> iter  22 value 3131.938793
-#> iter  23 value 3131.422043
-#> iter  24 value 3131.227775
-#> iter  25 value 3131.033884
-#> iter  26 value 3130.846740
-#> iter  27 value 3130.835932
-#> iter  28 value 3130.832997
-#> iter  29 value 3130.825356
-#> iter  30 value 3130.776818
-#> iter  31 value 3130.770431
-#> iter  32 value 3130.757928
-#> iter  33 value 3130.755677
-#> iter  34 value 3130.723737
-#> iter  35 value 3130.719620
-#> iter  36 value 3130.703012
-#> iter  37 value 3130.676708
-#> iter  38 value 3130.653518
-#> iter  39 value 3130.556465
-#> iter  40 value 3130.372389
-#> iter  41 value 3129.228329
-#> iter  42 value 3129.206947
-#> iter  43 value 3129.160241
-#> iter  44 value 3129.153029
-#> iter  45 value 3129.123457
-#> iter  46 value 3129.043810
-#> iter  47 value 3128.981845
-#> iter  48 value 3128.273091
-#> iter  49 value 3127.608023
-#> iter  50 value 3127.283104
-#> iter  51 value 3126.587070
-#> iter  52 value 3126.446818
-#> iter  53 value 3125.744619
-#> iter  54 value 3125.097099
-#> iter  55 value 3125.053484
-#> iter  56 value 3125.033272
-#> iter  57 value 3125.014791
-#> iter  58 value 3125.012071
-#> iter  59 value 3125.010910
-#> iter  60 value 3125.010218
-#> iter  61 value 3125.009359
-#> iter  62 value 3125.007972
-#> iter  63 value 3125.004426
-#> iter  64 value 3124.997516
-#> iter  65 value 3124.984689
-#> iter  66 value 3124.965173
-#> iter  67 value 3124.964561
-#> iter  68 value 3124.963486
-#> iter  69 value 3124.962820
-#> iter  70 value 3124.962124
-#> iter  71 value 3124.961757
-#> iter  72 value 3124.960524
-#> iter  73 value 3124.958711
-#> iter  74 value 3124.955265
-#> iter  75 value 3124.951518
-#> iter  76 value 3124.948336
-#> iter  77 value 3124.946962
-#> iter  78 value 3124.946710
-#> iter  79 value 3124.946594
-#> iter  80 value 3124.946494
-#> iter  81 value 3124.945981
-#> iter  82 value 3124.944925
-#> iter  83 value 3124.942164
-#> iter  84 value 3124.936334
-#> iter  85 value 3124.925329
-#> iter  86 value 3124.910781
-#> iter  87 value 3124.901903
-#> iter  88 value 3124.899596
-#> iter  89 value 3124.898763
-#> iter  90 value 3124.897944
-#> iter  91 value 3124.897248
-#> iter  91 value 3124.897247
-#> final  value 3124.897247 
+#> initial  value 10985.536114 
+#> iter   2 value 10800.352734
+#> iter   3 value 10710.056216
+#> iter   4 value 10696.539619
+#> iter   5 value 10410.628040
+#> iter   6 value 9573.297464
+#> iter   7 value 9351.651148
+#> iter   8 value 9329.344541
+#> iter   9 value 9302.416025
+#> iter  10 value 9265.668463
+#> iter  11 value 9068.342808
+#> iter  12 value 9037.543327
+#> iter  13 value 8952.913024
+#> iter  14 value 8926.152513
+#> iter  15 value 8882.675206
+#> iter  16 value 8869.904385
+#> iter  17 value 8854.504370
+#> iter  18 value 8829.269294
+#> iter  19 value 8814.535096
+#> iter  20 value 8794.155209
+#> iter  21 value 8773.611200
+#> iter  22 value 8739.848514
+#> iter  23 value 8727.306187
+#> iter  24 value 8715.940614
+#> iter  25 value 8714.820453
+#> iter  26 value 8706.647409
+#> iter  27 value 8703.676076
+#> iter  28 value 8698.952844
+#> iter  29 value 8698.567056
+#> iter  30 value 8698.201645
+#> iter  31 value 8693.360213
+#> iter  32 value 8688.138022
+#> iter  33 value 8681.607925
+#> iter  34 value 8680.921116
+#> iter  35 value 8677.333737
+#> iter  36 value 8674.251396
+#> iter  37 value 8671.868378
+#> iter  38 value 8669.386158
+#> iter  39 value 8667.460252
+#> iter  40 value 8665.912307
+#> iter  41 value 8665.132798
+#> iter  42 value 8665.116599
+#> iter  43 value 8665.109115
+#> iter  43 value 8665.109003
+#> iter  43 value 8665.109003
+#> final  value 8665.109003 
 #> converged
 #> Starting Values
-#> 0.250.250.250.25-5000-0.94894612107369700.3856559360520410-50
+#> 0.250.250.250.25-5000-0.47756445827387600.8490727400115340-50
 #> 
 #> 
 #> Likelihood
-#> initial  value 3889.644459 
-#> iter   2 value 3570.547529
-#> iter   3 value 3541.791468
-#> iter   4 value 3497.627566
-#> iter   5 value 3486.442792
-#> iter   6 value 3453.135139
-#> iter   7 value 3319.762316
-#> iter   8 value 3244.331796
-#> iter   9 value 3232.821045
-#> iter  10 value 3213.847963
-#> iter  11 value 3193.529748
-#> iter  12 value 3187.310550
-#> iter  13 value 3176.695560
-#> iter  14 value 3163.914863
-#> iter  15 value 3160.618868
-#> iter  16 value 3157.940390
-#> iter  17 value 3156.355328
-#> iter  18 value 3154.764585
-#> iter  19 value 3153.328694
-#> iter  20 value 3152.219419
-#> iter  21 value 3151.126053
-#> iter  22 value 3149.879765
-#> iter  23 value 3149.623310
-#> iter  24 value 3149.428513
-#> iter  25 value 3149.186339
-#> iter  26 value 3148.845906
-#> iter  27 value 3148.499734
-#> iter  28 value 3148.302638
-#> iter  29 value 3148.296957
-#> iter  30 value 3148.283639
-#> iter  31 value 3148.185901
-#> iter  32 value 3148.144830
-#> iter  33 value 3147.999423
-#> iter  34 value 3147.976128
-#> iter  35 value 3147.587584
-#> iter  36 value 3147.217075
-#> iter  37 value 3147.010491
-#> iter  38 value 3144.983572
-#> iter  39 value 3143.594947
-#> iter  40 value 3142.949244
-#> iter  41 value 3138.418235
-#> iter  42 value 3135.801237
-#> iter  43 value 3132.757124
-#> iter  44 value 3130.560585
-#> iter  45 value 3129.797669
-#> iter  46 value 3129.166356
-#> iter  47 value 3129.004516
-#> iter  48 value 3128.760094
-#> iter  49 value 3128.670908
-#> iter  50 value 3128.603777
-#> iter  51 value 3128.556219
-#> iter  52 value 3128.396485
-#> iter  53 value 3127.965717
-#> iter  54 value 3127.930728
-#> iter  55 value 3127.539617
-#> iter  56 value 3127.523168
-#> iter  57 value 3127.293807
-#> iter  58 value 3127.279239
-#> iter  59 value 3127.274313
-#> iter  60 value 3127.274250
-#> iter  61 value 3127.245394
-#> iter  62 value 3127.230926
-#> iter  63 value 3127.219832
-#> iter  64 value 3127.213218
-#> iter  65 value 3126.184696
-#> iter  66 value 3125.748570
-#> iter  67 value 3125.433821
-#> iter  68 value 3125.277158
-#> iter  69 value 3125.055683
-#> iter  70 value 3124.982005
-#> iter  71 value 3124.945053
-#> iter  72 value 3124.921887
-#> iter  73 value 3124.910446
-#> iter  74 value 3124.906260
-#> iter  75 value 3124.905646
-#> iter  76 value 3124.905549
-#> iter  76 value 3124.905527
-#> iter  76 value 3124.905527
-#> final  value 3124.905527 
+#> initial  value 10985.536114 
+#> iter   2 value 10886.600543
+#> iter   3 value 10862.909766
+#> iter   4 value 10671.259390
+#> iter   5 value 9887.299676
+#> iter   6 value 9814.061667
+#> iter   7 value 9725.736135
+#> iter   8 value 9431.956405
+#> iter   9 value 9309.089085
+#> iter  10 value 9157.673614
+#> iter  11 value 9022.109546
+#> iter  12 value 8969.446538
+#> iter  13 value 8926.403004
+#> iter  14 value 8902.358809
+#> iter  15 value 8866.480236
+#> iter  16 value 8828.857807
+#> iter  17 value 8817.894795
+#> iter  18 value 8806.176516
+#> iter  19 value 8795.825224
+#> iter  20 value 8793.029682
+#> iter  21 value 8790.652786
+#> iter  22 value 8788.726102
+#> iter  23 value 8787.480071
+#> iter  24 value 8787.285331
+#> iter  25 value 8787.245374
+#> iter  26 value 8787.241036
+#> iter  27 value 8787.240185
+#> iter  28 value 8787.239227
+#> iter  28 value 8787.239140
+#> final  value 8787.239140 
 #> converged
 #> Starting Values
-#> 0.250.250.250.25-50-0.948946121073697000.3856559360520410-50
+#> 0.250.250.250.25-500-0.477564458273876000.8490727400115340-50
 #> 
 #> 
 #> Likelihood
-#> initial  value 3889.644459 
-#> iter   2 value 3773.279285
-#> iter   3 value 3692.053609
-#> iter   4 value 3557.098354
-#> iter   5 value 3260.170347
-#> iter   6 value 3248.209713
-#> iter   7 value 3235.659960
-#> iter   8 value 3189.731324
-#> iter   9 value 3180.807178
-#> iter  10 value 3173.647182
-#> iter  11 value 3164.546209
-#> iter  12 value 3160.029796
-#> iter  13 value 3152.522698
-#> iter  14 value 3148.436470
-#> iter  15 value 3145.715291
-#> iter  16 value 3143.408634
-#> iter  17 value 3142.786940
-#> iter  18 value 3141.855997
-#> iter  19 value 3139.733274
-#> iter  20 value 3137.423009
-#> iter  21 value 3133.671343
-#> iter  22 value 3131.704825
-#> iter  23 value 3130.997668
-#> iter  24 value 3130.178136
-#> iter  25 value 3130.014288
-#> iter  26 value 3129.750331
-#> iter  27 value 3129.681226
-#> iter  28 value 3129.602476
-#> iter  29 value 3129.571009
-#> iter  30 value 3129.567511
-#> iter  31 value 3129.469260
-#> iter  32 value 3129.454885
-#> iter  33 value 3129.319947
-#> iter  34 value 3129.124787
-#> iter  35 value 3127.629002
-#> iter  36 value 3126.905517
-#> iter  37 value 3126.601171
-#> iter  38 value 3126.358381
-#> iter  39 value 3125.825839
-#> iter  40 value 3125.267036
-#> iter  41 value 3124.989534
-#> iter  42 value 3124.872809
-#> iter  43 value 3124.846131
-#> iter  44 value 3124.844817
-#> iter  45 value 3124.843879
-#> iter  46 value 3124.843806
-#> iter  47 value 3124.843754
-#> iter  47 value 3124.843750
-#> iter  47 value 3124.843750
-#> final  value 3124.843750 
+#> initial  value 10985.536114 
+#> iter   2 value 10957.973806
+#> iter   3 value 10684.012113
+#> iter   4 value 10524.257499
+#> iter   5 value 10418.379817
+#> iter   6 value 10399.123681
+#> iter   7 value 9173.627233
+#> iter   8 value 9113.693718
+#> iter   9 value 9060.884048
+#> iter  10 value 9060.139110
+#> iter  11 value 9037.755567
+#> iter  12 value 8984.740975
+#> iter  13 value 8938.517252
+#> iter  14 value 8926.904910
+#> iter  15 value 8922.819343
+#> iter  16 value 8904.439601
+#> iter  17 value 8802.626488
+#> iter  18 value 8790.554991
+#> iter  19 value 8708.935300
+#> iter  20 value 8653.373669
+#> iter  21 value 8630.630284
+#> iter  22 value 8605.581995
+#> iter  23 value 8572.170409
+#> iter  24 value 8560.618326
+#> iter  25 value 8548.068724
+#> iter  26 value 8540.968468
+#> iter  27 value 8539.620827
+#> iter  28 value 8535.293466
+#> iter  29 value 8533.776331
+#> iter  30 value 8532.680792
+#> iter  31 value 8532.660401
+#> iter  32 value 8532.655304
+#> iter  33 value 8532.597926
+#> iter  34 value 8532.583905
+#> iter  35 value 8532.533671
+#> iter  36 value 8532.339763
+#> iter  37 value 8532.172075
+#> iter  38 value 8531.746983
+#> iter  39 value 8531.713991
+#> iter  40 value 8531.482780
+#> iter  41 value 8531.472328
+#> iter  42 value 8531.419744
+#> iter  43 value 8531.335160
+#> iter  44 value 8531.295980
+#> iter  45 value 8531.281881
+#> iter  45 value 8531.281875
+#> iter  45 value 8531.281875
+#> final  value 8531.281875 
 #> converged
 #> Starting Values
-#> 0.250.250.250.25-50-0.9489461210736970000.3856559360520410-50
+#> 0.250.250.250.25-500-0.4775644582738760000.8490727400115340-50
 #> 
 #> 
 #> Likelihood
-#> initial  value 3889.644459 
-#> iter   2 value 3883.292290
-#> iter   3 value 3728.091493
-#> iter   4 value 3584.722575
-#> iter   5 value 3497.991195
-#> iter   6 value 3364.026647
-#> iter   7 value 3309.502322
-#> iter   8 value 3303.286553
-#> iter   9 value 3266.184248
-#> iter  10 value 3224.505646
-#> iter  11 value 3180.201830
-#> iter  12 value 3167.193973
-#> iter  13 value 3160.873614
-#> iter  14 value 3154.564016
-#> iter  15 value 3149.682203
-#> iter  16 value 3146.422796
-#> iter  17 value 3144.672201
-#> iter  18 value 3143.896083
-#> iter  19 value 3142.381526
-#> iter  20 value 3141.500269
-#> iter  21 value 3140.229265
-#> iter  22 value 3139.567175
-#> iter  23 value 3139.320805
-#> iter  24 value 3138.936694
-#> iter  25 value 3138.751181
-#> iter  26 value 3138.493163
-#> iter  27 value 3138.251916
-#> iter  28 value 3137.886698
-#> iter  29 value 3137.660695
-#> iter  30 value 3136.695032
-#> iter  31 value 3136.379799
-#> iter  32 value 3135.895390
-#> iter  33 value 3134.419052
-#> iter  34 value 3133.698103
-#> iter  35 value 3132.057789
-#> iter  36 value 3131.698827
-#> iter  37 value 3131.446256
-#> iter  38 value 3131.287664
-#> iter  39 value 3130.856372
-#> iter  40 value 3130.390703
-#> iter  41 value 3130.288852
-#> iter  42 value 3130.239152
-#> iter  43 value 3130.183650
-#> iter  44 value 3130.171847
-#> iter  45 value 3130.005740
-#> iter  46 value 3130.004922
-#> iter  47 value 3129.978793
-#> iter  48 value 3129.972341
-#> iter  49 value 3129.970025
-#> iter  50 value 3129.954781
-#> iter  51 value 3129.952800
-#> iter  52 value 3129.950346
-#> iter  53 value 3129.923731
-#> iter  54 value 3129.864946
-#> iter  55 value 3129.689231
-#> iter  56 value 3129.060939
-#> iter  57 value 3129.009643
-#> iter  58 value 3128.534465
-#> iter  59 value 3128.117690
-#> iter  60 value 3127.159767
-#> iter  61 value 3125.714758
-#> iter  62 value 3125.316803
-#> iter  63 value 3125.127594
-#> iter  64 value 3125.007761
-#> iter  65 value 3124.968046
-#> iter  66 value 3124.950103
-#> iter  67 value 3124.944822
-#> iter  68 value 3124.941834
-#> iter  69 value 3124.940566
-#> iter  70 value 3124.939755
-#> iter  71 value 3124.938102
-#> iter  72 value 3124.934657
-#> iter  73 value 3124.934571
-#> iter  74 value 3124.934473
-#> iter  75 value 3124.934264
-#> iter  75 value 3124.934220
-#> iter  75 value 3124.934183
-#> final  value 3124.934183 
+#> initial  value 10985.536114 
+#> iter   2 value 10903.202993
+#> iter   3 value 10523.248501
+#> iter   4 value 10096.543272
+#> iter   5 value 10059.423897
+#> iter   6 value 9800.386286
+#> iter   7 value 9569.033193
+#> iter   8 value 9401.795170
+#> iter   9 value 9207.231580
+#> iter  10 value 9197.067121
+#> iter  11 value 9134.620754
+#> iter  12 value 9118.995916
+#> iter  13 value 9104.042147
+#> iter  14 value 8859.160932
+#> iter  15 value 8787.061083
+#> iter  16 value 8756.607556
+#> iter  17 value 8744.315956
+#> iter  18 value 8733.969020
+#> iter  19 value 8703.008906
+#> iter  20 value 8690.071862
+#> iter  21 value 8647.681478
+#> iter  22 value 8641.425019
+#> iter  23 value 8612.364494
+#> iter  24 value 8602.502790
+#> iter  25 value 8600.487925
+#> iter  26 value 8599.255314
+#> iter  27 value 8598.614612
+#> iter  28 value 8593.250901
+#> iter  29 value 8592.940106
+#> iter  30 value 8592.352495
+#> iter  31 value 8591.564393
+#> iter  32 value 8591.434956
+#> iter  33 value 8588.795133
+#> iter  34 value 8588.677443
+#> iter  35 value 8586.653640
+#> iter  36 value 8584.393213
+#> iter  37 value 8580.583653
+#> iter  38 value 8580.000935
+#> iter  39 value 8578.052719
+#> iter  40 value 8576.976528
+#> iter  41 value 8572.849952
+#> iter  42 value 8570.537196
+#> iter  43 value 8564.946989
+#> iter  44 value 8558.572809
+#> iter  45 value 8549.861904
+#> iter  46 value 8543.418428
+#> iter  47 value 8535.178714
+#> iter  48 value 8528.051810
+#> iter  49 value 8522.776074
+#> iter  50 value 8522.519247
+#> iter  51 value 8521.954646
+#> iter  52 value 8521.858536
+#> iter  53 value 8521.843159
+#> iter  54 value 8521.841467
+#> iter  55 value 8521.841334
+#> iter  55 value 8521.841318
+#> iter  55 value 8521.841318
+#> final  value 8521.841318 
 #> converged
 #> Starting Values
-#> 0.250.250.250.25-50-0.94894612107369700.38565593605204100-50
+#> 0.250.250.250.25-500-0.4775644582738760000.84907274001153400-50
 #> 
 #> 
 #> Likelihood
-#> initial  value 3889.644459 
-#> iter   2 value 3861.039927
-#> iter   3 value 3778.376757
-#> iter   4 value 3488.070193
-#> iter   5 value 3442.837200
-#> iter   6 value 3425.501891
-#> iter   7 value 3364.567146
-#> iter   8 value 3348.142256
-#> iter   9 value 3182.035109
-#> iter  10 value 3179.267773
-#> iter  11 value 3166.273695
-#> iter  12 value 3159.272230
-#> iter  13 value 3158.135361
-#> iter  14 value 3151.021561
-#> iter  15 value 3145.234753
-#> iter  16 value 3145.080859
-#> iter  17 value 3140.965783
-#> iter  18 value 3139.956935
-#> iter  19 value 3137.192411
-#> iter  20 value 3135.775329
-#> iter  21 value 3133.806424
-#> iter  22 value 3132.987699
-#> iter  23 value 3132.961939
-#> iter  24 value 3132.581676
-#> iter  25 value 3132.375564
-#> iter  26 value 3132.073951
-#> iter  27 value 3132.067815
-#> iter  28 value 3132.002534
-#> iter  29 value 3131.992782
-#> iter  30 value 3131.991178
-#> iter  31 value 3131.977162
-#> iter  32 value 3131.942894
-#> iter  33 value 3131.936572
-#> iter  34 value 3131.922592
-#> iter  35 value 3131.888435
-#> iter  36 value 3131.862383
-#> iter  37 value 3131.846223
-#> iter  38 value 3131.845322
-#> iter  39 value 3131.840003
-#> iter  40 value 3131.832938
-#> iter  41 value 3131.819543
-#> iter  42 value 3131.801888
-#> iter  43 value 3131.781660
-#> iter  44 value 3131.771031
-#> iter  45 value 3131.766248
-#> iter  46 value 3131.762846
-#> iter  47 value 3131.760632
-#> iter  48 value 3131.759197
-#> iter  49 value 3131.757635
-#> iter  50 value 3131.748021
-#> iter  50 value 3131.748020
-#> final  value 3131.748020 
+#> initial  value 10985.536114 
+#> iter   2 value 10894.920780
+#> iter   3 value 10696.548987
+#> iter   4 value 10625.893529
+#> iter   5 value 10460.785562
+#> iter   6 value 10126.311356
+#> iter   7 value 10095.755969
+#> iter   8 value 9970.881358
+#> iter   9 value 9386.829406
+#> iter  10 value 9352.750584
+#> iter  11 value 9327.690998
+#> iter  12 value 9228.272669
+#> iter  13 value 9209.046142
+#> iter  14 value 8999.788115
+#> iter  15 value 8995.053010
+#> iter  16 value 8938.998427
+#> iter  17 value 8807.807357
+#> iter  18 value 8784.185119
+#> iter  19 value 8767.215806
+#> iter  20 value 8731.994941
+#> iter  21 value 8719.882165
+#> iter  22 value 8705.148727
+#> iter  23 value 8694.541892
+#> iter  24 value 8693.179121
+#> iter  25 value 8690.049150
+#> iter  26 value 8686.992049
+#> iter  27 value 8684.439139
+#> iter  28 value 8683.923651
+#> iter  29 value 8683.573953
+#> iter  30 value 8682.917824
+#> iter  31 value 8681.275275
+#> iter  32 value 8677.591734
+#> iter  33 value 8675.908456
+#> iter  34 value 8674.439723
+#> iter  35 value 8670.262015
+#> iter  36 value 8657.767932
+#> iter  37 value 8657.731319
+#> iter  38 value 8657.374260
+#> iter  39 value 8655.246413
+#> iter  40 value 8652.031482
+#> iter  41 value 8651.735015
+#> iter  42 value 8650.933439
+#> iter  43 value 8648.435972
+#> iter  44 value 8648.232069
+#> iter  45 value 8645.345089
+#> iter  46 value 8644.237940
+#> iter  47 value 8631.215833
+#> iter  48 value 8628.798799
+#> iter  49 value 8621.654199
+#> iter  50 value 8615.484050
+#> iter  51 value 8614.806257
+#> iter  52 value 8608.542258
+#> iter  53 value 8605.870936
+#> iter  54 value 8602.512289
+#> iter  55 value 8600.249355
+#> iter  56 value 8599.287750
+#> iter  57 value 8597.990051
+#> iter  58 value 8597.665676
+#> iter  59 value 8597.579938
+#> iter  60 value 8597.566094
+#> iter  61 value 8597.563913
+#> iter  62 value 8597.563551
+#> iter  63 value 8597.563394
+#> iter  64 value 8597.563054
+#> iter  65 value 8597.562723
+#> iter  66 value 8597.562279
+#> iter  67 value 8597.562011
+#> iter  67 value 8597.562011
+#> final  value 8597.562011 
 #> converged
 #> Starting Values
-#> 0.250.250.250.25-50-0.94894612107369700.385655936052041000-50
+#> 0.250.250.250.25-500-0.4775644582738760000.849072740011534000-50
 #> 
 #> 
 #> Likelihood
-#> initial  value 3889.644459 
-#> iter   2 value 3879.314077
-#> iter   3 value 3783.519296
-#> iter   4 value 3573.371065
-#> iter   5 value 3532.460267
-#> iter   6 value 3366.035835
-#> iter   7 value 3364.657255
-#> iter   8 value 3322.118702
-#> iter   9 value 3298.177248
-#> iter  10 value 3219.570387
-#> iter  11 value 3179.411893
-#> iter  12 value 3177.456920
-#> iter  13 value 3173.613702
-#> iter  14 value 3171.986473
-#> iter  15 value 3162.834773
-#> iter  16 value 3143.823020
-#> iter  17 value 3139.999076
-#> iter  18 value 3137.879038
-#> iter  19 value 3136.228246
-#> iter  20 value 3135.428895
-#> iter  21 value 3134.802601
-#> iter  22 value 3134.286850
-#> iter  23 value 3134.019843
-#> iter  24 value 3133.733696
-#> iter  25 value 3133.601155
-#> iter  26 value 3133.338239
-#> iter  27 value 3133.102299
-#> iter  28 value 3132.793082
-#> iter  29 value 3132.631733
-#> iter  30 value 3132.458751
-#> iter  31 value 3132.335585
-#> iter  32 value 3132.277338
-#> iter  33 value 3132.179083
-#> iter  34 value 3132.147526
-#> iter  35 value 3132.128589
-#> iter  36 value 3132.128136
-#> iter  37 value 3132.127185
-#> iter  38 value 3132.123259
-#> iter  39 value 3132.120961
-#> iter  40 value 3132.118170
-#> iter  41 value 3132.113894
-#> iter  42 value 3132.088854
-#> iter  43 value 3132.075239
-#> iter  44 value 3131.973817
-#> iter  45 value 3131.908466
-#> iter  46 value 3131.871120
-#> iter  47 value 3131.842348
-#> iter  48 value 3131.820458
-#> iter  49 value 3131.808098
-#> iter  50 value 3131.801287
-#> iter  51 value 3131.797558
-#> iter  52 value 3131.795580
-#> iter  53 value 3131.794586
-#> iter  54 value 3131.794072
-#> iter  55 value 3131.793814
-#> iter  56 value 3131.793683
-#> iter  57 value 3131.793617
-#> iter  57 value 3131.793583
-#> iter  57 value 3131.793583
-#> final  value 3131.793583 
+#> initial  value 10985.536114 
+#> iter   2 value 10493.221942
+#> iter   3 value 10476.329952
+#> iter   4 value 9749.925159
+#> iter   5 value 9543.811841
+#> iter   6 value 9512.623046
+#> iter   7 value 9266.555334
+#> iter   8 value 9104.059806
+#> iter   9 value 9069.275349
+#> iter  10 value 8999.821966
+#> iter  11 value 8989.185673
+#> iter  12 value 8978.204094
+#> iter  13 value 8905.661286
+#> iter  14 value 8717.839479
+#> iter  15 value 8668.828519
+#> iter  16 value 8648.328414
+#> iter  17 value 8619.170634
+#> iter  18 value 8615.688248
+#> iter  19 value 8610.887970
+#> iter  20 value 8605.339898
+#> iter  21 value 8604.981820
+#> iter  22 value 8601.579607
+#> iter  23 value 8600.052070
+#> iter  24 value 8598.807457
+#> iter  25 value 8597.883500
+#> iter  26 value 8597.565850
+#> iter  27 value 8597.422541
+#> iter  28 value 8597.397731
+#> iter  29 value 8597.383705
+#> iter  30 value 8597.373113
+#> iter  31 value 8597.349701
+#> iter  32 value 8597.312657
+#> iter  33 value 8597.243054
+#> iter  34 value 8597.136576
+#> iter  35 value 8597.094378
+#> iter  35 value 8597.094337
+#> iter  36 value 8597.093752
+#> iter  36 value 8597.093720
+#> iter  36 value 8597.093719
+#> final  value 8597.093719 
 #> converged
 #> Starting Values
-#> 0.250.250.250.25-50-0.94894612107369700.3856559360520410-500
+#> 0.250.250.250.25-500-0.4775644582738760000.8490727400115340-500
 #> 
 #> 
 #> Likelihood
-#> initial  value 3889.644459 
-#> iter   2 value 3884.117364
-#> iter   3 value 3797.634505
-#> iter   4 value 3703.929099
-#> iter   5 value 3668.150058
-#> iter   6 value 3374.504289
-#> iter   7 value 3353.687711
-#> iter   8 value 3333.657231
-#> iter   9 value 3279.777107
-#> iter  10 value 3264.814687
-#> iter  11 value 3234.123039
-#> iter  12 value 3205.835396
-#> iter  13 value 3185.219598
-#> iter  14 value 3152.710350
-#> iter  15 value 3148.365055
-#> iter  16 value 3147.549183
-#> iter  17 value 3146.589359
-#> iter  18 value 3145.466474
-#> iter  19 value 3144.646394
-#> iter  20 value 3144.320136
-#> iter  21 value 3144.279984
-#> iter  22 value 3144.208839
-#> iter  23 value 3144.171645
-#> iter  24 value 3144.073809
-#> iter  25 value 3143.867423
-#> iter  26 value 3143.823170
-#> iter  27 value 3143.812839
-#> iter  28 value 3143.804994
-#> iter  29 value 3143.743658
-#> iter  30 value 3143.606545
-#> iter  31 value 3142.518995
-#> iter  32 value 3141.538984
-#> iter  33 value 3140.420228
-#> iter  34 value 3139.397251
-#> iter  35 value 3137.675194
-#> iter  36 value 3131.398946
-#> iter  37 value 3129.443841
-#> iter  38 value 3128.777407
-#> iter  39 value 3128.098476
-#> iter  40 value 3127.590502
-#> iter  41 value 3126.991538
-#> iter  42 value 3126.377421
-#> iter  43 value 3126.075536
-#> iter  44 value 3125.814087
-#> iter  45 value 3125.667856
-#> iter  46 value 3125.589519
-#> iter  47 value 3125.458122
-#> iter  48 value 3125.343389
-#> iter  49 value 3125.200079
-#> iter  50 value 3125.066024
-#> iter  51 value 3125.055329
-#> iter  52 value 3125.051065
-#> iter  53 value 3125.050191
-#> iter  54 value 3125.046095
-#> iter  55 value 3125.027673
-#> iter  56 value 3125.019620
-#> iter  57 value 3125.010732
-#> iter  58 value 3125.004768
-#> iter  59 value 3124.994646
-#> iter  60 value 3124.977179
-#> iter  61 value 3124.971050
-#> iter  62 value 3124.970752
-#> iter  63 value 3124.970456
-#> iter  64 value 3124.970284
-#> iter  65 value 3124.967405
-#> iter  66 value 3124.962586
-#> iter  67 value 3124.951464
-#> iter  68 value 3124.933795
-#> iter  69 value 3124.913394
-#> iter  70 value 3124.903398
-#> iter  71 value 3124.900836
-#> iter  72 value 3124.899494
-#> iter  73 value 3124.898157
-#> iter  74 value 3124.897315
-#> iter  75 value 3124.897008
-#> iter  75 value 3124.897008
-#> final  value 3124.897008 
+#> initial  value 10985.536114 
+#> iter   2 value 10903.190446
+#> iter   3 value 10484.708005
+#> iter   4 value 9946.010551
+#> iter   5 value 9915.070028
+#> iter   6 value 9475.347085
+#> iter   7 value 9116.419141
+#> iter   8 value 9012.127987
+#> iter   9 value 8990.208459
+#> iter  10 value 8988.919502
+#> iter  11 value 8976.930620
+#> iter  12 value 8956.070754
+#> iter  13 value 8950.970559
+#> iter  14 value 8917.158697
+#> iter  15 value 8885.039726
+#> iter  16 value 8870.729779
+#> iter  17 value 8867.911762
+#> iter  18 value 8852.590369
+#> iter  19 value 8792.219012
+#> iter  20 value 8770.043281
+#> iter  21 value 8756.835588
+#> iter  22 value 8749.097257
+#> iter  23 value 8716.665579
+#> iter  24 value 8703.587805
+#> iter  25 value 8694.387576
+#> iter  26 value 8592.599625
+#> iter  27 value 8590.558835
+#> iter  28 value 8572.380435
+#> iter  29 value 8563.765427
+#> iter  30 value 8553.065639
+#> iter  31 value 8545.685772
+#> iter  32 value 8536.591798
+#> iter  33 value 8531.553867
+#> iter  34 value 8525.824210
+#> iter  35 value 8522.970926
+#> iter  36 value 8522.263468
+#> iter  37 value 8521.763445
+#> iter  38 value 8521.668802
+#> iter  39 value 8521.611659
+#> iter  40 value 8521.587376
+#> iter  41 value 8521.575049
+#> iter  42 value 8521.572869
+#> iter  43 value 8521.572607
+#> iter  43 value 8521.572605
+#> final  value 8521.572605 
 #> converged
 #> Starting Values
-#> 0.250.250.250.25-50-0.94894612107369700.3856559360520410-5000
+#> 0.250.250.250.25-500-0.4775644582738760000.8490727400115340-5000
 #> 
 #> 
 #> Likelihood
-#> initial  value 3889.644459 
-#> iter   2 value 3561.074195
-#> iter   3 value 3531.153302
-#> iter   4 value 3449.021134
-#> iter   5 value 3400.849808
-#> iter   6 value 3262.396439
-#> iter   7 value 3245.192979
-#> iter   8 value 3237.684675
-#> iter   9 value 3234.999477
-#> iter  10 value 3205.401290
-#> iter  11 value 3204.802995
-#> iter  12 value 3195.446339
-#> iter  13 value 3178.637428
-#> iter  14 value 3169.518024
-#> iter  15 value 3154.999433
-#> iter  16 value 3154.842141
-#> iter  17 value 3154.457087
-#> iter  18 value 3153.186092
-#> iter  19 value 3151.231208
-#> iter  20 value 3150.142943
-#> iter  21 value 3149.320153
-#> iter  22 value 3148.740972
-#> iter  23 value 3148.696300
-#> iter  24 value 3148.671574
-#> iter  25 value 3148.589205
-#> iter  26 value 3148.518325
-#> iter  27 value 3148.414559
-#> iter  28 value 3148.385343
-#> iter  29 value 3148.378934
-#> iter  30 value 3148.377458
-#> iter  31 value 3148.377028
-#> iter  32 value 3148.376292
-#> iter  33 value 3148.370598
-#> iter  34 value 3148.368398
-#> iter  35 value 3148.366075
-#> iter  36 value 3148.364940
-#> iter  37 value 3148.363103
-#> iter  37 value 3148.363102
-#> final  value 3148.363102 
+#> initial  value 10985.536114 
+#> iter   2 value 10902.080940
+#> iter   3 value 10764.962197
+#> iter   4 value 10422.657365
+#> iter   5 value 10282.172930
+#> iter   6 value 10147.016932
+#> iter   7 value 10121.432859
+#> iter   8 value 9904.789307
+#> iter   9 value 9105.134841
+#> iter  10 value 9067.117350
+#> iter  11 value 9050.950846
+#> iter  12 value 9047.996286
+#> iter  13 value 9034.168233
+#> iter  14 value 9033.687040
+#> iter  15 value 9022.986662
+#> iter  16 value 9016.130619
+#> iter  17 value 9013.987010
+#> iter  18 value 9008.761960
+#> iter  19 value 8917.080226
+#> iter  20 value 8848.742699
+#> iter  21 value 8829.852262
+#> iter  22 value 8820.712796
+#> iter  23 value 8800.763895
+#> iter  24 value 8797.079127
+#> iter  25 value 8785.792634
+#> iter  26 value 8770.502733
+#> iter  27 value 8766.876521
+#> iter  28 value 8739.830577
+#> iter  29 value 8682.457210
+#> iter  30 value 8634.605450
+#> iter  31 value 8612.929081
+#> iter  32 value 8602.114770
+#> iter  33 value 8598.162994
+#> iter  34 value 8579.050684
+#> iter  35 value 8577.943215
+#> iter  36 value 8577.372223
+#> iter  37 value 8566.195480
+#> iter  38 value 8563.421679
+#> iter  39 value 8558.056343
+#> iter  40 value 8551.598901
+#> iter  41 value 8543.217293
+#> iter  42 value 8539.525442
+#> iter  43 value 8534.332934
+#> iter  44 value 8534.250547
+#> iter  45 value 8527.629518
+#> iter  46 value 8524.745522
+#> iter  47 value 8524.531474
+#> iter  48 value 8524.468096
+#> iter  49 value 8524.400709
+#> iter  50 value 8523.690609
+#> iter  51 value 8523.394490
+#> iter  52 value 8523.356865
+#> iter  53 value 8520.595548
+#> iter  54 value 8520.186156
+#> iter  55 value 8518.951195
+#> iter  56 value 8515.959840
+#> iter  57 value 8514.198797
+#> iter  58 value 8512.773975
+#> iter  59 value 8511.948440
+#> iter  60 value 8509.720991
+#> iter  61 value 8507.309753
+#> iter  62 value 8506.048681
+#> iter  63 value 8505.278744
+#> iter  64 value 8504.560417
+#> iter  65 value 8502.664200
+#> iter  66 value 8501.949284
+#> iter  67 value 8501.226008
+#> iter  68 value 8500.279566
+#> iter  69 value 8500.105160
+#> iter  70 value 8499.869669
+#> iter  71 value 8499.856039
+#> iter  72 value 8499.847626
+#> iter  73 value 8499.847083
+#> iter  73 value 8499.847030
+#> iter  73 value 8499.847030
+#> final  value 8499.847030 
 #> converged
-#> <gbtm_criteria> PMS>0.05, APPA>0.70, OCC>=5 | 5 shape(s) pass
-#>   recommended: degrees 1,2,1,1  (BIC 6337.4, entropy 0.806)
+#> Starting Values
+#> 0.250.250.250.25-50-0.4775644582738760000.8490727400115340-5000
+#> 
+#> 
+#> Likelihood
+#> initial  value 10985.536114 
+#> iter   2 value 10902.093260
+#> iter   3 value 10896.822549
+#> iter   4 value 10671.904263
+#> iter   5 value 10633.629699
+#> iter   6 value 9323.546874
+#> iter   7 value 9125.721334
+#> iter   8 value 9070.468171
+#> iter   9 value 8984.905434
+#> iter  10 value 8961.952831
+#> iter  11 value 8950.088916
+#> iter  12 value 8943.047508
+#> iter  13 value 8917.209439
+#> iter  14 value 8905.582836
+#> iter  15 value 8893.823800
+#> iter  16 value 8887.958316
+#> iter  17 value 8878.059168
+#> iter  18 value 8872.002043
+#> iter  19 value 8867.735986
+#> iter  20 value 8855.092129
+#> iter  21 value 8840.064859
+#> iter  22 value 8836.029766
+#> iter  23 value 8809.418375
+#> iter  24 value 8787.478953
+#> iter  25 value 8765.855292
+#> iter  26 value 8758.417920
+#> iter  27 value 8736.808567
+#> iter  28 value 8725.117095
+#> iter  29 value 8717.801721
+#> iter  30 value 8716.547827
+#> iter  31 value 8715.574697
+#> iter  32 value 8715.131206
+#> iter  33 value 8715.130958
+#> iter  34 value 8715.111079
+#> iter  35 value 8715.020827
+#> iter  36 value 8714.991554
+#> iter  37 value 8714.989950
+#> iter  38 value 8714.111201
+#> iter  39 value 8713.695099
+#> iter  40 value 8713.635022
+#> iter  41 value 8713.353488
+#> iter  42 value 8712.956557
+#> iter  43 value 8712.689081
+#> iter  44 value 8712.530475
+#> iter  45 value 8712.470662
+#> iter  46 value 8712.419412
+#> iter  47 value 8712.385639
+#> iter  48 value 8712.369803
+#> iter  49 value 8712.362198
+#> iter  50 value 8712.358106
+#> iter  51 value 8712.356074
+#> iter  52 value 8712.355072
+#> iter  53 value 8712.354564
+#> iter  54 value 8712.354310
+#> iter  54 value 8712.354183
+#> iter  54 value 8712.354183
+#> final  value 8712.354183 
+#> converged
+#> Starting Values
+#> 0.250.250.250.25-5000-0.4775644582738760000.8490727400115340-5000
+#> 
+#> 
+#> Likelihood
+#> initial  value 10985.536114 
+#> iter   2 value 10922.981063
+#> iter   3 value 10918.315871
+#> iter   4 value 10603.712778
+#> iter   5 value 10551.866165
+#> iter   6 value 10417.850659
+#> iter   7 value 9525.459861
+#> iter   8 value 9501.635589
+#> iter   9 value 9322.322839
+#> iter  10 value 9273.062650
+#> iter  11 value 9249.396601
+#> iter  12 value 9220.061067
+#> iter  13 value 9208.873542
+#> iter  14 value 9185.815175
+#> iter  15 value 9177.254917
+#> iter  16 value 8986.321112
+#> iter  17 value 8963.109050
+#> iter  18 value 8821.413936
+#> iter  19 value 8771.160784
+#> iter  20 value 8635.076922
+#> iter  21 value 8616.519869
+#> iter  22 value 8604.254121
+#> iter  23 value 8594.431725
+#> iter  24 value 8588.610296
+#> iter  25 value 8586.227456
+#> iter  26 value 8583.108747
+#> iter  27 value 8581.343811
+#> iter  28 value 8580.784124
+#> iter  29 value 8580.647478
+#> iter  30 value 8580.624795
+#> iter  31 value 8580.608314
+#> iter  32 value 8580.586991
+#> iter  33 value 8580.542298
+#> iter  34 value 8580.464084
+#> iter  35 value 8580.351226
+#> iter  36 value 8580.250919
+#> iter  37 value 8580.250480
+#> iter  38 value 8580.249188
+#> iter  39 value 8580.242927
+#> iter  39 value 8580.242860
+#> iter  40 value 8580.237573
+#> iter  41 value 8580.236846
+#> iter  42 value 8580.234966
+#> iter  42 value 8580.234925
+#> iter  43 value 8580.234289
+#> iter  43 value 8580.234214
+#> iter  43 value 8580.234213
+#> final  value 8580.234213 
+#> converged
+#> Starting Values
+#> 0.250.250.250.25-500-0.47756445827387600.8490727400115340-5000
+#> 
+#> 
+#> Likelihood
+#> initial  value 10985.536114 
+#> iter   2 value 10876.757002
+#> iter   3 value 10579.018173
+#> iter   4 value 10184.372325
+#> iter   5 value 10113.379067
+#> iter   6 value 9810.911544
+#> iter   7 value 9339.527204
+#> iter   8 value 9304.571345
+#> iter   9 value 9297.244783
+#> iter  10 value 9287.584750
+#> iter  11 value 9251.051138
+#> iter  12 value 9185.924581
+#> iter  13 value 9104.742687
+#> iter  14 value 8878.321374
+#> iter  15 value 8855.845529
+#> iter  16 value 8818.898739
+#> iter  17 value 8803.829067
+#> iter  18 value 8772.058962
+#> iter  19 value 8749.902330
+#> iter  20 value 8732.872733
+#> iter  21 value 8721.478965
+#> iter  22 value 8717.921662
+#> iter  23 value 8716.276766
+#> iter  24 value 8715.976049
+#> iter  25 value 8715.573902
+#> iter  26 value 8715.443391
+#> iter  27 value 8715.375233
+#> iter  28 value 8715.337561
+#> iter  29 value 8715.318177
+#> iter  30 value 8715.296310
+#> iter  31 value 8715.295893
+#> iter  32 value 8715.290311
+#> iter  33 value 8715.290155
+#> iter  34 value 8715.285282
+#> iter  35 value 8715.279588
+#> iter  36 value 8715.274064
+#> iter  37 value 8715.244158
+#> iter  38 value 8714.975199
+#> iter  39 value 8714.905610
+#> iter  40 value 8714.887921
+#> iter  41 value 8714.869824
+#> iter  42 value 8714.682506
+#> iter  43 value 8714.672728
+#> iter  44 value 8714.666907
+#> iter  45 value 8714.660105
+#> iter  46 value 8714.655386
+#> iter  47 value 8714.653128
+#> iter  48 value 8714.652134
+#> iter  49 value 8714.651572
+#> iter  50 value 8714.651282
+#> iter  51 value 8714.651145
+#> iter  51 value 8714.651075
+#> iter  51 value 8714.651075
+#> final  value 8714.651075 
+#> converged
+#> Starting Values
+#> 0.250.250.250.25-500-0.477564458273876000.8490727400115340-5000
+#> 
+#> 
+#> Likelihood
+#> initial  value 10985.536114 
+#> iter   2 value 10301.253371
+#> iter   3 value 10298.958097
+#> iter   4 value 10133.952800
+#> iter   5 value 10052.794441
+#> iter   6 value 9364.546437
+#> iter   7 value 9042.645842
+#> iter   8 value 8918.088763
+#> iter   9 value 8875.365326
+#> iter  10 value 8809.495376
+#> iter  11 value 8771.672340
+#> iter  12 value 8764.580220
+#> iter  13 value 8726.803364
+#> iter  14 value 8686.128017
+#> iter  15 value 8669.959131
+#> iter  16 value 8613.274276
+#> iter  17 value 8598.863857
+#> iter  18 value 8588.389283
+#> iter  19 value 8576.633235
+#> iter  20 value 8555.485216
+#> iter  21 value 8543.895559
+#> iter  22 value 8531.086038
+#> iter  23 value 8526.693419
+#> iter  24 value 8523.124366
+#> iter  25 value 8519.525618
+#> iter  26 value 8514.540396
+#> iter  27 value 8513.638223
+#> iter  28 value 8513.273157
+#> iter  29 value 8512.651475
+#> iter  30 value 8512.521358
+#> iter  31 value 8512.407481
+#> iter  32 value 8512.378359
+#> iter  33 value 8512.377501
+#> iter  34 value 8512.371858
+#> iter  35 value 8512.371536
+#> iter  36 value 8512.368703
+#> iter  37 value 8512.367638
+#> iter  37 value 8512.367517
+#> iter  37 value 8512.367445
+#> final  value 8512.367445 
+#> converged
+#> Starting Values
+#> 0.250.250.250.25-500-0.4775644582738760000.84907274001153400-5000
+#> 
+#> 
+#> Likelihood
+#> initial  value 10985.536114 
+#> iter   2 value 10913.904114
+#> iter   3 value 10780.162063
+#> iter   4 value 10659.887732
+#> iter   5 value 10165.387906
+#> iter   6 value 10155.068661
+#> iter   7 value 9634.338835
+#> iter   8 value 9568.078112
+#> iter   9 value 9452.580976
+#> iter  10 value 9067.276329
+#> iter  11 value 8928.809186
+#> iter  12 value 8871.481552
+#> iter  13 value 8837.439322
+#> iter  14 value 8787.368075
+#> iter  15 value 8745.373859
+#> iter  16 value 8730.688207
+#> iter  17 value 8686.119222
+#> iter  18 value 8684.414245
+#> iter  19 value 8683.583366
+#> iter  20 value 8683.306122
+#> iter  21 value 8683.162909
+#> iter  22 value 8682.917995
+#> iter  23 value 8682.861196
+#> iter  24 value 8682.839435
+#> iter  25 value 8682.802567
+#> iter  26 value 8682.760861
+#> iter  27 value 8682.692467
+#> iter  28 value 8682.596237
+#> iter  29 value 8682.520445
+#> iter  30 value 8682.455593
+#> iter  31 value 8682.181845
+#> iter  32 value 8681.923946
+#> iter  33 value 8681.507374
+#> iter  34 value 8681.214395
+#> iter  35 value 8681.108862
+#> iter  36 value 8681.080587
+#> iter  36 value 8681.080521
+#> final  value 8681.080521 
+#> converged
+#> Starting Values
+#> 0.250.250.250.25-500-0.4775644582738760000.849072740011534000-5000
+#> 
+#> 
+#> Likelihood
+#> initial  value 10985.536114 
+#> iter   2 value 10492.106524
+#> iter   3 value 10473.741762
+#> iter   4 value 10346.383807
+#> iter   5 value 9516.446853
+#> iter   6 value 9514.397647
+#> iter   7 value 9476.919990
+#> iter   8 value 9326.278416
+#> iter   9 value 9199.800122
+#> iter  10 value 9109.146168
+#> iter  11 value 9015.930723
+#> iter  12 value 8992.250864
+#> iter  13 value 8937.407045
+#> iter  14 value 8836.515139
+#> iter  15 value 8765.120484
+#> iter  16 value 8698.673948
+#> iter  17 value 8663.033573
+#> iter  18 value 8635.086593
+#> iter  19 value 8626.461535
+#> iter  20 value 8612.518493
+#> iter  21 value 8603.389023
+#> iter  22 value 8600.889391
+#> iter  23 value 8599.572389
+#> iter  24 value 8598.309716
+#> iter  25 value 8598.044639
+#> iter  26 value 8597.925382
+#> iter  27 value 8597.808600
+#> iter  28 value 8597.658926
+#> iter  29 value 8597.591821
+#> iter  30 value 8597.579348
+#> iter  31 value 8597.577679
+#> iter  32 value 8597.575699
+#> iter  33 value 8597.570532
+#> iter  34 value 8597.559824
+#> iter  35 value 8597.539412
+#> iter  36 value 8597.507650
+#> iter  37 value 8597.472331
+#> iter  38 value 8597.435193
+#> iter  39 value 8597.434865
+#> iter  39 value 8597.434865
+#> iter  39 value 8597.434861
+#> final  value 8597.434861 
+#> converged
+#> <gbtm_criteria> PMS>0.05, APPA>0.70, OCC>=5 | 7 shape(s) pass
+#>   recommended: degrees 2,3,1,3  (BIC 17116.7, entropy 0.762)
 # }
 ```

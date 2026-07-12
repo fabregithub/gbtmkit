@@ -30,4 +30,6 @@
   runs the whole workflow in one call and returns a `gbtm_result`;
   [`plot_trajectories()`](https://fabregithub.github.io/gbtmkit/reference/plot_trajectories.md)
   draws fitted trajectories.
-- Two synthetic example datasets, `sim_binary` and `sim_continuous`.
+- Two synthetic example datasets, `sim_binary` and `sim_continuous`: ten
+  occasions, four planted groups of mixed polynomial order (two linear,
+  two cubic).

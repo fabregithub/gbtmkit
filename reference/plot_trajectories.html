@@ -78,210 +78,202 @@ occasion. Requires the <span class="pkg">ggplot2</span> package.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sim_binary"</span>, package <span class="op">=</span> <span class="st">"gbtmkit"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">spec</span> <span class="op">&lt;-</span> <span class="fu"><a href="gbtm_spec.html">gbtm_spec</a></span><span class="op">(</span><span class="va">sim_binary</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"y1"</span>,<span class="st">"y2"</span>,<span class="st">"y3"</span>,<span class="st">"y4"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"t1"</span>,<span class="st">"t2"</span>,<span class="st">"t3"</span>,<span class="st">"t4"</span><span class="op">)</span>, id <span class="op">=</span> <span class="st">"id"</span>, family <span class="op">=</span> <span class="st">"binomial"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">spec</span> <span class="op">&lt;-</span> <span class="fu"><a href="gbtm_spec.html">gbtm_spec</a></span><span class="op">(</span><span class="va">sim_binary</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"y"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                  <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"t"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>, id <span class="op">=</span> <span class="st">"id"</span>, family <span class="op">=</span> <span class="st">"binomial"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"trajeR"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">&amp;&amp;</span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"ggplot2"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="fit_gbtm.html">fit_gbtm</a></span><span class="op">(</span><span class="va">spec</span>, n_groups <span class="op">=</span> <span class="fl">4</span>, degrees <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">3</span>, <span class="fl">1</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"L"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="fit_gbtm.html">fit_gbtm</a></span><span class="op">(</span><span class="va">spec</span>, n_groups <span class="op">=</span> <span class="fl">4</span>, degrees <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"L"</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu">plot_trajectories</span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Starting Values</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 0.250.250.250.25-50-0.9489461210736970000.385655936052041000-50</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 0.250.250.250.25-5000-0.4775644582738760000.849072740011534000-5000</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Likelihood</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter   1 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3889.644459</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 10985.536114</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter   2 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3889.557561</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 10980.527072</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter   3 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3889.470721</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 10975.535925</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter   4 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3889.372368</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 10974.685937</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter   5 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3889.274099</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 10973.839813</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter   6 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3889.188985</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 10971.285301</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter   7 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3889.103879</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 10968.711717</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter   8 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3888.938577</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 10960.863450</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter   9 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3888.773245</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 10952.791121</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  10 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3888.277059</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 10926.639168</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  11 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3887.780595</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 10895.732083</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  12 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3886.289556</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 10744.184012</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  13 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3884.796101</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 10471.217711</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  14 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3880.301921</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 9934.991509</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  15 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3875.788456</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 9864.112200</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  16 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3862.150939</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 9763.004280</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  17 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3848.407248</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 9737.361300</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  18 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3807.036260</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 9726.034911</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  19 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3766.463906</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 9690.027590</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  20 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3672.192981</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 9646.339922</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  21 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3618.714341</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 9544.534552</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  22 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3580.365761</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 9419.809567</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  23 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3524.316156</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 9381.028379</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  24 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3312.190203</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 9313.397906</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  25 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3310.030662</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 9252.675150</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  26 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3301.176701</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 9189.781789</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  27 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3281.334194</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 9136.567943</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  28 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3241.963918</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 9045.820360</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  29 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3237.742101</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8977.811943</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  30 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3222.328020</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8874.187057</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  31 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3208.216965</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8771.316424</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  32 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3177.739609</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8742.279697</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  33 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3156.177621</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8673.319080</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  34 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3147.109072</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8659.350499</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  35 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3145.613182</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8652.300622</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  36 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3145.010857</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8643.956171</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  37 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3144.760459</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8636.124256</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  38 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3144.476248</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8629.061600</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  39 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3144.257267</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8626.065296</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  40 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3144.064009</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8625.272830</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  41 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3143.894775</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8624.510845</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  42 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3143.603016</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8623.880797</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  43 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3143.454038</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8623.106647</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  44 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3143.118756</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8622.680867</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  45 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3142.796837</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8622.200578</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  46 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3142.533523</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8621.512124</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  47 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3141.917359</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8620.887735</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  48 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3141.324462</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8619.534632</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  49 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3140.594328</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8619.374822</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  50 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3138.877312</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8619.061395</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  51 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3136.795041</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8618.492287</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  52 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3134.875283</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8618.156606</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  53 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3131.691612</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.829518</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  54 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3129.691132</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.825741</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  55 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3128.725471</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.730425</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  56 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3128.381415</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.663594</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  57 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3128.311510</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.635611</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  58 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3128.250190</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.632786</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  59 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3128.206396</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.631976</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  60 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3128.189609</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.631625</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  61 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3128.186203</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.631172</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  62 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3128.181534</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.630370</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  63 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3128.179841</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.628977</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  64 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3128.177379</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.626777</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  65 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3128.173593</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.623496</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  66 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3128.168742</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.618015</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  67 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3128.165665</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.611577</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  68 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3128.164542</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.596177</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  69 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3128.164309</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.584435</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  70 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3128.163992</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.561387</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  71 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3128.163121</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.556829</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  72 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3128.160739</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.555703</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  73 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3128.153231</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.555452</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  74 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3128.126839</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.555449</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  75 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3128.118234</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.555448</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  76 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3128.099194</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.555448</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  77 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3128.065616</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.555446</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  78 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3128.002885</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.555443</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  79 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3127.879093</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.555433</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  80 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3127.791432</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.555410</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  81 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3127.785357</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.555350</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  82 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3127.780316</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.555206</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  83 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3127.779416</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.554876</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  84 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3127.779040</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.554192</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  85 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3127.778996</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.552924</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  86 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3127.778964</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.551530</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  87 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3127.778874</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.545324</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  88 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3127.778655</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8617.518411</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  89 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3127.778060</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8616.683934</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  90 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3127.776423</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8616.596245</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  91 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3127.774108</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8616.436956</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> iter  92 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3127.767356</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> iter  93 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3127.763584</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> iter  94 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3127.751748</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> iter  95 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3127.723375</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> iter  96 value </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3127.703045</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8616.096503</span>
 <span class="r-plt img"><img src="plot_trajectories-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>

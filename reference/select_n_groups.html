@@ -113,217 +113,207 @@ of groups), and the fitted models.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sim_binary"</span>, package <span class="op">=</span> <span class="st">"gbtmkit"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">spec</span> <span class="op">&lt;-</span> <span class="fu"><a href="gbtm_spec.html">gbtm_spec</a></span><span class="op">(</span><span class="va">sim_binary</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"y1"</span>,<span class="st">"y2"</span>,<span class="st">"y3"</span>,<span class="st">"y4"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"t1"</span>,<span class="st">"t2"</span>,<span class="st">"t3"</span>,<span class="st">"t4"</span><span class="op">)</span>, id <span class="op">=</span> <span class="st">"id"</span>, family <span class="op">=</span> <span class="st">"binomial"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">spec</span> <span class="op">&lt;-</span> <span class="fu"><a href="gbtm_spec.html">gbtm_spec</a></span><span class="op">(</span><span class="va">sim_binary</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"y"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                  <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"t"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>, id <span class="op">=</span> <span class="st">"id"</span>, family <span class="op">=</span> <span class="st">"binomial"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"trajeR"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu">select_n_groups</span><span class="op">(</span><span class="va">spec</span>, candidates <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">5</span>, degree <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu">select_n_groups</span><span class="op">(</span><span class="va">spec</span>, candidates <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">5</span>, degree <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Starting Values</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 0.50.5-2.1690177846160201.218309550283050</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 0.50.5-1.35218614405793001.9707048996239500</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Likelihood</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 3454.147366 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter   2 value 3423.436500</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter   3 value 3414.748985</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter   4 value 3311.191835</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter   5 value 3213.160855</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter   6 value 3194.629948</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter   7 value 3179.043480</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter   8 value 3168.399518</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter   9 value 3167.928377</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  10 value 3167.904775</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  11 value 3167.903287</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  12 value 3167.903044</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  12 value 3167.903042</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> final  value 3167.903042 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 11144.862797 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter   2 value 9949.344846</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter   3 value 9948.517726</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter   4 value 9887.968577</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter   5 value 9852.794629</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter   6 value 9802.178974</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter   7 value 9756.011520</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter   8 value 9750.721957</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter   9 value 9419.958041</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  10 value 9161.731928</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  11 value 8914.045923</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  12 value 8782.663552</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  13 value 8720.369955</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  14 value 8689.124054</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  15 value 8686.580176</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  16 value 8685.887592</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  17 value 8685.880238</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  17 value 8685.880137</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  18 value 8685.877664</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  19 value 8685.877129</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  20 value 8685.868228</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  21 value 8685.867828</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  22 value 8685.864742</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  23 value 8685.864540</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  24 value 8685.862595</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  25 value 8685.862448</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  25 value 8685.862321</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  25 value 8685.862318</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> final  value 8685.862318 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> converged</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Starting Values</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 0.3333333333333330.3333333333333330.333333333333333-50-0.25266904051869402.403355740238520</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 0.3333333333333330.3333333333333330.333333333333333-2.75953796069026000.16678555619753500-500</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Likelihood</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 3514.077440 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter   2 value 3498.032931</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter   3 value 3483.431806</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter   4 value 3452.370402</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter   5 value 3337.074062</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter   6 value 3326.914372</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter   7 value 3314.743700</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter   8 value 3257.081854</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter   9 value 3216.237605</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  10 value 3172.366973</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  11 value 3164.067564</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  12 value 3156.954434</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  13 value 3149.228867</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  14 value 3146.831016</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  15 value 3145.406683</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  16 value 3144.595225</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  17 value 3144.458136</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  18 value 3144.338854</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  19 value 3144.330193</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  20 value 3144.327448</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  21 value 3144.326541</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  22 value 3144.315487</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  23 value 3144.312589</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  24 value 3144.286041</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  25 value 3144.275312</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  26 value 3144.271232</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  27 value 3144.267692</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  28 value 3144.267226</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  28 value 3144.267224</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  28 value 3144.267224</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> final  value 3144.267224 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 11486.525318 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter   2 value 11267.702756</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter   3 value 11046.140091</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter   4 value 10424.392736</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter   5 value 9803.587104</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter   6 value 9737.171147</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter   7 value 9731.611043</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter   8 value 9703.989854</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter   9 value 9695.292237</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  10 value 9512.244560</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  11 value 9351.003029</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  12 value 9185.579216</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  13 value 8972.709663</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  14 value 8944.442491</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  15 value 8938.613980</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  16 value 8890.720136</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  17 value 8865.243610</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  18 value 8848.058840</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  19 value 8800.173650</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  20 value 8797.454865</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  21 value 8771.525950</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  22 value 8697.804331</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  23 value 8688.651526</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  24 value 8687.396370</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  25 value 8687.082615</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  26 value 8686.508758</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  27 value 8686.205263</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  28 value 8686.041080</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  29 value 8685.960229</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  30 value 8685.912017</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  31 value 8685.887332</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  32 value 8685.875141</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  33 value 8685.868812</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  34 value 8685.865561</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  35 value 8685.863946</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  36 value 8685.863134</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  36 value 8685.863134</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> final  value 8685.863134 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> converged</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Starting Values</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 0.250.250.250.25-50-0.94894612107369700.3856559360520410-50</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 0.250.250.250.25-500-0.477564458273876000.84907274001153400-500</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Likelihood</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 3889.644459 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter   2 value 3686.500786</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter   3 value 3605.669041</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter   4 value 3476.798584</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter   5 value 3463.604944</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter   6 value 3364.300839</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter   7 value 3293.207267</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter   8 value 3288.003410</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter   9 value 3255.318374</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  10 value 3238.305472</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  11 value 3207.819092</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  12 value 3172.603149</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  13 value 3164.655958</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  14 value 3158.339294</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  15 value 3154.316268</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  16 value 3147.480475</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  17 value 3141.047569</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  18 value 3138.714029</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  19 value 3137.704408</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  20 value 3137.256644</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  21 value 3137.058930</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  22 value 3136.895103</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  23 value 3136.715689</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  24 value 3136.474564</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  25 value 3136.406977</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  26 value 3136.349818</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  27 value 3136.246247</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  28 value 3136.225298</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  29 value 3136.090264</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  30 value 3135.675899</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  31 value 3135.426328</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  32 value 3135.033194</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  33 value 3134.684070</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  34 value 3134.288829</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  35 value 3134.058545</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  36 value 3133.787293</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  37 value 3133.313530</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  38 value 3132.792135</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  39 value 3132.585801</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  40 value 3132.464281</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  41 value 3132.182210</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  42 value 3131.961313</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  43 value 3130.705631</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  44 value 3130.625574</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  45 value 3130.470530</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  46 value 3130.414801</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  47 value 3130.334164</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  48 value 3130.309852</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  49 value 3130.077779</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  50 value 3129.571736</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  51 value 3128.687810</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  52 value 3128.611177</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  53 value 3128.262066</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  54 value 3128.211748</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  55 value 3128.202360</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  56 value 3128.037359</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  57 value 3127.911980</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  58 value 3127.817608</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  59 value 3127.581595</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  60 value 3126.770200</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  61 value 3126.624897</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  62 value 3126.510753</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  63 value 3126.468151</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  64 value 3126.435579</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  65 value 3126.430714</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  66 value 3126.427093</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  67 value 3126.393073</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  68 value 3126.368812</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  69 value 3126.331335</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  70 value 3126.306524</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  71 value 3126.296714</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  72 value 3126.291394</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  73 value 3126.287285</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  74 value 3126.285094</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  74 value 3126.285093</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> final  value 3126.285093 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 10985.536114 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter   2 value 10832.062710</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter   3 value 10820.357392</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter   4 value 10676.738270</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter   5 value 9789.253631</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter   6 value 9510.472294</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter   7 value 9147.675265</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter   8 value 9101.075214</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter   9 value 9039.654187</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  10 value 9000.295827</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  11 value 8979.413113</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  12 value 8931.417694</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  13 value 8891.762505</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  14 value 8884.444598</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  15 value 8861.054776</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  16 value 8860.535407</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  17 value 8856.284035</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  18 value 8841.861792</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  19 value 8802.427472</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  20 value 8787.058697</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  21 value 8749.511283</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  22 value 8689.112051</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  23 value 8682.724958</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  24 value 8676.175820</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  25 value 8670.648359</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  26 value 8644.729215</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  27 value 8622.755948</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  28 value 8612.789550</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  29 value 8602.489948</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  30 value 8583.983131</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  31 value 8581.801208</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  32 value 8563.945825</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  33 value 8548.627139</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  34 value 8540.672875</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  35 value 8538.162604</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  36 value 8535.027188</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  37 value 8533.760348</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  38 value 8531.406171</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  39 value 8531.257026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  40 value 8530.394562</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  41 value 8530.082376</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  42 value 8529.800045</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  43 value 8529.677807</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  44 value 8529.653000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  45 value 8529.648380</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  46 value 8529.647935</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  46 value 8529.647883</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  47 value 8529.647173</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  48 value 8529.646934</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  48 value 8529.646924</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  48 value 8529.646917</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> final  value 8529.646917 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> converged</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Starting Values</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 0.20.20.20.20.2-50-1.5366464063360-0.25266904051869400.8345209703968940-50</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 0.20.20.20.20.2-500-0.942973425273998000.166785556197535001.4045182259602800-500</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Likelihood</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 3710.037469 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter   2 value 3653.877604</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter   3 value 3567.357785</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter   4 value 3483.142775</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter   5 value 3408.235168</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter   6 value 3312.009110</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter   7 value 3282.391489</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter   8 value 3196.075878</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter   9 value 3189.452391</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  10 value 3158.815297</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  11 value 3155.408531</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  12 value 3152.593123</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  13 value 3148.837846</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  14 value 3145.930017</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  15 value 3142.984898</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  16 value 3142.412722</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  17 value 3141.198055</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  18 value 3140.259026</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  19 value 3135.105403</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  20 value 3133.458945</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  21 value 3132.088997</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  22 value 3129.277930</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  23 value 3128.741015</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  24 value 3128.524933</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  25 value 3128.193462</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  26 value 3127.674085</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  27 value 3127.319808</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  28 value 3126.613633</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  29 value 3126.425846</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  30 value 3126.367821</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  31 value 3126.355244</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  32 value 3126.349579</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  33 value 3126.348451</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  34 value 3126.347878</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  35 value 3126.347217</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  36 value 3126.345909</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  37 value 3126.345152</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  38 value 3126.337580</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  39 value 3126.333188</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  40 value 3126.330920</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  41 value 3126.329960</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  42 value 3126.329700</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  43 value 3126.319780</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  44 value 3126.310961</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  45 value 3126.298279</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  46 value 3126.290493</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  47 value 3126.287332</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  48 value 3126.285590</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  49 value 3126.284341</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  50 value 3126.283680</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  51 value 3126.283395</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  52 value 3126.283246</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  53 value 3126.283158</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  53 value 3126.283114</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  53 value 3126.283114</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> final  value 3126.283114 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 10812.940044 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter   2 value 10068.443848</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter   3 value 10058.144107</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter   4 value 10036.187036</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter   5 value 9834.899792</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter   6 value 9182.395578</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter   7 value 9086.542650</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter   8 value 8960.369949</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter   9 value 8957.421335</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  10 value 8955.314342</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  11 value 8945.711717</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  12 value 8942.562532</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  13 value 8786.165828</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  14 value 8743.270149</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  15 value 8702.895117</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  16 value 8696.866127</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  17 value 8630.095693</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  18 value 8629.254238</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  19 value 8606.937714</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  20 value 8593.852582</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  21 value 8593.102524</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  22 value 8584.368738</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  23 value 8553.667352</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  24 value 8547.219857</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  25 value 8540.141701</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  26 value 8538.576846</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  27 value 8533.078268</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  28 value 8531.144563</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  29 value 8530.119368</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  30 value 8529.692493</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  31 value 8529.633005</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  32 value 8529.613447</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  33 value 8529.607527</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  34 value 8529.605189</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  35 value 8529.604122</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  36 value 8529.602856</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  37 value 8529.599269</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  38 value 8529.586038</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  39 value 8529.578910</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  40 value 8529.570747</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  41 value 8529.560051</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  42 value 8529.549428</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  43 value 8529.511282</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  44 value 8529.498679</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  45 value 8529.490258</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  46 value 8529.488627</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> iter  46 value 8529.488511</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> final  value 8529.488511 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> converged</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;gbtm_selection&gt; stage=n_groups  by=BIC</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  n_groups   degrees      bic      aic   ok</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         2       1,1 6372.372 6345.806 TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         3     1,1,1 6347.040 6304.534 TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         4   1,1,1,1 6333.016 6274.570 TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         5 1,1,1,1,1 6354.951 6280.566 TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         2       2,2 17422.92 17385.72 TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         3     2,2,2 17452.17 17393.73 TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         4   2,2,2,2 17168.99 17089.29 TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         5 2,2,2,2,2 17197.93 17096.98 TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   best: 4</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
