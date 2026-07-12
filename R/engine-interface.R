@@ -16,7 +16,7 @@
 #'   [gbtm_fit()].
 #' @export
 gbtm_engines <- function() {
-  c("trajeR")
+  c("trajeR", "flexmix")
 }
 
 #' Outcome families supported by an engine
@@ -27,7 +27,8 @@ gbtm_engines <- function() {
 gbtm_engine_families <- function(engine = gbtm_engines()) {
   engine <- match.arg(engine, gbtm_engines())
   switch(engine,
-    trajeR = c("binomial", "gaussian", "poisson", "beta")
+    trajeR  = c("binomial", "gaussian", "poisson", "beta"),
+    flexmix = c("binomial", "gaussian", "poisson")
   )
 }
 
@@ -43,7 +44,26 @@ gbtm_engine_families <- function(engine = gbtm_engines()) {
 gbtm_engine_methods <- function(engine = gbtm_engines()) {
   engine <- match.arg(engine, gbtm_engines())
   switch(engine,
-    trajeR = c("L", "EM", "EMIRLS")
+    trajeR  = c("L", "EM", "EMIRLS"),
+    flexmix = NA_character_
+  )
+}
+
+#' Does an engine support per-group polynomial degrees?
+#'
+#' trajeR fits a separate polynomial order per group. flexmix fits one model
+#' formula shared by all components, so the degree is uniform across groups;
+#' [evaluate_shapes()] then sweeps uniform shapes instead of per-group
+#' combinations.
+#'
+#' @param engine Engine name; see [gbtm_engines()].
+#' @return `TRUE` if `degrees` may differ across groups, `FALSE` otherwise.
+#' @export
+gbtm_engine_per_group_degrees <- function(engine = gbtm_engines()) {
+  engine <- match.arg(engine, gbtm_engines())
+  switch(engine,
+    trajeR  = TRUE,
+    flexmix = FALSE
   )
 }
 
@@ -84,9 +104,12 @@ gbtm_fit <- function(spec,
                  engine, spec$family), call. = FALSE)
   }
   switch(engine,
-    trajeR = .fit_trajer(spec, n_groups = n_groups, degrees = degrees,
-                         method = method, hessian = hessian,
-                         itermax = itermax, seed = seed, ...)
+    trajeR  = .fit_trajer(spec, n_groups = n_groups, degrees = degrees,
+                          method = method, hessian = hessian,
+                          itermax = itermax, seed = seed, ...),
+    flexmix = .fit_flexmix(spec, n_groups = n_groups, degrees = degrees,
+                           method = method, hessian = hessian,
+                           itermax = itermax, seed = seed, ...)
   )
 }
 

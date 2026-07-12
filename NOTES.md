@@ -141,8 +141,17 @@ throughout.
 ## Possible next steps (not done)
 
 - Tag `v0.1.0`.
-- Second engine adapter (`flexmix`) to prove the interface generalizes; the
-  adapter conformance test is already set up for it.
+- ~~Second engine adapter (`flexmix`) to prove the interface generalizes~~ —
+  done (2026-07-12). Notes: flexmix maps GBTM to a mixture of GLMs on long
+  data grouped by subject (`y ~ poly(t, d, raw = TRUE) | id`); binomial needs a
+  two-column `cbind(y, 1 - y)` response; `logLik`/`BIC`/`AIC` are S4 methods,
+  so accessors go through `stats4::`; per-component degrees via
+  `FLXMRglmfix(nested=)` collapse in practice, so the adapter requires uniform
+  degrees and `evaluate_shapes()` sweeps uniform shapes
+  (`gbtm_engine_per_group_degrees()`); `flexmix::refit()` (the SE step) can
+  produce NaN SEs on boundary parameters — warning, not error. On the binary
+  fixture the flexmix pipeline matches trajeR's recovery (0.895) and runs much
+  faster.
 - `grolts_report()` mapping outputs to GRoLTS checklist item numbers.
 - Multi-start initialization for CNORM.
 - Consider a CRAN submission.

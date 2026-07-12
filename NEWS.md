@@ -1,5 +1,11 @@
 # gbtmkit 0.0.0.9000
 
+* Second estimation engine: `flexmix` (`engine = "flexmix"`), proving the
+  adapter interface generalizes. Supports binomial, gaussian, and poisson
+  families with a single EM optimizer; the polynomial order is shared by all
+  groups (`gbtm_engine_per_group_degrees()`), and `evaluate_shapes()` sweeps
+  uniform shapes for such engines.
+
 * First working version: an engine-agnostic pipeline for group-based trajectory
   modeling (GBTM) that follows the GRoLTS reporting checklist.
 * `gbtm_spec()` describes the data and model (columns by name, outcome family)

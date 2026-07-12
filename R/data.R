@@ -14,8 +14,8 @@
 #' \describe{
 #'   \item{id}{Subject identifier.}
 #'   \item{x1, x2}{Covariates, present but not driving the outcome.}
-#'   \item{y1--y10}{Binary outcomes at occasions 1--10.}
-#'   \item{t1--t10}{Occasion times.}
+#'   \item{y1, y2, y3, y4, y5, y6, y7, y8, y9, y10}{Binary outcomes at occasions 1--10.}
+#'   \item{t1, t2, t3, t4, t5, t6, t7, t8, t9, t10}{Occasion times.}
 #'   \item{true_group}{Ground-truth group label (1--4); not used in fitting.}
 #' }
 #' @seealso [sim_continuous]
@@ -39,8 +39,8 @@
 #' \describe{
 #'   \item{id}{Subject identifier.}
 #'   \item{x1, x2}{Covariates, present but not driving the outcome.}
-#'   \item{y1--y10}{Continuous outcomes at occasions 1--10.}
-#'   \item{t1--t10}{Occasion times.}
+#'   \item{y1, y2, y3, y4, y5, y6, y7, y8, y9, y10}{Continuous outcomes at occasions 1--10.}
+#'   \item{t1, t2, t3, t4, t5, t6, t7, t8, t9, t10}{Occasion times.}
 #'   \item{true_group}{Ground-truth group label (1--4); not used in fitting.}
 #' }
 #' @seealso [sim_binary]

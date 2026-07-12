@@ -17,28 +17,8 @@ continuous_spec <- function() {
             id = "id", family = "gaussian")
 }
 
-# Shared conformance check any engine's fit must satisfy.
-expect_valid_fit <- function(fit, n_groups) {
-  expect_s3_class(fit, "gbtm_fit")
-  expect_equal(gbtm_n_groups(fit), n_groups)
-  expect_length(gbtm_degrees(fit), n_groups)
-
-  expect_true(is.finite(gbtm_bic(fit)))
-  expect_true(is.finite(gbtm_aic(fit)))
-  expect_true(is.finite(gbtm_loglik(fit)))
-
-  post <- gbtm_posterior(fit)
-  expect_equal(ncol(post), n_groups)
-  expect_equal(nrow(post), fit$spec$n_subjects)
-  # rows are probability distributions
-  expect_equal(unname(rowSums(post)), rep(1, nrow(post)), tolerance = 1e-6)
-  expect_true(all(post >= -1e-8 & post <= 1 + 1e-8))
-
-  sizes <- gbtm_group_sizes(fit)
-  expect_length(sizes, n_groups)
-  expect_equal(sum(sizes), 1, tolerance = 1e-6)
-  expect_true(all(sizes >= 0))
-}
+# The shared conformance check (expect_valid_fit) lives in
+# helper-conformance.R so every engine adapter's tests use the same contract.
 
 test_that("trajeR LOGIT fit satisfies the engine contract", {
   skip_on_cran()

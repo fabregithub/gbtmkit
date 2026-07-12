@@ -193,7 +193,10 @@ plot_trajectories(cfit)
 
 * **Engine-agnostic.** The pipeline talks only to a small set of accessors
   (`gbtm_bic()`, `gbtm_posterior()`, `gbtm_group_sizes()`, ...), so additional
-  backends can be added without changing the workflow.
+  backends can be added without changing the workflow. Besides trajeR, a
+  `flexmix` backend ships today: pass `engine = "flexmix"` to any fitting
+  function. flexmix's EM is fast, but it fits one polynomial order shared by
+  all groups, so the shape search sweeps uniform shapes there.
 * **Built to scale.** The shape search runs the fits with the Hessian off
   (needed only for the final model's standard errors), defaults to a greedy
   stepwise strategy, and supports a `time_budget`, `max_fits`, and on-disk

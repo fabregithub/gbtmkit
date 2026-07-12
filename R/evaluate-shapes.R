@@ -149,8 +149,13 @@ evaluate_shapes <- function(spec,
   }
   budget_secs <- .parse_duration(time_budget)
 
+  # Engines that share one polynomial order across groups search the 1-D space
+  # of uniform shapes; per-group coordinate descent would only propose
+  # non-uniform candidates the engine rejects.
+  per_group <- gbtm_engine_per_group_degrees(engine)
+
   n_levels <- max_degree - min_degree + 1L
-  grid_size <- n_levels^n_groups
+  grid_size <- if (per_group) n_levels^n_groups else n_levels
   # Auto-downshift a huge grid to stepwise.
   if (strategy == "grid" && is.finite(max_fits) && grid_size > max_fits) {
     if (verbose) message(sprintf(
@@ -220,7 +225,7 @@ evaluate_shapes <- function(spec,
     # One-time ETA after a short warm-up.
     if (verbose && !st$eta_done && st$n_fits >= min(3L, max_fits)) {
       per <- mean(st$times)
-      planned <- if (strategy == "grid") grid_size else
+      planned <- if (!per_group || strategy == "grid") grid_size else
         min(max_passes * n_groups * n_levels, max_fits)
       remaining <- max(planned - st$n_fits, 0)
       message(sprintf(
@@ -232,7 +237,14 @@ evaluate_shapes <- function(spec,
   }
 
   # --- run the chosen strategy ------------------------------------------------
-  if (strategy == "grid") {
+  if (!per_group) {
+    if (verbose) message(sprintf(
+      "engine '%s' fits one polynomial order for all groups; sweeping uniform shapes %d:%d.",
+      engine, min_degree, max_degree))
+    for (d in min_degree:max_degree) {
+      if (is.null(evaluate(rep(d, n_groups)))) break  # budget hit
+    }
+  } else if (strategy == "grid") {
     for (deg in .grid_degrees(n_groups, min_degree, max_degree)) {
       if (is.null(evaluate(deg))) break            # budget hit
     }

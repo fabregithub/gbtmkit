@@ -21,7 +21,9 @@ Roxygen: list(markdown = TRUE)
 Depends:
     R (>= 4.1)
 Imports:
-    stats
+    stats,
+    stats4,
+    utils
 Suggests:
     trajeR,
     flexmix,
