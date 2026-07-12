@@ -104,6 +104,9 @@ throughout.
 | 4344d33 | 2026-07-10 | Add pkgdown site + GitHub Pages deploy workflow |
 | 8addca6 | 2026-07-10 | Fix pkgdown build: default `docs/` output, move design doc to `dev/DESIGN.md` |
 | f8f297d | 2026-07-10 | Expand vignette: stage-by-stage flow + continuous plot |
+| 2759ad5 | 2026-07-10 | Warn on empty groups; EM for the continuous vignette example |
+| f7a58a0 | 2026-07-12 | Redesign example data: 10 occasions, mixed linear/cubic shapes |
+| 3a1fdf4 | 2026-07-12 | flexmix as a second estimation engine (uniform-degree capability) |
 
 ### Build stages (as executed)
 
