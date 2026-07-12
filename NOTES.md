@@ -107,6 +107,7 @@ throughout.
 | 2759ad5 | 2026-07-10 | Warn on empty groups; EM for the continuous vignette example |
 | f7a58a0 | 2026-07-12 | Redesign example data: 10 occasions, mixed linear/cubic shapes |
 | 3a1fdf4 | 2026-07-12 | flexmix as a second estimation engine (uniform-degree capability) |
+| ba80163 | 2026-07-12 | lcmm as a third estimation engine (hlme / thresholds link) |
 
 ### Build stages (as executed)
 
