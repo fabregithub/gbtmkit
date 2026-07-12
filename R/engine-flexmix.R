@@ -27,20 +27,6 @@
   poisson  = "poisson"
 )
 
-# Long-format data for flexmix: one row per subject x occasion, with `.gid` the
-# subject index (1..n in spec row order). Column-major flattening puts the
-# first occasion's rows first, so `!duplicated(.gid)` recovers spec row order.
-.flexmix_long <- function(spec) {
-  Y <- .spec_Y(spec)
-  A <- .spec_A(spec)
-  long <- data.frame(
-    .gid = rep(seq_len(nrow(Y)), times = ncol(Y)),
-    y    = as.vector(Y),
-    t    = as.vector(A)
-  )
-  long[stats::complete.cases(long), , drop = FALSE]
-}
-
 # Fit and wrap. Called via gbtm_fit(spec, engine = "flexmix", ...).
 .fit_flexmix <- function(spec, n_groups, degrees, method = NULL,
                          hessian = FALSE, itermax = 100L, seed = NULL, ...) {
@@ -71,7 +57,7 @@
   }
   degree <- degrees[1L]
 
-  long <- .flexmix_long(spec)
+  long <- .spec_long(spec)
   rhs <- if (degree == 0L) "1" else sprintf("poly(t, %d, raw = TRUE)", degree)
   lhs <- if (spec$family == "binomial") "cbind(y, 1 - y)" else "y"
   fml <- stats::as.formula(paste(lhs, "~", rhs, "| .gid"))
@@ -145,7 +131,7 @@ gbtm_loglik.gbtm_fit_flexmix <- function(fit, ...) {
 gbtm_posterior.gbtm_fit_flexmix <- function(fit, ...) {
   # flexmix posteriors are per data row; with the `| .gid` grouping they are
   # identical within a subject, so keep each subject's first row.
-  long <- .flexmix_long(fit$spec)
+  long <- .spec_long(fit$spec)
   post <- flexmix::posterior(fit$raw)[!duplicated(long$.gid), , drop = FALSE]
   dimnames(post) <- list(NULL, paste0("group", seq_len(ncol(post))))
   post

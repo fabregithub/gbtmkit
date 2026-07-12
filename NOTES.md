@@ -155,6 +155,17 @@ throughout.
   produce NaN SEs on boundary parameters — warning, not error. On the binary
   fixture the flexmix pipeline matches trajeR's recovery (0.895) and runs much
   faster.
+- Third engine adapter (`lcmm`) — done (2026-07-12). Notes: GBTM = latent
+  class growth analysis, `random = ~ -1` with class-specific effects via
+  `mixture =`; gaussian → `hlme()`, binary → `lcmm(link = "thresholds")`
+  (2-level ordinal ≈ probit trajectory model; conv=1 in ~30 s on the binary
+  fixture, recovery 0.896). ng > 1 requires starting values: fit ng = 1 first
+  and pass it as `B` (deterministic init). lcmm post-processing (`predictY`)
+  re-parses the stored `call`, so the adapter must patch `call$fixed` /
+  `call$mixture` with the actual formula objects after fitting. Model-implied
+  group sizes = softmax of the first ng-1 parameters (class-membership
+  intercepts, last class is reference). `mixture` is shared across classes, so
+  uniform degrees only — same capability flag as flexmix.
 - `grolts_report()` mapping outputs to GRoLTS checklist item numbers.
 - Multi-start initialization for CNORM.
 - Consider a CRAN submission.

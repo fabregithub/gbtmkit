@@ -3,7 +3,7 @@
 #
 # The pipeline never calls an estimation package directly. It calls `gbtm_fit()`
 # to obtain a `gbtm_fit` object, then reads everything it needs through a small
-# set of S3 generics defined here. Each backend (trajeR, later flexmix/lcmm)
+# set of S3 generics defined here. Each backend (trajeR, flexmix, lcmm)
 # provides an adapter that (a) knows how to fit and (b) implements these
 # generics for its own fit class. This file also holds the engine registry and
 # the base-class methods for fields the wrapper stores identically for every
@@ -16,7 +16,7 @@
 #'   [gbtm_fit()].
 #' @export
 gbtm_engines <- function() {
-  c("trajeR", "flexmix")
+  c("trajeR", "flexmix", "lcmm")
 }
 
 #' Outcome families supported by an engine
@@ -28,7 +28,8 @@ gbtm_engine_families <- function(engine = gbtm_engines()) {
   engine <- match.arg(engine, gbtm_engines())
   switch(engine,
     trajeR  = c("binomial", "gaussian", "poisson", "beta"),
-    flexmix = c("binomial", "gaussian", "poisson")
+    flexmix = c("binomial", "gaussian", "poisson"),
+    lcmm    = c("binomial", "gaussian")
   )
 }
 
@@ -45,16 +46,17 @@ gbtm_engine_methods <- function(engine = gbtm_engines()) {
   engine <- match.arg(engine, gbtm_engines())
   switch(engine,
     trajeR  = c("L", "EM", "EMIRLS"),
-    flexmix = NA_character_
+    flexmix = NA_character_,
+    lcmm    = NA_character_
   )
 }
 
 #' Does an engine support per-group polynomial degrees?
 #'
-#' trajeR fits a separate polynomial order per group. flexmix fits one model
-#' formula shared by all components, so the degree is uniform across groups;
-#' [evaluate_shapes()] then sweeps uniform shapes instead of per-group
-#' combinations.
+#' trajeR fits a separate polynomial order per group. flexmix and lcmm fit one
+#' model formula shared by all components/classes, so the degree is uniform
+#' across groups; [evaluate_shapes()] then sweeps uniform shapes instead of
+#' per-group combinations.
 #'
 #' @param engine Engine name; see [gbtm_engines()].
 #' @return `TRUE` if `degrees` may differ across groups, `FALSE` otherwise.
@@ -63,7 +65,8 @@ gbtm_engine_per_group_degrees <- function(engine = gbtm_engines()) {
   engine <- match.arg(engine, gbtm_engines())
   switch(engine,
     trajeR  = TRUE,
-    flexmix = FALSE
+    flexmix = FALSE,
+    lcmm    = FALSE
   )
 }
 
@@ -109,7 +112,10 @@ gbtm_fit <- function(spec,
                           itermax = itermax, seed = seed, ...),
     flexmix = .fit_flexmix(spec, n_groups = n_groups, degrees = degrees,
                            method = method, hessian = hessian,
-                           itermax = itermax, seed = seed, ...)
+                           itermax = itermax, seed = seed, ...),
+    lcmm    = .fit_lcmm(spec, n_groups = n_groups, degrees = degrees,
+                        method = method, hessian = hessian,
+                        itermax = itermax, seed = seed, ...)
   )
 }
 
@@ -205,6 +211,21 @@ print.gbtm_fit <- function(x, ...) {
   z <- z - max(z)
   e <- exp(z)
   e / sum(e)
+}
+
+# Long-format data for engines that model subject x occasion rows (flexmix,
+# lcmm): `.gid` is the subject index (1..n in spec row order). Column-major
+# flattening puts the first occasion's rows first, so `!duplicated(.gid)`
+# recovers spec row order.
+.spec_long <- function(spec) {
+  Y <- .spec_Y(spec)
+  A <- .spec_A(spec)
+  long <- data.frame(
+    .gid = rep(seq_len(nrow(Y)), times = ncol(Y)),
+    y    = as.vector(Y),
+    t    = as.vector(A)
+  )
+  long[stats::complete.cases(long), , drop = FALSE]
 }
 
 # Indices of groups with no hard-assigned members. An empty group is a sign of a

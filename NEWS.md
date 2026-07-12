@@ -1,5 +1,10 @@
 # gbtmkit 0.0.0.9000
 
+* Third estimation engine: `lcmm` (`engine = "lcmm"`). Gaussian outcomes map
+  to `lcmm::hlme()` and binary outcomes to `lcmm::lcmm(link = "thresholds")`,
+  both as latent class growth models (`random = ~ -1`) with the canonical
+  1-class-fit initialization. Single optimizer; uniform polynomial order
+  across groups (like flexmix).
 * Second estimation engine: `flexmix` (`engine = "flexmix"`), proving the
   adapter interface generalizes. Supports binomial, gaussian, and poisson
   families with a single EM optimizer; the polynomial order is shared by all
