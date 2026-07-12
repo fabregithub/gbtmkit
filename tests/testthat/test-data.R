@@ -6,11 +6,11 @@ test_that("sim_binary has the expected structure", {
   expect_s3_class(sim_binary, "data.frame")
   expect_identical(
     names(sim_binary),
-    c("id", "x1", "x2", "y1", "y2", "y3", "y4", "t1", "t2", "t3", "t4", "true_group")
+    c("id", "x1", "x2", paste0("y", 1:10), paste0("t", 1:10), "true_group")
   )
   expect_equal(nrow(sim_binary), 1500L)
   # binary outcomes
-  ys <- unlist(sim_binary[, c("y1", "y2", "y3", "y4")])
+  ys <- unlist(sim_binary[, paste0("y", 1:10)])
   expect_true(all(ys %in% c(0L, 1L)))
   # four planted groups
   expect_setequal(sim_binary$true_group, 1:4)

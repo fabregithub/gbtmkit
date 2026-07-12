@@ -7,7 +7,7 @@
 # recovers them.
 #
 # The data is entirely synthetic and domain-neutral: generic id, two covariates
-# (x1, x2), outcomes over four occasions (y1..y4), time columns (t1..t4), and a
+# (x1, x2), outcomes over ten occasions (y1..y10), time columns (t1..t10), and a
 # `true_group` label the pipeline never sees. No real data of any kind is used.
 #
 #   simulate_binary()      -> binary outcomes     (for LOGIT / family="binomial")
@@ -15,18 +15,19 @@
 # =============================================================================
 
 # Four canonical trajectory shapes shared by both generators, on the linear
-# predictor scale (log-odds for binary, mean for continuous):
-#   G1 stable-high : flat, high
-#   G2 falling     : high early -> low late
-#   G3 rising      : low early  -> high late
-#   G4 stable-low  : flat, low
+# predictor scale (log-odds for binary, mean for continuous). Time is rescaled
+# to s in [-1, 1] so the same coefficients work for any `times` grid:
+#   G1 linear rising  : degree 1, low early  -> high late
+#   G2 cubic peak     : degree 3, rises to a mid-study peak, then declines
+#   G3 cubic trough   : degree 3, declines to a mid-study trough, then recovers
+#   G4 linear falling : degree 1, high early -> low late
 .traj_shapes <- function(times, sep) {
-  ct <- times - mean(times)                      # centered time
+  s <- (times - mean(times)) / (diff(range(times)) / 2)   # rescaled to [-1, 1]
   list(
-    G1_stable_high =  sep        + 0.00 * ct,
-    G2_falling     =  sep * 0.9  - sep * 0.9 * ct,
-    G3_rising      = -sep * 0.9  + sep * 0.9 * ct,
-    G4_stable_low  = -sep        + 0.00 * ct
+    G1_linear_rising  = sep * (-0.6 + 1.0 * s),
+    G2_cubic_peak     = sep * ( 0.5 + 0.3 * s - 0.9 * s^2 - 0.6 * s^3),
+    G3_cubic_trough   = sep * (-0.5 - 0.3 * s + 0.9 * s^2 + 0.6 * s^3),
+    G4_linear_falling = sep * ( 0.6 - 1.0 * s)
   )
 }
 
@@ -61,14 +62,15 @@
 #' Simulate binary group-based trajectory data
 #'
 #' @param n,seed,props,times See details in the file header.
-#' @param sep Group separation on the log-odds scale. Wide by default because
-#'   binary data over few occasions is low-information; too little separation
-#'   makes BIC under-select the number of groups.
+#' @param sep Group separation on the log-odds scale. Binary data is
+#'   low-information and the shapes cross mid-study, so separation must stay
+#'   generous: below ~3 the single-start fit lands in local optima (empty or
+#'   merged groups) and BIC under-selects the number of groups.
 simulate_binary <- function(n     = 1500,
                             seed  = 12345,
                             props = c(0.20, 0.20, 0.20, 0.40),
-                            times = 1:4,
-                            sep   = 2.5) {
+                            times = 1:10,
+                            sep   = 3) {
   base   <- .sim_common(n, seed, props, times)
   shapes <- .traj_shapes(times, sep)[seq_len(base$K)]
   Y <- matrix(NA_integer_, n, base$nt)
@@ -93,7 +95,7 @@ simulate_binary <- function(n     = 1500,
 simulate_continuous <- function(n      = 1200,
                                 seed   = 12345,
                                 props  = c(0.25, 0.25, 0.25, 0.25),
-                                times  = 1:4,
+                                times  = 1:10,
                                 sep    = 6,
                                 noise  = 1.5,
                                 center = 24) {
@@ -123,8 +125,8 @@ if (sys.nframe() == 0L) {                        # only when run as a script
 
   sim_binary     <- simulate_binary()
   sim_continuous <- simulate_continuous()
-  report(sim_binary,     "binary",     c("y1", "y2", "y3", "y4"))
-  report(sim_continuous, "continuous", c("y1", "y2", "y3", "y4"))
+  report(sim_binary,     "binary",     paste0("y", 1:10))
+  report(sim_continuous, "continuous", paste0("y", 1:10))
 
   usethis::use_data(sim_binary, sim_continuous, overwrite = TRUE)
 }

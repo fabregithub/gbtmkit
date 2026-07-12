@@ -29,8 +29,8 @@ fake_evaluator <- function(target = 2L, pass_criteria = TRUE) {
 
 fake_spec <- function() {
   data("sim_binary", package = "gbtmkit", envir = environment())
-  gbtm_spec(sim_binary, c("y1", "y2", "y3", "y4"),
-            c("t1", "t2", "t3", "t4"), id = "id", family = "binomial")
+  gbtm_spec(sim_binary, paste0("y", 1:10),
+            paste0("t", 1:10), id = "id", family = "binomial")
 }
 
 test_that(".parse_duration understands seconds and unit strings", {

@@ -2,8 +2,8 @@
 
 bspec <- function() {
   data("sim_binary", package = "gbtmkit", envir = environment())
-  gbtm_spec(sim_binary, c("y1", "y2", "y3", "y4"),
-            c("t1", "t2", "t3", "t4"), id = "id", family = "binomial")
+  gbtm_spec(sim_binary, paste0("y", 1:10),
+            paste0("t", 1:10), id = "id", family = "binomial")
 }
 
 test_that("select_algorithm compares methods and picks a finite-BIC winner", {
@@ -24,8 +24,10 @@ test_that("select_algorithm compares methods and picks a finite-BIC winner", {
 test_that("select_n_groups sweeps candidates and recovers the planted 4", {
   skip_on_cran()
   skip_if_not_installed("trajeR")
-  sel <- select_n_groups(bspec(), candidates = 2:5, degree = 1,
-                         method = "L", itermax = 100, seed = 1)
+  # degree 2: with curved (cubic) planted shapes, linear-only selection
+  # under-selects -- quadratic is enough for BIC to find the planted 4.
+  sel <- select_n_groups(bspec(), candidates = 2:5, degree = 2,
+                         method = "L", itermax = 300, seed = 1)
   expect_equal(sel$type, "n_groups")
   expect_equal(sort(sel$table$n_groups), 2:5)
   # sim_binary has 4 planted groups -> BIC should choose 4

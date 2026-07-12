@@ -28,8 +28,10 @@ library(gbtmkit)
 ## The data
 
 The package ships two entirely synthetic datasets with known ground-truth
-groups. `sim_binary` has a binary outcome measured on four occasions, with four
-latent trajectory shapes (stable-high, falling, rising, stable-low):
+groups. `sim_binary` has a binary outcome measured on ten occasions, with four
+latent trajectory shapes of mixed polynomial order: a linear rising group, a
+cubic rise-peak-decline group, a cubic decline-trough-recovery group, and a
+linear falling group:
 
 ```{r}
 data("sim_binary", package = "gbtmkit")
@@ -45,8 +47,8 @@ will fit it.
 ```{r}
 spec <- gbtm_spec(
   sim_binary,
-  outcomes = c("y1", "y2", "y3", "y4"),
-  time     = c("t1", "t2", "t3", "t4"),
+  outcomes = paste0("y", 1:10),
+  time     = paste0("t", 1:10),
   id       = "id",
   family   = "binomial"
 )
@@ -64,9 +66,10 @@ keep the vignette quick.
 res <- run_gbtm_pipeline(
   spec,
   candidates = 2:5,     # consider 2 to 5 groups
-  degree     = 1,       # linear shapes while choosing the number of groups
+  degree     = 2,       # quadratic while choosing the number of groups --
+                        # with curved shapes, linear-only selection under-selects
   method     = "L",     # fix the algorithm (skip stage 1) for speed
-  max_degree = 2,       # allow up to quadratic in the shape search
+  max_degree = 3,       # allow up to cubic in the shape search
   seed       = 1,
   verbose    = FALSE
 )
@@ -120,15 +123,19 @@ algo <- select_algorithm(spec, n_groups = 2, degrees = c(1, 1))
 algo
 ```
 
-**Stage 2 -- choose the number of groups** by BIC over a set of candidates:
+**Stage 2 -- choose the number of groups** by BIC over a set of candidates.
+Quadratic shapes are used while sweeping: with curved trajectories like these,
+linear-only selection under-selects the number of groups:
 
 ```{r, eval = has_trajer}
-groups <- select_n_groups(spec, candidates = 2:5, degree = 1, method = "L")
+groups <- select_n_groups(spec, candidates = 2:5, degree = 2, method = "L")
 groups
 ```
 
 **Stage 3 -- search polynomial shapes** for the chosen number of groups, then
-apply the GRoLTS acceptance criteria (PMS > 0.05, APPA > 0.70, OCC >= 5):
+apply the GRoLTS acceptance criteria (PMS > 0.05, APPA > 0.70, OCC >= 5). (The
+one-call pipeline above searched up to cubic; here we cap the search at
+quadratic to keep the vignette quick.)
 
 ```{r, eval = has_trajer}
 shapes <- evaluate_shapes(spec, n_groups = groups$best, method = "L",
@@ -153,24 +160,24 @@ The same pipeline handles continuous outcomes: switch the family to
 continuous dataset. `sim_continuous` has the same four shape types on a
 continuous scale.
 
-We fit with `method = "EM"` here. For this censored-normal problem the default
-`"L"` (maximum-likelihood) optimizer lands in a degenerate local optimum where
-one group ends up empty -- its trajectory is then unconstrained and looks
-extreme. `"EM"` recovers all four groups with a much lower BIC, and is exactly
-what [`select_algorithm()`](../reference/select_algorithm.html) would choose. If
-a group ever does come out empty, `plot_trajectories()` / `gbtm_predict()` warn
-you.
+We fit cubic shapes in all four groups (in a real analysis the shape search
+refines the per-group degrees, as above). Shape misspecification can push a fit
+into a degenerate local optimum where a group ends up empty -- on this data,
+forcing *linear* shapes (`degrees = rep(1, 4)`) with the `"L"` optimizer does
+exactly that. If it happens, `plot_trajectories()` / `gbtm_predict()` warn you;
+switching the method (`"EM"` recovers all four groups here) or revisiting the
+shapes fixes it.
 
 ```{r, eval = has_trajer}
 data("sim_continuous", package = "gbtmkit")
 cspec <- gbtm_spec(
   sim_continuous,
-  outcomes = c("y1", "y2", "y3", "y4"),
-  time     = c("t1", "t2", "t3", "t4"),
+  outcomes = paste0("y", 1:10),
+  time     = paste0("t", 1:10),
   id       = "id",
   family   = "gaussian"
 )
-cfit <- fit_gbtm(cspec, n_groups = 4, degrees = rep(1, 4), method = "EM")
+cfit <- fit_gbtm(cspec, n_groups = 4, degrees = rep(3, 4), method = "L")
 gbtm_diagnostics(cfit)$entropy
 ```
 

@@ -8,17 +8,17 @@ make_binary <- function() {
 test_that("valid binary spec is constructed with the right structure", {
   spec <- gbtm_spec(
     make_binary(),
-    outcomes = c("y1", "y2", "y3", "y4"),
-    time     = c("t1", "t2", "t3", "t4"),
+    outcomes = paste0("y", 1:10),
+    time     = paste0("t", 1:10),
     id       = "id",
     family   = "binomial"
   )
   expect_s3_class(spec, "gbtm_spec")
   expect_equal(spec$family, "binomial")
-  expect_equal(spec$n_occasions, 4L)
+  expect_equal(spec$n_occasions, 10L)
   expect_equal(spec$n_subjects, 1500L)
-  expect_equal(dim(.spec_Y(spec)), c(1500L, 4L))
-  expect_equal(dim(.spec_A(spec)), c(1500L, 4L))
+  expect_equal(dim(.spec_Y(spec)), c(1500L, 10L))
+  expect_equal(dim(.spec_A(spec)), c(1500L, 10L))
   expect_equal(.spec_ids(spec), make_binary()$id)
 })
 
@@ -26,8 +26,8 @@ test_that("continuous spec accepts censoring bounds and ssigma", {
   data("sim_continuous", package = "gbtmkit", envir = environment())
   spec <- gbtm_spec(
     sim_continuous,
-    outcomes = c("y1", "y2", "y3", "y4"),
-    time     = c("t1", "t2", "t3", "t4"),
+    outcomes = paste0("y", 1:10),
+    time     = paste0("t", 1:10),
     id       = "id",
     family   = "gaussian",
     ymin     = 0, ymax = 60, ssigma = TRUE

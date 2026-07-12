@@ -54,8 +54,8 @@ name}, and the outcome values are checked against the declared \code{family}.
 data("sim_binary", package = "gbtmkit")
 spec <- gbtm_spec(
   sim_binary,
-  outcomes = c("y1", "y2", "y3", "y4"),
-  time     = c("t1", "t2", "t3", "t4"),
+  outcomes = paste0("y", 1:10),
+  time     = paste0("t", 1:10),
   id       = "id",
   family   = "binomial"
 )

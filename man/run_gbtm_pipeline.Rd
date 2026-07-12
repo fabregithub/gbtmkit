@@ -75,8 +75,8 @@ lowest-BIC shape and records \code{criteria_met = FALSE}.
 \examples{
 \donttest{
 data("sim_binary", package = "gbtmkit")
-spec <- gbtm_spec(sim_binary, c("y1","y2","y3","y4"),
-                  c("t1","t2","t3","t4"), id = "id", family = "binomial")
+spec <- gbtm_spec(sim_binary, paste0("y", 1:10),
+                  paste0("t", 1:10), id = "id", family = "binomial")
 if (requireNamespace("trajeR", quietly = TRUE)) {
   res <- run_gbtm_pipeline(spec, candidates = 2:5, method = "L")
   res

@@ -47,10 +47,10 @@ defaulting \code{hessian = TRUE}, so the result includes standard errors.
 \examples{
 \donttest{
 data("sim_binary", package = "gbtmkit")
-spec <- gbtm_spec(sim_binary, c("y1","y2","y3","y4"),
-                  c("t1","t2","t3","t4"), id = "id", family = "binomial")
+spec <- gbtm_spec(sim_binary, paste0("y", 1:10),
+                  paste0("t", 1:10), id = "id", family = "binomial")
 if (requireNamespace("trajeR", quietly = TRUE))
-  fit_gbtm(spec, n_groups = 4, degrees = c(1, 3, 3, 1), method = "L")
+  fit_gbtm(spec, n_groups = 4, degrees = rep(3, 4), method = "L")
 }
 }
 \seealso{

@@ -4,16 +4,16 @@
 binary_spec <- function() {
   data("sim_binary", package = "gbtmkit", envir = environment())
   gbtm_spec(sim_binary,
-            outcomes = c("y1", "y2", "y3", "y4"),
-            time     = c("t1", "t2", "t3", "t4"),
+            outcomes = paste0("y", 1:10),
+            time     = paste0("t", 1:10),
             id = "id", family = "binomial")
 }
 
 continuous_spec <- function() {
   data("sim_continuous", package = "gbtmkit", envir = environment())
   gbtm_spec(sim_continuous,
-            outcomes = c("y1", "y2", "y3", "y4"),
-            time     = c("t1", "t2", "t3", "t4"),
+            outcomes = paste0("y", 1:10),
+            time     = paste0("t", 1:10),
             id = "id", family = "gaussian")
 }
 

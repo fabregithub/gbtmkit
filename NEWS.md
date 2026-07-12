@@ -14,4 +14,6 @@
   `apply_grolts_criteria()`, and `fit_gbtm()`.
 * `run_gbtm_pipeline()` runs the whole workflow in one call and returns a
   `gbtm_result`; `plot_trajectories()` draws fitted trajectories.
-* Two synthetic example datasets, `sim_binary` and `sim_continuous`.
+* Two synthetic example datasets, `sim_binary` and `sim_continuous`: ten
+  occasions, four planted groups of mixed polynomial order (two linear, two
+  cubic).
