@@ -2,10 +2,15 @@
 
 `gbtmkit` turns group-based trajectory modeling (GBTM) into a
 reproducible pipeline that follows the GRoLTS reporting checklist.
-Estimation is delegated to interchangeable backends behind one
-interface, so the same workflow handles binary and continuous outcomes,
-and the fit diagnostics (entropy, APPA, OCC, group proportions) are
-computed the same way regardless of engine.
+Estimation is delegated to interchangeable backends – `trajeR` (the
+default), `flexmix`, and `lcmm` – behind one interface: every fitting
+function takes an `engine` argument, and the fit diagnostics (entropy,
+APPA, OCC, group proportions) are computed the same way regardless of
+engine, for binary and continuous outcomes alike.
+
+The examples below all use the default `engine = "trajeR"`; the
+[Choosing an engine](#choosing-an-engine) section at the end compares
+the backends and shows how to switch.
 
 ``` r
 

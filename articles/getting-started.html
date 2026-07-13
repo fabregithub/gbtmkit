@@ -70,10 +70,15 @@
      do not edit the generated file. -->
 <p><code>gbtmkit</code> turns group-based trajectory modeling (GBTM)
 into a reproducible pipeline that follows the GRoLTS reporting
-checklist. Estimation is delegated to interchangeable backends behind
-one interface, so the same workflow handles binary and continuous
-outcomes, and the fit diagnostics (entropy, APPA, OCC, group
-proportions) are computed the same way regardless of engine.</p>
+checklist. Estimation is delegated to interchangeable backends –
+<code>trajeR</code> (the default), <code>flexmix</code>, and
+<code>lcmm</code> – behind one interface: every fitting function takes
+an <code>engine</code> argument, and the fit diagnostics (entropy, APPA,
+OCC, group proportions) are computed the same way regardless of engine,
+for binary and continuous outcomes alike.</p>
+<p>The examples below all use the default
+<code>engine = "trajeR"</code>; the <a href="#choosing-an-engine">Choosing an engine</a> section at the end
+compares the backends and shows how to switch.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/fabregithub/gbtmkit" class="external-link">gbtmkit</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">

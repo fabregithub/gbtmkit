@@ -150,6 +150,9 @@ Built step by step, confirming each stage, with `R CMD check` kept at
 | ba80163 | 2026-07-12 | lcmm as a third estimation engine (hlme / thresholds link) |
 | 038d2a2 | 2026-07-13 | Vignette: “Choosing an engine” section for all three backends |
 | 1de6584 | 2026-07-13 | Precompute the vignette (static .Rmd from .orig; CI builds in seconds) |
+| c518283 | 2026-07-13 | Fix pkgdown: add gbtm_engine_per_group_degrees to the reference index |
+| 1e337b5 | 2026-07-13 | pkgdown builds without executing examples (site build ~2 min) |
+| 9fa95c4 | 2026-07-13 | Vignette: consistent headings; stages as real sub-headings |
 
 ### Build stages (as executed)
 
