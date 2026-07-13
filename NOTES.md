@@ -137,6 +137,7 @@ throughout.
 | c518283 | 2026-07-13 | Fix pkgdown: add gbtm_engine_per_group_degrees to the reference index |
 | 1e337b5 | 2026-07-13 | pkgdown builds without executing examples (site build ~2 min) |
 | 9fa95c4 | 2026-07-13 | Vignette: consistent headings; stages as real sub-headings |
+| 4d5a8ed | 2026-07-13 | Vignette: introduce the engine choice up front |
 
 ### Build stages (as executed)
 
