@@ -55,7 +55,10 @@ to \code{\link[=evaluate_shapes]{evaluate_shapes()}}.}
 
 \item{verbose}{Print progress messages.}
 
-\item{...}{Passed to the underlying fitting calls.}
+\item{...}{Passed to the underlying fitting calls in every stage. In
+particular \code{n_starts} (see \code{\link[=gbtm_fit]{gbtm_fit()}}) applies multi-start
+initialization throughout; note it multiplies the cost of the shape
+search, which \code{max_fits}/\code{time_budget} still bound.}
 }
 \value{
 An object of class \code{gbtm_result} with elements \code{spec}, \code{engine},

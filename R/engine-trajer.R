@@ -15,9 +15,53 @@
   beta     = "BETA"
 )
 
+# Data-driven random starting values for one multi-start attempt: partition
+# the subjects with k-means on their outcome vectors (RNG-dependent, so each
+# attempt differs), then fit a per-cluster polynomial regression for the
+# trajectory coefficients. trajeR's default initialization is deterministic
+# (quantile-based, seed-independent), so this is what makes n_starts > 1
+# explore different basins. Layout of the returned `paraminit` (per trajeR
+# source): the first ng entries are group-membership logits vs group 1 for
+# Method "L", but plain probabilities for "EM"/"EMIRLS"; then the per-group
+# trajectory coefficients; then (CNORM only) the per-group residual sd.
+.trajer_kmeans_start <- function(spec, n_groups, degrees, method) {
+  Y <- .spec_Y(spec)
+  A <- .spec_A(spec)
+  Yk <- Y
+  if (anyNA(Yk)) {                     # impute column means for clustering only
+    for (j in seq_len(ncol(Yk))) {
+      Yk[is.na(Yk[, j]), j] <- mean(Yk[, j], na.rm = TRUE)
+    }
+  }
+  cl <- stats::kmeans(Yk, centers = n_groups, nstart = 1)$cluster
+
+  b <- c()
+  sig <- c()
+  for (k in seq_len(n_groups)) {
+    yk <- as.vector(Y[cl == k, , drop = FALSE])
+    tk <- as.vector(A[cl == k, , drop = FALSE])
+    if (spec$family == "binomial") {
+      co <- stats::coef(suppressWarnings(
+        stats::glm(yk ~ poly(tk, degrees[k], raw = TRUE),
+                   family = stats::binomial())))
+      co[!is.finite(co)] <- 0
+      b <- c(b, pmax(pmin(co, 5), -5))   # clamp separable-cluster extremes
+    } else {
+      fit <- stats::lm(yk ~ poly(tk, degrees[k], raw = TRUE))
+      b <- c(b, stats::coef(fit))
+      sig <- c(sig, stats::sd(stats::resid(fit)))
+    }
+  }
+
+  pr <- tabulate(cl, n_groups) / length(cl)
+  first <- if (method == "L") log(pr / pr[1]) else pr
+  c(first, b, sig)
+}
+
 # Fit and wrap. Called via gbtm_fit(spec, engine = "trajeR", ...).
 .fit_trajer <- function(spec, n_groups, degrees, method = NULL,
-                        hessian = FALSE, itermax = 100L, seed = NULL, ...) {
+                        hessian = FALSE, itermax = 100L, seed = NULL,
+                        n_starts = 1L, ...) {
   if (!requireNamespace("trajeR", quietly = TRUE)) {
     stop("engine 'trajeR' requires the 'trajeR' package to be installed.",
          call. = FALSE)
@@ -59,20 +103,49 @@
   }
   args <- utils::modifyList(args, list(...))
 
+  if (n_starts > 1L && !spec$family %in% c("binomial", "gaussian")) {
+    warning(sprintf(
+      "multi-start is not implemented for family '%s' with engine 'trajeR'; using the default initialization.",
+      spec$family), call. = FALSE)
+    n_starts <- 1L
+  }
+
+  # Start 1: trajeR's default (deterministic) initialization. Further starts
+  # use k-means partition starting values; the best finite BIC wins.
   if (!is.null(seed)) set.seed(seed)
   raw <- do.call(trajeR::trajeR, args)
+  best_bic   <- as.numeric(trajeR::trajeRBIC(raw))
+  start_bics <- best_bic
+  if (n_starts > 1L) {
+    for (s in 2:n_starts) {
+      set.seed((if (is.null(seed)) 0L else seed) + s - 1L)
+      cand <- tryCatch({
+        args$paraminit <- .trajer_kmeans_start(spec, n_groups, degrees, method)
+        do.call(trajeR::trajeR, args)
+      }, error = function(e) NULL)
+      bic <- if (is.null(cand)) NA_real_ else
+        tryCatch(as.numeric(trajeR::trajeRBIC(cand)), error = function(e) NA_real_)
+      start_bics <- c(start_bics, bic)
+      if (is.finite(bic) && (!is.finite(best_bic) || bic < best_bic)) {
+        best_bic <- bic
+        raw <- cand
+      }
+    }
+  }
 
   structure(
     list(
-      engine   = "trajeR",
-      family   = spec$family,
-      model    = model,
-      method   = method,
-      n_groups = n_groups,
-      degrees  = degrees,
-      hessian  = hessian,
-      raw      = raw,
-      spec     = spec
+      engine     = "trajeR",
+      family     = spec$family,
+      model      = model,
+      method     = method,
+      n_groups   = n_groups,
+      degrees    = degrees,
+      hessian    = hessian,
+      n_starts   = n_starts,
+      start_bics = start_bics,
+      raw        = raw,
+      spec       = spec
     ),
     class = c("gbtm_fit_trajer", "gbtm_fit")
   )

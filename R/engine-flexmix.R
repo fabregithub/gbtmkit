@@ -29,7 +29,8 @@
 
 # Fit and wrap. Called via gbtm_fit(spec, engine = "flexmix", ...).
 .fit_flexmix <- function(spec, n_groups, degrees, method = NULL,
-                         hessian = FALSE, itermax = 100L, seed = NULL, ...) {
+                         hessian = FALSE, itermax = 100L, seed = NULL,
+                         n_starts = 1L, ...) {
   if (!requireNamespace("flexmix", quietly = TRUE)) {
     stop("engine 'flexmix' requires the 'flexmix' package to be installed.",
          call. = FALSE)
@@ -62,13 +63,40 @@
   lhs <- if (spec$family == "binomial") "cbind(y, 1 - y)" else "y"
   fml <- stats::as.formula(paste(lhs, "~", rhs, "| .gid"))
 
-  if (!is.null(seed)) set.seed(seed)
-  raw <- flexmix::flexmix(
-    fml, data = long, k = n_groups,
-    model   = flexmix::FLXMRglm(family = .flexmix_family[[spec$family]]),
-    control = utils::modifyList(list(iter.max = as.integer(itermax)),
-                                list(...))
-  )
+  # flexmix's EM initialization is random, so multi-start is simply a fresh
+  # run per start; the best finite BIC wins. Start 1 uses `seed` itself, so
+  # n_starts = 1 reproduces the single-start behavior exactly. Without a seed
+  # the runs differ anyway (each consumes RNG state).
+  one_fit <- function(s) {
+    if (!is.null(seed)) set.seed(seed + s - 1L)
+    flexmix::flexmix(
+      fml, data = long, k = n_groups,
+      model   = flexmix::FLXMRglm(family = .flexmix_family[[spec$family]]),
+      control = utils::modifyList(list(iter.max = as.integer(itermax)),
+                                  list(...))
+    )
+  }
+  if (n_starts == 1L) {
+    raw <- one_fit(1L)
+    start_bics <- as.numeric(stats4::BIC(raw))
+  } else {
+    raw <- NULL
+    best_bic <- Inf
+    start_bics <- numeric(0)
+    for (s in seq_len(n_starts)) {
+      cand <- tryCatch(one_fit(s), error = function(e) NULL)
+      bic <- if (is.null(cand)) NA_real_ else
+        tryCatch(as.numeric(stats4::BIC(cand)), error = function(e) NA_real_)
+      start_bics <- c(start_bics, bic)
+      if (is.finite(bic) && bic < best_bic) {
+        best_bic <- bic
+        raw <- cand
+      }
+    }
+    if (is.null(raw)) {
+      stop("all flexmix starts failed to produce a finite BIC.", call. = FALSE)
+    }
+  }
 
   k_actual <- length(flexmix::prior(raw))
   if (k_actual < n_groups) {
@@ -91,16 +119,18 @@
 
   structure(
     list(
-      engine   = "flexmix",
-      family   = spec$family,
-      model    = unname(.flexmix_family[[spec$family]]),
-      method   = NA_character_,
-      n_groups = k_actual,
-      degrees  = rep(degree, k_actual),
-      hessian  = hessian,
-      raw      = raw,
-      refit    = refit,
-      spec     = spec
+      engine     = "flexmix",
+      family     = spec$family,
+      model      = unname(.flexmix_family[[spec$family]]),
+      method     = NA_character_,
+      n_groups   = k_actual,
+      degrees    = rep(degree, k_actual),
+      hessian    = hessian,
+      n_starts   = n_starts,
+      start_bics = start_bics,
+      raw        = raw,
+      refit      = refit,
+      spec       = spec
     ),
     class = c("gbtm_fit_flexmix", "gbtm_fit")
   )

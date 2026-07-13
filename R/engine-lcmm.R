@@ -25,7 +25,8 @@
 
 # Fit and wrap. Called via gbtm_fit(spec, engine = "lcmm", ...).
 .fit_lcmm <- function(spec, n_groups, degrees, method = NULL,
-                      hessian = FALSE, itermax = 100L, seed = NULL, ...) {
+                      hessian = FALSE, itermax = 100L, seed = NULL,
+                      n_starts = 1L, ...) {
   if (!requireNamespace("lcmm", quietly = TRUE)) {
     stop("engine 'lcmm' requires the 'lcmm' package to be installed.",
          call. = FALSE)
@@ -76,11 +77,33 @@
   if (!is.null(seed)) set.seed(seed)
   if (n_groups == 1L) {
     raw <- fitter(1L, ...)
-  } else {
+  } else if (n_starts == 1L) {
     # lcmm requires explicit starting values for ng > 1; the canonical init is
     # the 1-class fit.
     init <- fitter(1L)
     raw  <- fitter(n_groups, mixture = mixture, B = init, ...)
+  } else {
+    # Multi-start via lcmm's own gridsearch(): `rep` runs from random
+    # perturbations of the 1-class fit, then a full fit from the best one.
+    # gridsearch() re-parses the `m` call and evaluates it in this frame, so
+    # the fitting function must be bound here under a plain name. (`random` in
+    # the B = random(minit) it constructs is a syntactic sentinel that lcmm
+    # detects from the unevaluated call -- it must NOT resolve to a function.)
+    init      <- fitter(1L)
+    FITFUN    <- if (spec$family == "gaussian") lcmm::hlme else lcmm::lcmm
+    itermax_i <- as.integer(itermax)
+    mcall <- if (spec$family == "gaussian") {
+      quote(FITFUN(fixed = fixed, mixture = mixture, random = ~ -1,
+                   subject = ".gid", ng = n_groups, data = long,
+                   maxiter = itermax_i, verbose = FALSE))
+    } else {
+      quote(FITFUN(fixed = fixed, mixture = mixture, random = ~ -1,
+                   subject = ".gid", ng = n_groups, data = long,
+                   link = "thresholds", maxiter = itermax_i, verbose = FALSE))
+    }
+    gcall <- as.call(list(quote(lcmm::gridsearch), m = mcall,
+                          rep = n_starts, maxiter = itermax_i, minit = init))
+    raw <- eval(gcall)
   }
   # lcmm post-processing functions (predictY, ...) re-parse the stored call, so
   # the formula symbols must be replaced by the actual formula objects.
@@ -97,15 +120,17 @@
 
   structure(
     list(
-      engine   = "lcmm",
-      family   = spec$family,
-      model    = if (spec$family == "gaussian") "hlme" else "lcmm-thresholds",
-      method   = NA_character_,
-      n_groups = n_groups,
-      degrees  = rep(degree, n_groups),
-      hessian  = hessian,
-      raw      = raw,
-      spec     = spec
+      engine     = "lcmm",
+      family     = spec$family,
+      model      = if (spec$family == "gaussian") "hlme" else "lcmm-thresholds",
+      method     = NA_character_,
+      n_groups   = n_groups,
+      degrees    = rep(degree, n_groups),
+      hessian    = hessian,
+      n_starts   = n_starts,
+      start_bics = as.numeric(raw$BIC),
+      raw        = raw,
+      spec       = spec
     ),
     class = c("gbtm_fit_lcmm", "gbtm_fit")
   )

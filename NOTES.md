@@ -66,6 +66,30 @@ shapes crossing mid-study. Lessons:
   10-occasion binary fixture; `select_algorithm()` records it and moves on, as
   designed.
 
+## Findings from multi-start initialization (2026-07-13, `n_starts`)
+
+- **trajeR's default initialization is deterministic** (quantile-based):
+  re-running with different seeds gives identical fits, so multi-start must
+  supply `paraminit`. Its layout (from source, per Method): first ng entries
+  are membership *logits vs group 1* for `"L"` but *probabilities* for
+  `"EM"`/`"EMIRLS"`; then per-group trajectory coefficients; then per-group
+  residual sd (CNORM; with `ssigma=TRUE` only the first is used).
+- **Parameter-space noise is useless; k-means partition starts work.** Random
+  jitter of the default init either falls back into the same basin or lands in
+  garbage. Partitioning subjects with k-means on their outcome vectors and
+  fitting per-cluster polynomial regressions reaches the EM-quality optimum
+  with the fast "L" optimizer (CNORM rep(1,4): 52906 vs 53012 default), and
+  **rescues mixed per-group degrees**: binary c(1,3,3,1) reaches BIC 17110 vs
+  18175 default -- better than any uniform-degree fit (18080).
+- **lcmm gridsearch NSE**: `gridsearch()` re-parses the `m` call, so the
+  fitting function must be bound under a plain name in the calling frame, and
+  the `random()` in the `B = random(minit)` it builds is a *syntactic
+  sentinel* -- lcmm detects it from the unevaluated call after evaluation
+  fails, so no `random` function may exist in that frame.
+- **trajeR's POIS initialization requires overdispersion** (its qgamma-based
+  init NaNs when var(Y) <= mean(Y)) -- relevant for tests that fabricate count
+  data.
+
 ## Precomputed vignette (2026-07-13)
 
 The getting-started vignette runs ~20 min of real fits, which made every CI /

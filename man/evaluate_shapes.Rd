@@ -19,7 +19,8 @@ evaluate_shapes(
   time_budget = Inf,
   max_fits = Inf,
   checkpoint = NULL,
-  verbose = TRUE
+  verbose = TRUE,
+  ...
 )
 }
 \arguments{
@@ -51,6 +52,9 @@ evaluate_shapes(
 resumes, skipping shapes already evaluated.}
 
 \item{verbose}{Print the run-time estimate and progress messages.}
+
+\item{...}{Passed on to \code{\link[=gbtm_fit]{gbtm_fit()}} for every candidate fit (e.g.
+\code{n_starts}; note multi-start multiplies the search cost).}
 }
 \value{
 An object of class \code{gbtm_shapes}: \verb{$table} (one row per shape),

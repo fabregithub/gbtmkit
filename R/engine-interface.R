@@ -86,6 +86,12 @@ gbtm_engine_per_group_degrees <- function(engine = gbtm_engines()) {
 #'   `FALSE` for speed during model search -- set `TRUE` for the final model.
 #' @param itermax Maximum optimizer iterations.
 #' @param seed Optional integer seed for reproducibility.
+#' @param n_starts Number of initializations to try; the best fit by BIC is
+#'   kept. The first start is the engine's default initialization; additional
+#'   starts are engine-specific (trajeR: k-means partition starting values;
+#'   flexmix: fresh random EM initializations; lcmm: [lcmm::gridsearch()]).
+#'   Mixture fits can land in local optima -- empty or merged groups are the
+#'   telltale sign -- and `n_starts` greater than 1 is the standard defense.
 #' @param ... Passed on to the underlying engine call.
 #' @return A `gbtm_fit` object (subclassed per engine).
 #' @export
@@ -97,6 +103,7 @@ gbtm_fit <- function(spec,
                      hessian = FALSE,
                      itermax = 100L,
                      seed = NULL,
+                     n_starts = 1L,
                      ...) {
   if (!inherits(spec, "gbtm_spec")) {
     stop("`spec` must be a gbtm_spec (see gbtm_spec()).", call. = FALSE)
@@ -106,16 +113,23 @@ gbtm_fit <- function(spec,
     stop(sprintf("engine '%s' does not support family '%s'.",
                  engine, spec$family), call. = FALSE)
   }
+  n_starts <- as.integer(n_starts)
+  if (length(n_starts) != 1L || is.na(n_starts) || n_starts < 1L) {
+    stop("`n_starts` must be a single positive integer.", call. = FALSE)
+  }
   switch(engine,
     trajeR  = .fit_trajer(spec, n_groups = n_groups, degrees = degrees,
                           method = method, hessian = hessian,
-                          itermax = itermax, seed = seed, ...),
+                          itermax = itermax, seed = seed,
+                          n_starts = n_starts, ...),
     flexmix = .fit_flexmix(spec, n_groups = n_groups, degrees = degrees,
                            method = method, hessian = hessian,
-                           itermax = itermax, seed = seed, ...),
+                           itermax = itermax, seed = seed,
+                           n_starts = n_starts, ...),
     lcmm    = .fit_lcmm(spec, n_groups = n_groups, degrees = degrees,
                         method = method, hessian = hessian,
-                        itermax = itermax, seed = seed, ...)
+                        itermax = itermax, seed = seed,
+                        n_starts = n_starts, ...)
   )
 }
 
@@ -198,6 +212,9 @@ print.gbtm_fit <- function(x, ...) {
   cat(sprintf("  degrees : %s\n", paste(x$degrees, collapse = ", ")))
   if (!is.null(x$method) && !is.na(x$method)) {
     cat(sprintf("  method  : %s\n", x$method))
+  }
+  if (!is.null(x$n_starts) && x$n_starts > 1L) {
+    cat(sprintf("  starts  : %d\n", x$n_starts))
   }
   bic <- tryCatch(gbtm_bic(x), error = function(e) NA_real_)
   if (is.finite(bic)) cat(sprintf("  BIC     : %.2f\n", bic))

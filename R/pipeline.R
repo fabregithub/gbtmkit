@@ -37,7 +37,10 @@
 #' @param itermax,seed Passed to the fitting stages.
 #' @param time_budget,max_fits,checkpoint Bounds for the shape search.
 #' @param verbose Print progress messages.
-#' @param ... Passed to the underlying fitting calls.
+#' @param ... Passed to the underlying fitting calls in every stage. In
+#'   particular `n_starts` (see [gbtm_fit()]) applies multi-start
+#'   initialization throughout; note it multiplies the cost of the shape
+#'   search, which `max_fits`/`time_budget` still bound.
 #' @return An object of class `gbtm_result` with elements `spec`, `engine`,
 #'   `method`, `algorithm_selection`, `group_selection`, `n_groups`, `shapes`,
 #'   `criteria`, `chosen_degrees`, `criteria_met`, `final_fit`, `assignment`,
@@ -119,7 +122,7 @@ run_gbtm_pipeline <- function(spec,
                             max_passes = max_passes, itermax = itermax,
                             seed = seed, time_budget = time_budget,
                             max_fits = max_fits, checkpoint = checkpoint,
-                            verbose = verbose)
+                            verbose = verbose, ...)
   criteria <- apply_grolts_criteria(shapes, pms_min = pms_min,
                                     appa_min = appa_min, occ_min = occ_min)
   rec <- grolts_recommended(criteria)

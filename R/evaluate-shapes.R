@@ -69,10 +69,11 @@
 # Fit one shape and diagnose it. Internal seam: tests mock this to exercise the
 # search logic without fitting real models.
 .shape_fit_diag <- function(spec, engine, n_groups, degrees, method,
-                            hessian, itermax, seed) {
+                            hessian, itermax, seed, ...) {
   fit <- tryCatch(
     gbtm_fit(spec, engine = engine, n_groups = n_groups, degrees = degrees,
-             method = method, hessian = hessian, itermax = itermax, seed = seed),
+             method = method, hessian = hessian, itermax = itermax, seed = seed,
+             ...),
     error = function(e) e
   )
   if (inherits(fit, "error")) {
@@ -116,6 +117,8 @@
 #' @param checkpoint Optional file path; results are appended here and a rerun
 #'   resumes, skipping shapes already evaluated.
 #' @param verbose Print the run-time estimate and progress messages.
+#' @param ... Passed on to [gbtm_fit()] for every candidate fit (e.g.
+#'   `n_starts`; note multi-start multiplies the search cost).
 #' @return An object of class `gbtm_shapes`: `$table` (one row per shape),
 #'   `$best` (degrees with the lowest BIC), `$best_fit`, `$n_fits`,
 #'   `$budget_hit`, and `$strategy`.
@@ -135,7 +138,8 @@ evaluate_shapes <- function(spec,
                             time_budget = Inf,
                             max_fits = Inf,
                             checkpoint = NULL,
-                            verbose = TRUE) {
+                            verbose = TRUE,
+                            ...) {
   if (!inherits(spec, "gbtm_spec")) {
     stop("`spec` must be a gbtm_spec.", call. = FALSE)
   }
@@ -204,7 +208,7 @@ evaluate_shapes <- function(spec,
     }
     t0 <- Sys.time()
     res <- .shape_fit_diag(spec, engine, n_groups, deg, method,
-                           hessian, itermax, seed)
+                           hessian, itermax, seed, ...)
     st$times <- c(st$times, as.numeric(Sys.time() - t0, units = "secs"))
     st$n_fits <- st$n_fits + 1L
 
