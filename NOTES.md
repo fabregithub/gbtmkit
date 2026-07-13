@@ -212,6 +212,7 @@ throughout.
 | 4b17254 | 2026-07-13 | **v0.1.0**: README scope section ("does / does not do"), version bump, tag |
 | ddde39b | 2026-07-13 | Multi-start initialization (`n_starts`): k-means starts for trajeR, native for flexmix/lcmm |
 | 1882db3 | 2026-07-13 | Class-membership covariates (`gbtm_spec(covariates=)`) on all three engines |
+| ca77f40 | 2026-07-13 | `benchmark_engines()` harness + scale results (flexmix 15-180x faster) |
 
 ### Build stages (as executed)
 
