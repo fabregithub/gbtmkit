@@ -274,6 +274,7 @@ throughout.
 | 78b3806 | 2026-07-13 | Vignette: grolts_report, n_starts, covariates, benchmark_engines |
 | a55f985 | 2026-07-13 | Time-varying trajectory covariates (`gbtm_spec(tcov=)`) on all engines |
 | 19717b1 | 2026-07-13 | Parallel multi-start and selection sweeps via future.apply (~2-2.6x) |
+| 03c7c92 | 2026-07-13 | **v0.2.0**: vignette parallel note, warm-start negative result, demo-data decision |
 
 ### Build stages (as executed)
 
@@ -300,6 +301,9 @@ throughout.
 
 ## Current state
 
+- **v0.2.0 tagged (2026-07-13)**: multi-start (`n_starts`), membership +
+  time-varying covariates, `grolts_report()`, `benchmark_engines()`, parallel
+  independent fits; 482 tests, check 0/0/0.
 - **v0.1.0 tagged (2026-07-13)**: three engines (trajeR / flexmix / lcmm), full
   GRoLTS pipeline, precomputed vignette, README scope section; CI green on all
   five platforms.
