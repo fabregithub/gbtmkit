@@ -10,7 +10,12 @@ engine, for binary and continuous outcomes alike.
 
 The examples below all use the default `engine = "trajeR"`; the
 [Choosing an engine](#choosing-an-engine) section at the end compares
-the backends and shows how to switch.
+and benchmarks the backends and shows how to switch. Along the way we
+turn the finished result into a GRoLTS reporting aid
+([`grolts_report()`](https://fabregithub.github.io/gbtmkit/reference/grolts_report.md)),
+escape a local optimum with multi-start initialization (`n_starts`), and
+predict group membership from covariates
+(`gbtm_spec(covariates = ...)`).
 
 ``` r
 
@@ -183,6 +188,92 @@ head(res$assignment)
 #> 6  6     3 2.151267e-10 1.157310e-04 9.264874e-01 0.0733968257
 ```
 
+## Report against the GRoLTS checklist
+
+[`grolts_report()`](https://fabregithub.github.io/gbtmkit/reference/grolts_report.md)
+maps the finished pipeline result onto the GRoLTS checklist (van de
+Schoot et al. 2017): items the pipeline can answer – time metric,
+software, the shape search, starting values, selection tools, class
+sizes, entropy – are filled in automatically, and items only you can
+know (the missing-data mechanism, what appears in the manuscript, syntax
+availability) are flagged with whatever context the result contributes.
+Pass `file =` to also write the report as a Markdown appendix for
+supplementary material.
+
+``` r
+
+grolts_report(res)
+#> <gbtm_grolts_report> GRoLTS reporting aid (items paraphrased from
+#>   van de Schoot et al. 2017, doi:10.1080/10705511.2016.1247646)
+#> 
+#> -- auto-filled from the pipeline result --
+#>   [1] Metric of time
+#>       10 occasions (columns t1 .. t10); observed times span [1, 10].
+#>   [2] Time within waves
+#>       Fixed occasions: every subject shares the same times (1, 2, 3, 4, 5,
+#>       6, 7, 8, 9, 10); within-wave variance is 0.
+#>   [4] Observed outcome distribution
+#>       Per-wave proportions: 0.59, 0.58, 0.57, 0.58, 0.58, 0.57, 0.53, 0.51,
+#>       0.47, 0.44.
+#>   [5] Software
+#>       R version 4.6.1 (2026-06-24); gbtmkit 0.1.0; engine trajeR (trajeR
+#>       0.11.1), method 'L'.
+#>   [7] Alternative trajectory shapes
+#>       15 polynomial shapes fitted (stepwise search, degrees 1..3 per
+#>       group); chosen degrees: 2, 3, 1, 3.
+#>   [8] Covariates
+#>       No covariates were used.
+#>   [9] Starting values / iterations
+#>       Final fit: single (default) initialization; iteration cap 100.
+#>       (trajeR's default initialization is deterministic; additional starts
+#>       are k-means-based.)
+#>   [10] Model selection tools
+#>       Group number selected by BIC over 2..5 groups; shapes screened with
+#>       GRoLTS acceptance criteria (min class share > 0.05, APPA > 0.7, OCC
+#>       >= 5).
+#>   [11] Number of models fitted
+#>       20 models fitted in total (0 algorithm comparison, 4 group-number
+#>       candidates, 15 shape-search fits, 1 final fit). A one-class solution
+#>       was NOT among the candidates -- consider adding candidates = 1:K.
+#>   [12] Cases per class
+#>       Final 4-group model: n per class = 325, 290, 572, 313 (proportions
+#>       0.22, 0.19, 0.38, 0.21). Per-candidate class sizes are not retained
+#>       by the pipeline.
+#>   [13] Entropy
+#>       Normalized classification entropy: 0.762 (APPA per class: 0.86, 0.90,
+#>       0.89, 0.87).
+#> 
+#> -- context supplied -- analyst completes --
+#>   [3c] Handling of missing data
+#>       No missing outcome values in the analysis data. Long-format engines
+#>       (flexmix, lcmm) drop missing occasions row-wise; trajeR receives the
+#>       NA matrix.
+#>   [6a] Within-class heterogeneity
+#>       Group-based trajectory model / latent class growth analysis: no
+#>       within-class random effects. Alternatives with within-class
+#>       heterogeneity (e.g. growth mixture models) were not fitted by this
+#>       pipeline; state whether they were considered.
+#>   [6b] Variance structure across classes
+#>       family = 'binomial': no free residual-variance structure to vary.
+#>   [14] Plot of final trajectories
+#>       Available via plot_trajectories(result$final_fit) (fitted group
+#>       trajectories with observed means); include it in the manuscript.
+#> 
+#> -- analyst must supply --
+#>   [3a] Missing-data mechanism
+#>       Describe the assumed mechanism. No missing outcome values in the
+#>       analysis data.
+#>   [3b] Predictors of attrition
+#>       Describe which variables relate to attrition/missingness.
+#>   [15] Plots for each model / individual trajectories
+#>       The pipeline retains fits per candidate in
+#>       result$group_selection$fits; plotting each model (or individual
+#>       trajectories) is up to the analyst.
+#>   [16] Syntax availability
+#>       Share the analysis script (spec + run_gbtm_pipeline call) and
+#>       sessionInfo() as supplementary material.
+```
+
 ## Run the stages individually
 
 [`run_gbtm_pipeline()`](https://fabregithub.github.io/gbtmkit/reference/run_gbtm_pipeline.md)
@@ -277,15 +368,7 @@ continuous dataset. `sim_continuous` has the same four shape types on a
 continuous scale.
 
 We fit cubic shapes in all four groups (in a real analysis the shape
-search refines the per-group degrees, as above). Shape misspecification
-can push a fit into a degenerate local optimum where a group ends up
-empty – on this data, forcing *linear* shapes (`degrees = rep(1, 4)`)
-with the `"L"` optimizer does exactly that. If it happens,
-[`plot_trajectories()`](https://fabregithub.github.io/gbtmkit/reference/plot_trajectories.md)
-/
-[`gbtm_predict()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_predict.md)
-warn you; switching the method (`"EM"` recovers all four groups here) or
-revisiting the shapes fixes it.
+search refines the per-group degrees, as above):
 
 ``` r
 
@@ -313,9 +396,98 @@ plot_trajectories(cfit)
 ```
 
 ![Fitted continuous group
-trajectories](getting-started-unnamed-chunk-15-1.png)
+trajectories](getting-started-unnamed-chunk-16-1.png)
 
-plot of chunk unnamed-chunk-15
+plot of chunk unnamed-chunk-16
+
+## Local optima and multi-start initialization
+
+Mixture fits can land in a degenerate local optimum – an empty or merged
+group is the telltale sign, and
+[`plot_trajectories()`](https://fabregithub.github.io/gbtmkit/reference/plot_trajectories.md)
+/
+[`gbtm_predict()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_predict.md)
+warn when they see one. On this data, forcing *linear* shapes with the
+`"L"` optimizer does exactly that: one group comes out empty.
+
+``` r
+
+bad <- gbtm_fit(cspec, n_groups = 4, degrees = rep(1, 4), method = "L",
+                itermax = 300, seed = 1)
+table(factor(gbtm_assign(bad)$group, 1:4))
+#> 
+#>   1   2   3   4 
+#> 313   0 566 321
+```
+
+The standard defense is multi-start initialization: `n_starts` re-fits
+the model from several starting points and keeps the best BIC. (For
+trajeR, whose default initialization is deterministic, the extra starts
+come from k-means partitions of the subjects’ outcome vectors; flexmix
+re-runs its random EM initialization; lcmm delegates to
+[`lcmm::gridsearch()`](https://cecileproust-lima.github.io/lcmm/reference/gridsearch.html).)
+
+``` r
+
+good <- gbtm_fit(cspec, n_groups = 4, degrees = rep(1, 4), method = "L",
+                 itermax = 300, seed = 1, n_starts = 5)
+table(factor(gbtm_assign(good)$group, 1:4))
+#> 
+#>   1   2   3   4 
+#> 313 259 307 321
+c(single_start = gbtm_bic(bad), best_of_5 = gbtm_bic(good))
+#> single_start    best_of_5 
+#>     53012.35     52905.71
+```
+
+All four groups are back, at a visibly better BIC. `n_starts` is
+accepted by every fitting function and flows through
+[`run_gbtm_pipeline()`](https://fabregithub.github.io/gbtmkit/reference/run_gbtm_pipeline.md)
+to all stages (it multiplies the shape-search cost, which
+`max_fits`/`time_budget` still bound).
+
+## Class-membership covariates
+
+Time-stable subject covariates (Nagin’s “risk factors”) can predict
+*which group a subject belongs to* via `gbtm_spec(covariates = ...)`;
+the group trajectories themselves stay functions of time only. Every
+engine supports this (trajeR `Risk`, flexmix’s concomitant model, lcmm
+`classmb`). The `x1`/`x2` columns in the shipped data are deliberately
+inert, so here is a tiny simulated example where a covariate genuinely
+drives membership:
+
+``` r
+
+set.seed(7)
+n   <- 500
+x1  <- rnorm(n)                                # pushes subjects toward group 2
+grp <- 1 + stats::rbinom(n, 1, stats::plogis(-0.4 + 1.5 * x1))
+times <- 1:6
+mu  <- rbind(12 + 1.2 * times, 30 - 1.2 * times)
+cov_data <- data.frame(id = seq_len(n), x1 = x1)
+cov_data[paste0("y", 1:6)] <- as.data.frame(
+  t(sapply(seq_len(n), function(i) stats::rnorm(6, mu[grp[i], ], 2))))
+cov_data[paste0("t", 1:6)] <- as.data.frame(matrix(rep(times, each = n), n, 6))
+```
+
+``` r
+
+xspec <- gbtm_spec(cov_data, paste0("y", 1:6), paste0("t", 1:6), id = "id",
+                   family = "gaussian", covariates = "x1")
+xfit  <- gbtm_fit(xspec, engine = "flexmix", n_groups = 2,
+                  degrees = c(1, 1), seed = 1)
+base  <- gbtm_fit(gbtm_spec(cov_data, paste0("y", 1:6), paste0("t", 1:6),
+                            id = "id", family = "gaussian"),
+                  engine = "flexmix", n_groups = 2,
+                  degrees = c(1, 1), seed = 1)
+c(with_covariate = gbtm_bic(xfit), without = gbtm_bic(base))
+#> with_covariate        without 
+#>       13231.39       13395.03
+```
+
+The membership model earns its parameters: BIC improves when the
+covariate is included. (Within one engine, BIC comparisons like this are
+exactly what the criterion is for.)
 
 ## Choosing an engine
 
@@ -359,35 +531,35 @@ is skipped, and for a uniform-degree engine the stage-3 shape search
 sweeps uniform shapes (degree 1 for all groups, degree 2 for all groups,
 …) instead of per-group combinations.
 
-Switching engine is one argument – here the same 4-group cubic model on
-the binary data with each backend:
+[`benchmark_engines()`](https://fabregithub.github.io/gbtmkit/reference/benchmark_engines.md)
+runs the same model on each installed backend and reports wall-clock
+time next to the engine-neutral classification diagnostics – here the
+4-group cubic model on the binary data:
 
 ``` r
 
-fits <- list(
-  trajeR  = fit_gbtm(spec, engine = "trajeR",  n_groups = 4,
-                     degrees = rep(3, 4), method = "L", hessian = FALSE),
-  flexmix = fit_gbtm(spec, engine = "flexmix", n_groups = 4,
-                     degrees = rep(3, 4), seed = 1),
-  lcmm    = fit_gbtm(spec, engine = "lcmm",    n_groups = 4,
-                     degrees = rep(3, 4), seed = 1)
-)
-sapply(fits, function(f) {
-  d <- gbtm_diagnostics(f)
-  c(entropy = round(d$entropy, 3), min_appa = round(min(d$groups$appa), 3))
-})
-#>          trajeR flexmix  lcmm
-#> entropy   0.761   0.749 0.750
-#> min_appa  0.851   0.846 0.844
+benchmark_engines(spec, n_groups = 4, degrees = rep(3, 4),
+                  method = "L", seed = 1)
+#> <gbtm_benchmark>  one model per engine, wall-clock seconds
+#>   engine   ok seconds      bic   loglik entropy min_appa groups_effective note
+#>   trajeR TRUE   49.97 17138.03 -8499.54    0.76     0.85                4     
+#>  flexmix TRUE    2.62 17182.07 -8499.69    0.75     0.85                4     
+#>     lcmm TRUE   32.65 17138.08 -8499.56    0.75     0.84                4     
+#> Note: BIC/loglik are comparable only within an engine;
+#> compare engines on time and classification diagnostics.
 ```
 
 All three engines find the same four groups with comparable
-classification quality. One caution: **compare BIC within an engine,
-never across engines** – each backend defines its likelihood differently
-(lcmm’s thresholds link even fits a different model family), so their
-absolute BIC values are not on a common scale. Use BIC to pick the
-number of groups and shape *given* an engine; use the classification
-diagnostics (entropy, APPA, OCC) to sanity-check a fit from any engine.
+classification quality; they differ mostly in speed (flexmix’s compiled
+EM is typically 1-2 orders of magnitude faster than trajeR, with lcmm in
+between – the gap grows with data size, so for a large study benchmark a
+subsample first and commit to the fastest adequate engine). One caution:
+**compare BIC within an engine, never across engines** – each backend
+defines its likelihood differently (lcmm’s thresholds link even fits a
+different model family), so their absolute BIC values are not on a
+common scale. Use BIC to pick the number of groups and shape *given* an
+engine; use the classification diagnostics (entropy, APPA, OCC) to
+sanity-check a fit from any engine.
 
 ## Notes
 

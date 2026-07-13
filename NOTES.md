@@ -234,6 +234,7 @@ Built step by step, confirming each stage, with `R CMD check` kept at
 | ddde39b | 2026-07-13 | Multi-start initialization (`n_starts`): k-means starts for trajeR, native for flexmix/lcmm |
 | 1882db3 | 2026-07-13 | Class-membership covariates (`gbtm_spec(covariates=)`) on all three engines |
 | ca77f40 | 2026-07-13 | [`benchmark_engines()`](https://fabregithub.github.io/gbtmkit/reference/benchmark_engines.md) harness + scale results (flexmix 15-180x faster) |
+| 7a950b8 | 2026-07-13 | [`grolts_report()`](https://fabregithub.github.io/gbtmkit/reference/grolts_report.md): pipeline result -\> GRoLTS checklist reporting aid |
 
 ### Build stages (as executed)
 
@@ -279,12 +280,9 @@ Built step by step, confirming each stage, with `R CMD check` kept at
   flow, and binary + continuous examples) and the full function
   reference.
 
-## Possible next steps (not done)
+## Engine adapter notes (flexmix / lcmm, 2026-07-12)
 
-- Tag `v0.1.0`.
-- ~~Second engine adapter (`flexmix`) to prove the interface
-  generalizes~~ — done (2026-07-12). Notes: flexmix maps GBTM to a
-  mixture of GLMs on long data grouped by subject
+- **flexmix**: mixture of GLMs on long data grouped by subject
   (`y ~ poly(t, d, raw = TRUE) | id`); binomial needs a two-column
   `cbind(y, 1 - y)` response; `logLik`/`BIC`/`AIC` are S4 methods, so
   accessors go through `stats4::`; per-component degrees via
@@ -295,22 +293,33 @@ Built step by step, confirming each stage, with `R CMD check` kept at
   ([`gbtm_engine_per_group_degrees()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_engine_per_group_degrees.md));
   `flexmix::refit()` (the SE step) can produce NaN SEs on boundary
   parameters — warning, not error. On the binary fixture the flexmix
-  pipeline matches trajeR’s recovery (0.895) and runs much faster.
-- Third engine adapter (`lcmm`) — done (2026-07-12). Notes: GBTM =
-  latent class growth analysis, `random = ~ -1` with class-specific
-  effects via `mixture =`; gaussian → `hlme()`, binary →
-  `lcmm(link = "thresholds")` (2-level ordinal ≈ probit trajectory
-  model; conv=1 in ~30 s on the binary fixture, recovery 0.896). ng \> 1
-  requires starting values: fit ng = 1 first and pass it as `B`
-  (deterministic init). lcmm post-processing (`predictY`) re-parses the
-  stored `call`, so the adapter must patch `call$fixed` / `call$mixture`
-  with the actual formula objects after fitting. Model-implied group
-  sizes = softmax of the first ng-1 parameters (class-membership
-  intercepts, last class is reference). `mixture` is shared across
+  pipeline matches trajeR’s recovery (0.895), much faster.
+- **lcmm**: LCGA via `random = ~ -1` with class-specific effects in
+  `mixture =`; gaussian → `hlme()`, binary → `lcmm(link = "thresholds")`
+  (2-level ordinal ≈ probit trajectory model; recovery 0.896 on the
+  binary fixture). ng \> 1 requires starting values: fit ng = 1 first
+  and pass it as `B`. Post-processing (`predictY`) re-parses the stored
+  `call`, so the adapter patches
+  `call$fixed`/`call$mixture`/`call$classmb` with the actual formula
+  objects. Model-implied group sizes = softmax of the first ng-1
+  parameters (covariate-free fits only). `mixture` is shared across
   classes, so uniform degrees only — same capability flag as flexmix.
-- [`grolts_report()`](https://fabregithub.github.io/gbtmkit/reference/grolts_report.md)
-  mapping outputs to GRoLTS checklist item numbers.
-- Multi-start initialization for CNORM.
+
+## Possible next steps (not done)
+
+- Combined vignette re-knit covering `n_starts`, `covariates =`,
+  [`benchmark_engines()`](https://fabregithub.github.io/gbtmkit/reference/benchmark_engines.md),
+  and
+  [`grolts_report()`](https://fabregithub.github.io/gbtmkit/reference/grolts_report.md).
+- Trajectory (time-varying) covariates.
+- Optionally make the shipped fixtures’ covariates drive membership
+  (data regeneration; cascades into all baked numbers).
 - Consider a CRAN submission.
 - Optional: bump `JamesIves/github-pages-deploy-action` to clear its
   Node 20 deprecation warning.
+
+Done along the way: v0.1.0 tag, flexmix + lcmm adapters, multi-start
+initialization, class-membership covariates,
+[`benchmark_engines()`](https://fabregithub.github.io/gbtmkit/reference/benchmark_engines.md),
+[`grolts_report()`](https://fabregithub.github.io/gbtmkit/reference/grolts_report.md),
+precomputed vignette (see History).
