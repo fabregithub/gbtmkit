@@ -19,6 +19,12 @@ run through one specification.
 
 ## Key decisions
 
+- **Demo-data covariates stay inert (decided 2026-07-13).** Regenerating the
+  fixtures so x1 drives membership would cascade into every baked number
+  (tests, vignette, benchmarks); the vignette's small simulated covariate
+  example states its truth inline and is the clearer demo. `x1`/`x2` being
+  inert is documented as deliberate.
+
 - **Name** `gbtmkit` (confirmed free on CRAN/GitHub/Bioconductor).
 - **Engine-agnostic** architecture: one S3 adapter contract; trajeR first.
 - **Both outcome types first-class**: binary (LOGIT) and continuous (CNORM).
@@ -151,9 +157,18 @@ when installed; the user controls workers via `future::plan()`. Notes:
 - **Tests use `plan(multicore)`** (fork): multisession workers cannot
   loadNamespace a devtools::load_all package; fork inherits it. Guarded by
   `future::supportsMulticore()` (unavailable on Windows/RStudio).
-- Remaining (unimplemented) speed ideas: warm starts in the shape search via
-  `paraminit` from the incumbent; subsample-based search; hybrid workflow
-  (select K with flexmix, fit with trajeR).
+- **Warm starts in the shape search: tried and REJECTED (negative result,
+  2026-07-13).** Initializing each trajeR candidate from the incumbent's
+  parameters (coefficient blocks padded/truncated) looks great per move --
+  1.8-3.3x faster and often better BIC when the incumbent is good (it pins
+  group identities to the degree slots). But in the actual stepwise search it
+  is poison: the search starts from the *linear* incumbent, warm candidates
+  inherit that poor basin, near-converged starting points kill exploration,
+  and the search stalled at rep(1,4) (BIC 17637 vs cold 17117) despite being
+  14.7x faster. Do not re-implement as a default; if ever revisited, it must
+  be best-of(cold, warm) per candidate, which forfeits the speedup.
+- Remaining (unimplemented) speed ideas: subsample-based search; hybrid
+  workflow (select K with flexmix, fit with trajeR).
 
 ## Findings from the engine benchmark (2026-07-13, `benchmark_engines()`)
 
@@ -318,8 +333,6 @@ throughout.
 
 ## Possible next steps (not done)
 
-- Optionally make the shipped fixtures' covariates drive membership (data
-  regeneration; cascades into all baked numbers).
 - Consider a CRAN submission.
 - Optional: bump `JamesIves/github-pages-deploy-action` to clear its Node 20
   deprecation warning.

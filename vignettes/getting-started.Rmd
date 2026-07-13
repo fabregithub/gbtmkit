@@ -221,7 +221,7 @@ grolts_report(res)
 #>       Per-wave proportions: 0.59, 0.58, 0.57, 0.58, 0.58, 0.57, 0.53, 0.51,
 #>       0.47, 0.44.
 #>   [5] Software
-#>       R version 4.6.1 (2026-06-24); gbtmkit 0.1.0; engine trajeR (trajeR
+#>       R version 4.6.1 (2026-06-24); gbtmkit 0.2.0; engine trajeR (trajeR
 #>       0.11.1), method 'L'.
 #>   [7] Alternative trajectory shapes
 #>       15 polynomial shapes fitted (stepwise search, degrees 1..3 per
@@ -433,7 +433,7 @@ good <- gbtm_fit(cspec, n_groups = 4, degrees = rep(1, 4), method = "L",
 table(factor(gbtm_assign(good)$group, 1:4))
 #> 
 #>   1   2   3   4 
-#> 313 259 307 321
+#> 259 307 321 313
 c(single_start = gbtm_bic(bad), best_of_5 = gbtm_bic(good))
 #> single_start    best_of_5 
 #>     53012.35     52905.71
@@ -442,7 +442,10 @@ c(single_start = gbtm_bic(bad), best_of_5 = gbtm_bic(good))
 All four groups are back, at a visibly better BIC. `n_starts` is accepted by
 every fitting function and flows through `run_gbtm_pipeline()` to all stages
 (it multiplies the shape-search cost, which `max_fits`/`time_budget` still
-bound).
+bound). The independent starts -- and the candidate fits in the selection
+stages -- run in parallel when the future.apply package is installed: set
+`future::plan(multisession)` to use several cores; with a `seed`, results are
+identical under any plan.
 
 ## Class-membership covariates
 
@@ -535,9 +538,9 @@ benchmark_engines(spec, n_groups = 4, degrees = rep(3, 4),
                   method = "L", seed = 1)
 #> <gbtm_benchmark>  one model per engine, wall-clock seconds
 #>   engine   ok seconds      bic   loglik entropy min_appa groups_effective note
-#>   trajeR TRUE   49.97 17138.03 -8499.54    0.76     0.85                4     
-#>  flexmix TRUE    2.62 17182.07 -8499.69    0.75     0.85                4     
-#>     lcmm TRUE   32.65 17138.08 -8499.56    0.75     0.84                4     
+#>   trajeR TRUE   50.40 17138.03 -8499.54    0.76     0.85                4     
+#>  flexmix TRUE    2.87 17182.07 -8499.69    0.75     0.85                4     
+#>     lcmm TRUE   33.44 17138.08 -8499.56    0.75     0.84                4     
 #> Note: BIC/loglik are comparable only within an engine;
 #> compare engines on time and classification diagnostics.
 ```

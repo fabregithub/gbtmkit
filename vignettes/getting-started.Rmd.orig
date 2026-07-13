@@ -280,7 +280,10 @@ c(single_start = gbtm_bic(bad), best_of_5 = gbtm_bic(good))
 All four groups are back, at a visibly better BIC. `n_starts` is accepted by
 every fitting function and flows through `run_gbtm_pipeline()` to all stages
 (it multiplies the shape-search cost, which `max_fits`/`time_budget` still
-bound).
+bound). The independent starts -- and the candidate fits in the selection
+stages -- run in parallel when the future.apply package is installed: set
+`future::plan(multisession)` to use several cores; with a `seed`, results are
+identical under any plan.
 
 ## Class-membership covariates
 
