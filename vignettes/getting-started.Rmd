@@ -9,10 +9,12 @@ vignette: >
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7, fig.height = 4.5)
-# The estimation engine (trajeR) is an optional dependency; only run the fitting
-# chunks when it is available so the vignette also builds without it.
-has_trajer <- requireNamespace("trajeR", quietly = TRUE)
-has_ggplot <- requireNamespace("ggplot2", quietly = TRUE)
+# The estimation engines are optional dependencies; only run the fitting
+# chunks when they are available so the vignette also builds without them.
+has_trajer  <- requireNamespace("trajeR", quietly = TRUE)
+has_flexmix <- requireNamespace("flexmix", quietly = TRUE)
+has_lcmm    <- requireNamespace("lcmm", quietly = TRUE)
+has_ggplot  <- requireNamespace("ggplot2", quietly = TRUE)
 ```
 
 `gbtmkit` turns group-based trajectory modeling (GBTM) into a reproducible
@@ -189,14 +191,64 @@ probabilities):
 plot_trajectories(cfit)
 ```
 
+## Choosing an engine
+
+Everything above used the default engine, `trajeR`. Estimation is pluggable:
+every fitting function (`gbtm_fit()`, the stage functions, and
+`run_gbtm_pipeline()`) takes an `engine` argument, and the registry tells you
+what each backend offers:
+
+```{r}
+gbtm_engines()
+sapply(gbtm_engines(), gbtm_engine_families)
+sapply(gbtm_engines(), gbtm_engine_per_group_degrees)
+```
+
+The three backends make different trade-offs:
+
+| | `trajeR` (default) | `flexmix` | `lcmm` |
+|---|---|---|---|
+| Families | binomial, gaussian, poisson, beta | binomial, gaussian, poisson | binomial, gaussian |
+| Optimizers | `"L"`, `"EM"`, `"EMIRLS"` (stage 1 picks one) | EM (fixed) | Marquardt (fixed) |
+| Per-group degrees | yes | no -- one order for all groups | no -- one order for all groups |
+| Notes | reference GBTM implementation | fast EM on large data | `hlme()`; binary via a thresholds link |
+
+The pipeline adapts automatically: for a single-optimizer engine stage 1 is
+skipped, and for a uniform-degree engine the stage-3 shape search sweeps
+uniform shapes (degree 1 for all groups, degree 2 for all groups, ...) instead
+of per-group combinations.
+
+Switching engine is one argument -- here the same 4-group cubic model on the
+binary data with each backend:
+
+```{r, eval = has_trajer && has_flexmix && has_lcmm}
+fits <- list(
+  trajeR  = fit_gbtm(spec, engine = "trajeR",  n_groups = 4,
+                     degrees = rep(3, 4), method = "L", hessian = FALSE),
+  flexmix = fit_gbtm(spec, engine = "flexmix", n_groups = 4,
+                     degrees = rep(3, 4), seed = 1),
+  lcmm    = fit_gbtm(spec, engine = "lcmm",    n_groups = 4,
+                     degrees = rep(3, 4), seed = 1)
+)
+sapply(fits, function(f) {
+  d <- gbtm_diagnostics(f)
+  c(entropy = round(d$entropy, 3), min_appa = round(min(d$groups$appa), 3))
+})
+```
+
+All three engines find the same four groups with comparable classification
+quality. One caution: **compare BIC within an engine, never across engines** --
+each backend defines its likelihood differently (lcmm's thresholds link even
+fits a different model family), so their absolute BIC values are not on a
+common scale. Use BIC to pick the number of groups and shape *given* an
+engine; use the classification diagnostics (entropy, APPA, OCC) to sanity-check
+a fit from any engine.
+
 ## Notes
 
-* **Engine-agnostic.** The pipeline talks only to a small set of accessors
-  (`gbtm_bic()`, `gbtm_posterior()`, `gbtm_group_sizes()`, ...), so additional
-  backends can be added without changing the workflow. Besides trajeR, a
-  `flexmix` backend ships today: pass `engine = "flexmix"` to any fitting
-  function. flexmix's EM is fast, but it fits one polynomial order shared by
-  all groups, so the shape search sweeps uniform shapes there.
+* **Engine-agnostic by design.** The pipeline talks only to a small set of
+  accessors (`gbtm_bic()`, `gbtm_posterior()`, `gbtm_group_sizes()`, ...), so
+  additional backends can be added without changing the workflow.
 * **Built to scale.** The shape search runs the fits with the Hessian off
   (needed only for the final model's standard errors), defaults to a greedy
   stepwise strategy, and supports a `time_budget`, `max_fits`, and on-disk
