@@ -104,7 +104,7 @@ group:</p>
 <span><span class="co">#&gt; 6          4</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="describe-the-model-with-a-spec">1. Describe the model with a spec<a class="anchor" aria-label="anchor" href="#describe-the-model-with-a-spec"></a>
+<h2 id="describe-the-model-with-a-spec">Describe the model with a spec<a class="anchor" aria-label="anchor" href="#describe-the-model-with-a-spec"></a>
 </h2>
 <p><code><a href="../reference/gbtm_spec.html">gbtm_spec()</a></code> records <em>what</em> to model – the outcome
 and time columns (by name), the id, and the outcome family – and
@@ -127,7 +127,7 @@ validates it, independent of which engine will fit it.</p>
 <span><span class="co">#&gt;   id         : id</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="run-the-whole-pipeline-in-one-call">2. Run the whole pipeline in one call<a class="anchor" aria-label="anchor" href="#run-the-whole-pipeline-in-one-call"></a>
+<h2 id="run-the-whole-pipeline-in-one-call">Run the whole pipeline in one call<a class="anchor" aria-label="anchor" href="#run-the-whole-pipeline-in-one-call"></a>
 </h2>
 <p><code><a href="../reference/run_gbtm_pipeline.html">run_gbtm_pipeline()</a></code> performs algorithm selection (when
 the engine offers a choice), group-number selection, the
@@ -188,7 +188,7 @@ produced is kept on the result object:</p>
 <span><span class="co">#&gt; 325 290 572 313</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="inspect-and-plot">3. Inspect and plot<a class="anchor" aria-label="anchor" href="#inspect-and-plot"></a>
+<h2 id="inspect-and-plot">Inspect and plot<a class="anchor" aria-label="anchor" href="#inspect-and-plot"></a>
 </h2>
 <p><code><a href="../reference/gbtm_diagnostics.html">gbtm_diagnostics()</a></code> gives the GRoLTS classification
 diagnostics, and <code><a href="../reference/plot_trajectories.html">plot_trajectories()</a></code> draws the fitted group
@@ -220,15 +220,17 @@ column) is in <code>res$assignment</code>:</p>
 <span><span class="co">#&gt; 6  6     3 2.151267e-10 1.157310e-04 9.264874e-01 0.0733968257</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="or-run-the-stages-individually">4. Or run the stages individually<a class="anchor" aria-label="anchor" href="#or-run-the-stages-individually"></a>
+<h2 id="run-the-stages-individually">Run the stages individually<a class="anchor" aria-label="anchor" href="#run-the-stages-individually"></a>
 </h2>
 <p><code><a href="../reference/run_gbtm_pipeline.html">run_gbtm_pipeline()</a></code> is a convenience wrapper. For full
 control you can run each GRoLTS stage yourself and inspect the result
 before moving on – this is exactly what the wrapper does internally.</p>
-<p><strong>Stage 1 – choose the estimation algorithm.</strong> trajeR
-offers <code>"L"</code>, <code>"EM"</code> and <code>"EMIRLS"</code>;
-the one with the lowest BIC is selected. (Engines with a single
-optimizer skip this stage.)</p>
+<div class="section level3">
+<h3 id="stage-1-choose-the-estimation-algorithm">Stage 1: choose the estimation algorithm<a class="anchor" aria-label="anchor" href="#stage-1-choose-the-estimation-algorithm"></a>
+</h3>
+<p>trajeR offers <code>"L"</code>, <code>"EM"</code> and
+<code>"EMIRLS"</code>; the one with the lowest BIC is selected. (Engines
+with a single optimizer skip this stage.)</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">algo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_algorithm.html">select_algorithm</a></span><span class="op">(</span><span class="va">spec</span>, n_groups <span class="op">=</span> <span class="fl">2</span>, degrees <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">algo</span></span>
@@ -238,10 +240,13 @@ optimizer skip this stage.)</p>
 <span><span class="co">#&gt;      EM 145507.87 145481.30 TRUE</span></span>
 <span><span class="co">#&gt;  EMIRLS 145739.37 145712.80 TRUE</span></span>
 <span><span class="co">#&gt;   best: L</span></span></code></pre></div>
-<p><strong>Stage 2 – choose the number of groups</strong> by BIC over a
-set of candidates. Quadratic shapes are used while sweeping: with curved
-trajectories like these, linear-only selection under-selects the number
-of groups:</p>
+</div>
+<div class="section level3">
+<h3 id="stage-2-choose-the-number-of-groups">Stage 2: choose the number of groups<a class="anchor" aria-label="anchor" href="#stage-2-choose-the-number-of-groups"></a>
+</h3>
+<p>The number of groups is chosen by BIC over a set of candidates.
+Quadratic shapes are used while sweeping: with curved trajectories like
+these, linear-only selection under-selects the number of groups:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">groups</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_n_groups.html">select_n_groups</a></span><span class="op">(</span><span class="va">spec</span>, candidates <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">5</span>, degree <span class="op">=</span> <span class="fl">2</span>, method <span class="op">=</span> <span class="st">"L"</span><span class="op">)</span></span>
 <span><span class="va">groups</span></span>
@@ -252,21 +257,27 @@ of groups:</p>
 <span><span class="co">#&gt;         4   2,2,2,2 17168.99 17089.29 TRUE</span></span>
 <span><span class="co">#&gt;         5 2,2,2,2,2 17197.93 17096.98 TRUE</span></span>
 <span><span class="co">#&gt;   best: 4</span></span></code></pre></div>
-<p><strong>Stage 3 – search polynomial shapes</strong> for the chosen
-number of groups, then apply the GRoLTS acceptance criteria (PMS &gt;
-0.05, APPA &gt; 0.70, OCC &gt;= 5). (The one-call pipeline above
-searched up to cubic; here we cap the search at quadratic to keep the
-vignette quick.)</p>
+</div>
+<div class="section level3">
+<h3 id="stage-3-search-polynomial-shapes">Stage 3: search polynomial shapes<a class="anchor" aria-label="anchor" href="#stage-3-search-polynomial-shapes"></a>
+</h3>
+<p>The polynomial shapes are searched for the chosen number of groups,
+then the GRoLTS acceptance criteria (PMS &gt; 0.05, APPA &gt; 0.70, OCC
+&gt;= 5) are applied. (The one-call pipeline above searched up to cubic;
+here we cap the search at quadratic to keep the vignette quick.)</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">shapes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/evaluate_shapes.html">evaluate_shapes</a></span><span class="op">(</span><span class="va">spec</span>, n_groups <span class="op">=</span> <span class="va">groups</span><span class="op">$</span><span class="va">best</span>, method <span class="op">=</span> <span class="st">"L"</span>,</span>
 <span>                          max_degree <span class="op">=</span> <span class="fl">2</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/apply_grolts_criteria.html">apply_grolts_criteria</a></span><span class="op">(</span><span class="va">shapes</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;gbtm_criteria&gt; PMS&gt;0.05, APPA&gt;0.70, OCC&gt;=5 | 5 shape(s) pass</span></span>
 <span><span class="co">#&gt;   recommended: degrees 2,2,1,1  (BIC 17157.6, entropy 0.751)</span></span></code></pre></div>
-<p><strong>Stage 4 – fit the final model</strong> (Hessian on, so the
-fit carries standard errors) and read off the diagnostics and
-per-subject assignment. Here we use the lowest-BIC shape found by the
-search:</p>
+</div>
+<div class="section level3">
+<h3 id="stage-4-fit-the-final-model">Stage 4: fit the final model<a class="anchor" aria-label="anchor" href="#stage-4-fit-the-final-model"></a>
+</h3>
+<p>The final model is fit with the Hessian on, so the fit carries
+standard errors, and the diagnostics and per-subject assignment are read
+off it. Here we use the lowest-BIC shape found by the search:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_gbtm.html">fit_gbtm</a></span><span class="op">(</span><span class="va">spec</span>, n_groups <span class="op">=</span> <span class="va">groups</span><span class="op">$</span><span class="va">best</span>, degrees <span class="op">=</span> <span class="va">shapes</span><span class="op">$</span><span class="va">best</span>, method <span class="op">=</span> <span class="st">"L"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/gbtm_diagnostics.html">gbtm_diagnostics</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
@@ -285,6 +296,7 @@ search:</p>
 <span><span class="co">#&gt; 4  4     4 0.006236484 5.497547e-02 3.255112e-08 9.387880e-01</span></span>
 <span><span class="co">#&gt; 5  5     2 0.003693904 9.832119e-01 2.924786e-05 1.306498e-02</span></span>
 <span><span class="co">#&gt; 6  6     3 0.068865474 1.503810e-04 9.309841e-01 1.180727e-09</span></span></code></pre></div>
+</div>
 </div>
 <div class="section level2">
 <h2 id="continuous-outcomes">Continuous outcomes<a class="anchor" aria-label="anchor" href="#continuous-outcomes"></a>
