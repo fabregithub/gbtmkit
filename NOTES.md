@@ -213,6 +213,7 @@ throughout.
 | ddde39b | 2026-07-13 | Multi-start initialization (`n_starts`): k-means starts for trajeR, native for flexmix/lcmm |
 | 1882db3 | 2026-07-13 | Class-membership covariates (`gbtm_spec(covariates=)`) on all three engines |
 | ca77f40 | 2026-07-13 | `benchmark_engines()` harness + scale results (flexmix 15-180x faster) |
+| 7a950b8 | 2026-07-13 | `grolts_report()`: pipeline result -> GRoLTS checklist reporting aid |
 
 ### Build stages (as executed)
 
@@ -274,7 +275,6 @@ throughout.
   group sizes = softmax of the first ng-1 parameters (class-membership
   intercepts, last class is reference). `mixture` is shared across classes, so
   uniform degrees only — same capability flag as flexmix.
-- `grolts_report()` mapping outputs to GRoLTS checklist item numbers.
 - Multi-start initialization for CNORM.
 - Consider a CRAN submission.
 - Optional: bump `JamesIves/github-pages-deploy-action` to clear its Node 20
