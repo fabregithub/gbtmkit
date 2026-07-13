@@ -15,6 +15,7 @@ gbtm_spec(
   id = NULL,
   family = gbtm_families(),
   covariates = NULL,
+  tcov = NULL,
   ymin = NULL,
   ymax = NULL,
   ssigma = FALSE
@@ -61,6 +62,21 @@ gbtm_spec(
   [`stats::model.matrix()`](https://rdrr.io/r/stats/model.matrix.html)
   where the engine needs a numeric design) and must contain no missing
   values.
+
+- tcov:
+
+  Optional *time-varying* (trajectory) covariates: a named list, one
+  element per covariate, each a character vector of column names of the
+  same length as `outcomes` (wide format, one column per occasion).
+  These shift the outcome *within* a group with group-specific
+  coefficients (trajeR `TCOV`; added to the component/class formula for
+  flexmix and lcmm). Columns must be numeric with no missing values.
+  Fitted trajectories from
+  [`gbtm_predict()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_predict.md)
+  /
+  [`plot_trajectories()`](https://fabregithub.github.io/gbtmkit/reference/plot_trajectories.md)
+  are computed at `tcov = 0`, so code these covariates with a meaningful
+  zero (e.g. 0/1 exposure, or centered).
 
 - ymin, ymax:
 

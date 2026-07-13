@@ -56,6 +56,7 @@ name</em>, and the outcome values are checked against the declared <code>family<
 <span>  id <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  family <span class="op">=</span> <span class="fu"><a href="gbtm_families.html">gbtm_families</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  covariates <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  tcov <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ymin <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ymax <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ssigma <span class="op">=</span> <span class="cn">FALSE</span></span>
@@ -100,6 +101,18 @@ themselves. Supported by every engine (trajeR <code>Risk</code>, flexmix concomi
 model, lcmm <code>classmb</code>). Columns may be numeric, logical, or
 factor/character (expanded via <code><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">stats::model.matrix()</a></code> where the engine
 needs a numeric design) and must contain no missing values.</p></dd>
+
+
+<dt id="arg-tcov">tcov<a class="anchor" aria-label="anchor" href="#arg-tcov"></a></dt>
+<dd><p>Optional <em>time-varying</em> (trajectory) covariates: a named list,
+one element per covariate, each a character vector of column names of the
+same length as <code>outcomes</code> (wide format, one column per occasion). These
+shift the outcome <em>within</em> a group with group-specific coefficients
+(trajeR <code>TCOV</code>; added to the component/class formula for flexmix and
+lcmm). Columns must be numeric with no missing values. Fitted
+trajectories from <code><a href="gbtm_predict.html">gbtm_predict()</a></code> / <code><a href="plot_trajectories.html">plot_trajectories()</a></code> are computed
+at <code>tcov = 0</code>, so code these covariates with a meaningful zero (e.g.
+0/1 exposure, or centered).</p></dd>
 
 
 <dt id="arg-ymin-ymax">ymin, ymax<a class="anchor" aria-label="anchor" href="#arg-ymin-ymax"></a></dt>

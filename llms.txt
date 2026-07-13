@@ -105,29 +105,26 @@ polynomial-shape search with GRoLTS acceptance criteria (PMS, APPA,
 OCC), the final fit with standard errors, and per-subject group
 assignment. Binary and continuous outcomes work on all three engines;
 counts (Poisson) on `trajeR`/`flexmix`; proportions (beta) on `trajeR`
-only. Class-membership covariates (Nagin’s “risk factors”) are supported
-on every engine via `gbtm_spec(covariates = ...)`, and multi-start
-initialization (`n_starts`) guards against local optima.
+only. Covariates work on every engine: class-membership covariates
+(Nagin’s “risk factors”) via `gbtm_spec(covariates = ...)` and
+time-varying trajectory covariates with group-specific effects via
+`gbtm_spec(tcov = ...)` (fitted trajectories are reported at
+`tcov = 0`). Multi-start initialization (`n_starts`) guards against
+local optima.
 
-**Out of scope (currently).**
-
-- **No trajectory covariates.** Group trajectories are functions of time
-  only; time-varying covariates on the outcome are not yet exposed.
-  (Covariates on *class membership* are supported – see above. The
-  `x1`/`x2` columns in the demo data are deliberately inert.)
-- **Not growth mixture models.** There are no within-class random
-  effects; if you need GMM, use
-  [`lcmm::hlme()`](https://cecileproust-lima.github.io/lcmm/reference/hlme.html)
-  with a `random =` formula (or similar tools) directly.
-- **Per-group polynomial degrees are `trajeR`-only.** `flexmix` and
-  `lcmm` fit one polynomial order shared by all groups; the shape search
-  adapts automatically (see
-  [`gbtm_engine_per_group_degrees()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_engine_per_group_degrees.md)).
-- **No cross-engine BIC.** Engines define their likelihoods differently,
-  so compare BIC only within an engine; use the classification
-  diagnostics (entropy, APPA, OCC) to sanity-check fits across engines.
-- No zero-inflated counts, dual/multi-trajectory models, distal
-  outcomes, or joint survival models.
+**Out of scope (currently).** - **Not growth mixture models.** There are
+no within-class random effects; if you need GMM, use
+[`lcmm::hlme()`](https://cecileproust-lima.github.io/lcmm/reference/hlme.html)
+with a `random =` formula (or similar tools) directly. - **Per-group
+polynomial degrees are `trajeR`-only.** `flexmix` and `lcmm` fit one
+polynomial order shared by all groups; the shape search adapts
+automatically (see
+[`gbtm_engine_per_group_degrees()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_engine_per_group_degrees.md)). -
+**No cross-engine BIC.** Engines define their likelihoods differently,
+so compare BIC only within an engine; use the classification diagnostics
+(entropy, APPA, OCC) to sanity-check fits across engines. - No
+zero-inflated counts, dual/multi-trajectory models, distal outcomes, or
+joint survival models.
 
 ## Data
 

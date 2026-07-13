@@ -128,6 +128,27 @@ Gotchas:
   classmb covariates do not enter the trajectories; the adapter supplies
   representative values (numeric mean / first level).
 
+## Findings from trajectory covariates (2026-07-13, `gbtm_spec(tcov=)`)
+
+Time-varying covariates with group-specific effects on all three
+engines: trajeR `TCOV` (covariate-major wide blocks, n x
+(occasions\*nw); delta estimates recovered the planted -3/+3 exactly),
+flexmix and lcmm via extra formula terms (in both `fixed` and `mixture`
+for lcmm so effects are class-specific). Gotchas:
+
+- **trajeR GroupProb needs TCOV (and X) passed again** – without TCOV
+  the posterior accessor crashes (`gkCNORM_cpp ... type=NULL`); X turns
+  out to be a numerical no-op (GroupProb recovers priors from the stored
+  fit; verified max \|diff\| ~ 1e-12) but is passed for safety.
+- **Engine predict paths must exclude tcov terms**: flexmix’s
+  coefficient matrix gains rows for the covariates (select only
+  Intercept + poly rows); lcmm’s predictY needs the tcov columns in
+  newdata (set to 0). Convention (documented in ?gbtm_spec): fitted
+  trajectories are at tcov = 0, so users should code tcov with a
+  meaningful zero.
+- **trajeR paraminit with TCOV**: delta block (ng x nw, zeros as start)
+  sits at the very end; the k-means multi-start appends it.
+
 ## Findings from the engine benchmark (2026-07-13, `benchmark_engines()`)
 
 `data-raw/benchmark-scale.R` at n = 2000 / 20000 (10 occasions, 4
@@ -235,6 +256,7 @@ Built step by step, confirming each stage, with `R CMD check` kept at
 | 1882db3 | 2026-07-13 | Class-membership covariates (`gbtm_spec(covariates=)`) on all three engines |
 | ca77f40 | 2026-07-13 | [`benchmark_engines()`](https://fabregithub.github.io/gbtmkit/reference/benchmark_engines.md) harness + scale results (flexmix 15-180x faster) |
 | 7a950b8 | 2026-07-13 | [`grolts_report()`](https://fabregithub.github.io/gbtmkit/reference/grolts_report.md): pipeline result -\> GRoLTS checklist reporting aid |
+| 78b3806 | 2026-07-13 | Vignette: grolts_report, n_starts, covariates, benchmark_engines |
 
 ### Build stages (as executed)
 
@@ -307,10 +329,6 @@ Built step by step, confirming each stage, with `R CMD check` kept at
 
 ## Possible next steps (not done)
 
-- Combined vignette re-knit covering `n_starts`, `covariates =`,
-  [`benchmark_engines()`](https://fabregithub.github.io/gbtmkit/reference/benchmark_engines.md),
-  and
-  [`grolts_report()`](https://fabregithub.github.io/gbtmkit/reference/grolts_report.md).
 - Trajectory (time-varying) covariates.
 - Optionally make the shipped fixtures’ covariates drive membership
   (data regeneration; cascades into all baked numbers).

@@ -2,6 +2,19 @@
 
 ## gbtmkit (development version)
 
+- Time-varying (trajectory) covariates:
+  `gbtm_spec(tcov = list(w = c("w1", ...)))` – occasion-level variables
+  that shift the outcome within a group, with group-specific
+  coefficients on every engine (trajeR `TCOV`; added to the
+  component/class formula for flexmix and lcmm). Fitted trajectories
+  from
+  [`gbtm_predict()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_predict.md)
+  /
+  [`plot_trajectories()`](https://fabregithub.github.io/gbtmkit/reference/plot_trajectories.md)
+  are computed at `tcov = 0`.
+  [`gbtm_posterior()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_accessors.md)
+  for trajeR now passes `TCOV`/`Risk` through to `GroupProb()` (required
+  with `tcov`; a no-op numerically for membership covariates).
 - New
   [`grolts_report()`](https://fabregithub.github.io/gbtmkit/reference/grolts_report.md):
   maps a

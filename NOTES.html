@@ -106,6 +106,16 @@
 <strong>lcmm predictY demands every model covariate in newdata</strong> even though classmb covariates do not enter the trajectories; the adapter supplies representative values (numeric mean / first level).</li>
 </ul></div>
 <div class="section level2">
+<h2 id="findings-from-trajectory-covariates-2026-07-13-gbtm_spectcov">Findings from trajectory covariates (2026-07-13, <code>gbtm_spec(tcov=)</code>)<a class="anchor" aria-label="anchor" href="#findings-from-trajectory-covariates-2026-07-13-gbtm_spectcov"></a></h2>
+<p>Time-varying covariates with group-specific effects on all three engines: trajeR <code>TCOV</code> (covariate-major wide blocks, n x (occasions*nw); delta estimates recovered the planted -3/+3 exactly), flexmix and lcmm via extra formula terms (in both <code>fixed</code> and <code>mixture</code> for lcmm so effects are class-specific). Gotchas:</p>
+<ul><li>
+<strong>trajeR GroupProb needs TCOV (and X) passed again</strong> – without TCOV the posterior accessor crashes (<code>gkCNORM_cpp ... type=NULL</code>); X turns out to be a numerical no-op (GroupProb recovers priors from the stored fit; verified max |diff| ~ 1e-12) but is passed for safety.</li>
+<li>
+<strong>Engine predict paths must exclude tcov terms</strong>: flexmix’s coefficient matrix gains rows for the covariates (select only Intercept + poly rows); lcmm’s predictY needs the tcov columns in newdata (set to 0). Convention (documented in ?gbtm_spec): fitted trajectories are at tcov = 0, so users should code tcov with a meaningful zero.</li>
+<li>
+<strong>trajeR paraminit with TCOV</strong>: delta block (ng x nw, zeros as start) sits at the very end; the k-means multi-start appends it.</li>
+</ul></div>
+<div class="section level2">
 <h2 id="findings-from-the-engine-benchmark-2026-07-13-benchmark_engines">Findings from the engine benchmark (2026-07-13, <code>benchmark_engines()</code>)<a class="anchor" aria-label="anchor" href="#findings-from-the-engine-benchmark-2026-07-13-benchmark_engines"></a></h2>
 <p><code>data-raw/benchmark-scale.R</code> at n = 2000 / 20000 (10 occasions, 4 groups, quadratic, method “L”, itermax 200, single start; wall-clock seconds on the dev Mac):</p>
 <table class="table"><thead><tr><th>n</th>
@@ -281,6 +291,9 @@
 <td>2026-07-13</td>
 <td>
 <code><a href="reference/grolts_report.html">grolts_report()</a></code>: pipeline result -&gt; GRoLTS checklist reporting aid</td>
+</tr><tr><td>78b3806</td>
+<td>2026-07-13</td>
+<td>Vignette: grolts_report, n_starts, covariates, benchmark_engines</td>
 </tr></tbody></table><div class="section level3">
 <h3 id="build-stages-as-executed">Build stages (as executed)<a class="anchor" aria-label="anchor" href="#build-stages-as-executed"></a></h3>
 <ol style="list-style-type: decimal"><li>
@@ -321,8 +334,7 @@
 </ul></div>
 <div class="section level2">
 <h2 id="possible-next-steps-not-done">Possible next steps (not done)<a class="anchor" aria-label="anchor" href="#possible-next-steps-not-done"></a></h2>
-<ul><li>Combined vignette re-knit covering <code>n_starts</code>, <code>covariates =</code>, <code><a href="reference/benchmark_engines.html">benchmark_engines()</a></code>, and <code><a href="reference/grolts_report.html">grolts_report()</a></code>.</li>
-<li>Trajectory (time-varying) covariates.</li>
+<ul><li>Trajectory (time-varying) covariates.</li>
 <li>Optionally make the shipped fixtures’ covariates drive membership (data regeneration; cascades into all baked numbers).</li>
 <li>Consider a CRAN submission.</li>
 <li>Optional: bump <code>JamesIves/github-pages-deploy-action</code> to clear its Node 20 deprecation warning.</li>
