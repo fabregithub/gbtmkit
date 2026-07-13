@@ -235,6 +235,7 @@ throughout.
 | ca77f40 | 2026-07-13 | `benchmark_engines()` harness + scale results (flexmix 15-180x faster) |
 | 7a950b8 | 2026-07-13 | `grolts_report()`: pipeline result -> GRoLTS checklist reporting aid |
 | 78b3806 | 2026-07-13 | Vignette: grolts_report, n_starts, covariates, benchmark_engines |
+| a55f985 | 2026-07-13 | Time-varying trajectory covariates (`gbtm_spec(tcov=)`) on all engines |
 
 ### Build stages (as executed)
 
@@ -294,7 +295,6 @@ throughout.
 
 ## Possible next steps (not done)
 
-- Trajectory (time-varying) covariates.
 - Optionally make the shipped fixtures' covariates drive membership (data
   regeneration; cascades into all baked numbers).
 - Consider a CRAN submission.
