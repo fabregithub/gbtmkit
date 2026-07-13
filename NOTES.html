@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="index.html">gbtmkit</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -205,6 +205,9 @@
 </tr><tr><td>9fa95c4</td>
 <td>2026-07-13</td>
 <td>Vignette: consistent headings; stages as real sub-headings</td>
+</tr><tr><td>4d5a8ed</td>
+<td>2026-07-13</td>
+<td>Vignette: introduce the engine choice up front</td>
 </tr></tbody></table><div class="section level3">
 <h3 id="build-stages-as-executed">Build stages (as executed)<a class="anchor" aria-label="anchor" href="#build-stages-as-executed"></a></h3>
 <ol style="list-style-type: decimal"><li>
@@ -229,7 +232,8 @@
 </div>
 <div class="section level2">
 <h2 id="current-state">Current state<a class="anchor" aria-label="anchor" href="#current-state"></a></h2>
-<ul><li>v0.1 functionally complete; CI green on all five platforms.</li>
+<ul><li>
+<strong>v0.1.0 tagged (2026-07-13)</strong>: three engines (trajeR / flexmix / lcmm), full GRoLTS pipeline, precomputed vignette, README scope section; CI green on all five platforms.</li>
 <li>
 <code>R CMD check</code> 0/0/0 locally (including the pandoc-built vignette).</li>
 <li>Tests: fast logic/mock/validation tests run everywhere (~1s); the 16 real-fit integration tests run locally (<code>devtools</code>, <code>NOT_CRAN=true</code>) and skip on CI/CRAN.</li>

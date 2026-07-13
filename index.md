@@ -87,6 +87,38 @@ See the [Getting started
 vignette](https://fabregithub.github.io/gbtmkit/articles/getting-started.html)
 for a full walkthrough.
 
+## What it does — and does not do
+
+**In scope.** Nagin-style GBTM (latent class growth analysis): each
+latent group follows its own polynomial trajectory over time, with *no*
+within-group random effects. On top of that one model class, gbtmkit
+standardizes the whole GRoLTS workflow: optimizer selection (for engines
+that offer a choice), group-number selection by BIC, a bounded
+polynomial-shape search with GRoLTS acceptance criteria (PMS, APPA,
+OCC), the final fit with standard errors, and per-subject group
+assignment. Binary and continuous outcomes work on all three engines;
+counts (Poisson) on `trajeR`/`flexmix`; proportions (beta) on `trajeR`
+only.
+
+**Out of scope (currently).**
+
+- **No covariates.** Trajectories are functions of time only; covariates
+  on the outcome or on class membership are not yet exposed (the
+  `x1`/`x2` columns in the demo data are deliberately inert).
+- **Not growth mixture models.** There are no within-class random
+  effects; if you need GMM, use
+  [`lcmm::hlme()`](https://cecileproust-lima.github.io/lcmm/reference/hlme.html)
+  with a `random =` formula (or similar tools) directly.
+- **Per-group polynomial degrees are `trajeR`-only.** `flexmix` and
+  `lcmm` fit one polynomial order shared by all groups; the shape search
+  adapts automatically (see
+  [`gbtm_engine_per_group_degrees()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_engine_per_group_degrees.md)).
+- **No cross-engine BIC.** Engines define their likelihoods differently,
+  so compare BIC only within an engine; use the classification
+  diagnostics (entropy, APPA, OCC) to sanity-check fits across engines.
+- No zero-inflated counts, dual/multi-trajectory models, distal
+  outcomes, or joint survival models.
+
 ## Data
 
 The example datasets `sim_binary` and `sim_continuous` are **entirely

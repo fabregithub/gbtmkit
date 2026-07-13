@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">gbtmkit</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -106,6 +106,23 @@
 <span><span class="fu"><a href="reference/plot_trajectories.html">plot_trajectories</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">final_fit</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">assignment</span><span class="op">)</span>          <span class="co"># per-subject group membership</span></span></code></pre></div>
 <p>You can also run the stages individually: <code><a href="reference/select_algorithm.html">select_algorithm()</a></code>, <code><a href="reference/select_n_groups.html">select_n_groups()</a></code>, <code><a href="reference/evaluate_shapes.html">evaluate_shapes()</a></code> + <code><a href="reference/apply_grolts_criteria.html">apply_grolts_criteria()</a></code>, then <code><a href="reference/fit_gbtm.html">fit_gbtm()</a></code>. See the <a href="https://fabregithub.github.io/gbtmkit/articles/getting-started.html">Getting started vignette</a> for a full walkthrough.</p>
+</div>
+<div class="section level2">
+<h2 id="what-it-does--and-does-not-do">What it does — and does not do<a class="anchor" aria-label="anchor" href="#what-it-does--and-does-not-do"></a>
+</h2>
+<p><strong>In scope.</strong> Nagin-style GBTM (latent class growth analysis): each latent group follows its own polynomial trajectory over time, with <em>no</em> within-group random effects. On top of that one model class, gbtmkit standardizes the whole GRoLTS workflow: optimizer selection (for engines that offer a choice), group-number selection by BIC, a bounded polynomial-shape search with GRoLTS acceptance criteria (PMS, APPA, OCC), the final fit with standard errors, and per-subject group assignment. Binary and continuous outcomes work on all three engines; counts (Poisson) on <code>trajeR</code>/<code>flexmix</code>; proportions (beta) on <code>trajeR</code> only.</p>
+<p><strong>Out of scope (currently).</strong></p>
+<ul>
+<li>
+<strong>No covariates.</strong> Trajectories are functions of time only; covariates on the outcome or on class membership are not yet exposed (the <code>x1</code>/<code>x2</code> columns in the demo data are deliberately inert).</li>
+<li>
+<strong>Not growth mixture models.</strong> There are no within-class random effects; if you need GMM, use <code><a href="https://cecileproust-lima.github.io/lcmm/reference/hlme.html" class="external-link">lcmm::hlme()</a></code> with a <code>random =</code> formula (or similar tools) directly.</li>
+<li>
+<strong>Per-group polynomial degrees are <code>trajeR</code>-only.</strong> <code>flexmix</code> and <code>lcmm</code> fit one polynomial order shared by all groups; the shape search adapts automatically (see <code><a href="reference/gbtm_engine_per_group_degrees.html">gbtm_engine_per_group_degrees()</a></code>).</li>
+<li>
+<strong>No cross-engine BIC.</strong> Engines define their likelihoods differently, so compare BIC only within an engine; use the classification diagnostics (entropy, APPA, OCC) to sanity-check fits across engines.</li>
+<li>No zero-inflated counts, dual/multi-trajectory models, distal outcomes, or joint survival models.</li>
+</ul>
 </div>
 <div class="section level2">
 <h2 id="data">Data<a class="anchor" aria-label="anchor" href="#data"></a>

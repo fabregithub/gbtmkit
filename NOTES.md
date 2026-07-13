@@ -153,6 +153,7 @@ Built step by step, confirming each stage, with `R CMD check` kept at
 | c518283 | 2026-07-13 | Fix pkgdown: add gbtm_engine_per_group_degrees to the reference index |
 | 1e337b5 | 2026-07-13 | pkgdown builds without executing examples (site build ~2 min) |
 | 9fa95c4 | 2026-07-13 | Vignette: consistent headings; stages as real sub-headings |
+| 4d5a8ed | 2026-07-13 | Vignette: introduce the engine choice up front |
 
 ### Build stages (as executed)
 
@@ -186,7 +187,9 @@ Built step by step, confirming each stage, with `R CMD check` kept at
 
 ## Current state
 
-- v0.1 functionally complete; CI green on all five platforms.
+- **v0.1.0 tagged (2026-07-13)**: three engines (trajeR / flexmix /
+  lcmm), full GRoLTS pipeline, precomputed vignette, README scope
+  section; CI green on all five platforms.
 - `R CMD check` 0/0/0 locally (including the pandoc-built vignette).
 - Tests: fast logic/mock/validation tests run everywhere (~1s); the 16
   real-fit integration tests run locally (`devtools`, `NOT_CRAN=true`)

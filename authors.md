@@ -11,13 +11,13 @@ Source:
 [`DESCRIPTION`](https://github.com/fabregithub/gbtmkit/blob/main/DESCRIPTION)
 
 Nakayama S (2026). *gbtmkit: Engine-Agnostic Pipeline for Group-Based
-Trajectory Modeling*. R package version 0.0.0.9000,
+Trajectory Modeling*. R package version 0.1.0,
 <https://github.com/fabregithub/gbtmkit>.
 
     @Manual{,
       title = {gbtmkit: Engine-Agnostic Pipeline for Group-Based Trajectory Modeling},
       author = {Shoji F. Nakayama},
       year = {2026},
-      note = {R package version 0.0.0.9000},
+      note = {R package version 0.1.0},
       url = {https://github.com/fabregithub/gbtmkit},
     }
