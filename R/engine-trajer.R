@@ -162,6 +162,7 @@
       n_groups   = n_groups,
       degrees    = degrees,
       hessian    = hessian,
+      itermax    = as.integer(itermax),
       n_starts   = n_starts,
       start_bics = start_bics,
       raw        = raw,

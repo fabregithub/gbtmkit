@@ -30,9 +30,10 @@ reference:
   - evaluate_shapes
   - apply_grolts_criteria
   - grolts_recommended
-- title: Orchestration and plotting
+- title: Orchestration, reporting, and plotting
   contents:
   - run_gbtm_pipeline
+  - grolts_report
   - plot_trajectories
 - title: Data
   contents:

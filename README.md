@@ -23,9 +23,12 @@ walkthrough and the full function reference.
   [`lcmm`](https://cran.r-project.org/package=lcmm)) behind a small set
   of accessors, so the GRoLTS diagnostics and plotting work the same
   regardless of engine.
-- **GRoLTS diagnostics built in.** Entropy, average posterior probability of
-  assignment (APPA), odds of correct classification (OCC), and group
-  proportions are computed once from the posterior matrix.
+- **GRoLTS diagnostics and reporting built in.** Entropy, average posterior
+  probability of assignment (APPA), odds of correct classification (OCC), and
+  group proportions are computed once from the posterior matrix -- and
+  `grolts_report()` maps a pipeline result onto the GRoLTS checklist,
+  auto-filling every item the pipeline can answer (with a Markdown export for
+  supplementary material).
 - **Built to scale.** The shape search fits with the Hessian off, defaults to a
   greedy stepwise strategy, and supports a time budget, a fit cap, and on-disk
   checkpointing so large problems run unattended and bounded.

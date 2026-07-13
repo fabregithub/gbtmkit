@@ -1,5 +1,13 @@
 # gbtmkit (development version)
 
+* New `grolts_report()`: maps a `run_gbtm_pipeline()` result onto the GRoLTS
+  checklist (van de Schoot et al. 2017). Items the pipeline can answer --
+  time metric, software and engine versions, shape search, starting values
+  and iterations, selection tools, models fitted, class sizes, entropy --
+  are auto-filled; items only the analyst can know (missing-data mechanism,
+  manuscript plots, syntax availability) are flagged with context. Pass
+  `file =` to also write a Markdown appendix. Fits now record `itermax` to
+  support it.
 * New `benchmark_engines()`: fits the same model with each installed engine
   and reports wall-clock time alongside the engine-neutral classification
   diagnostics, so the fastest adequate backend can be picked per problem

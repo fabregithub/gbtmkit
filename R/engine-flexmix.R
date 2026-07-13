@@ -131,6 +131,7 @@
       n_groups   = k_actual,
       degrees    = rep(degree, k_actual),
       hessian    = hessian,
+      itermax    = as.integer(itermax),
       n_starts   = n_starts,
       start_bics = start_bics,
       raw        = raw,

@@ -137,6 +137,7 @@
       n_groups   = n_groups,
       degrees    = rep(degree, n_groups),
       hessian    = hessian,
+      itermax    = as.integer(itermax),
       n_starts   = n_starts,
       start_bics = as.numeric(raw$BIC),
       raw        = raw,
