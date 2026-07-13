@@ -97,7 +97,7 @@
 </ul></div>
 <div class="section level2">
 <h2 id="findings-from-covariate-support-2026-07-13-gbtm_speccovariates">Findings from covariate support (2026-07-13, <code>gbtm_spec(covariates=)</code>)<a class="anchor" aria-label="anchor" href="#findings-from-covariate-support-2026-07-13-gbtm_speccovariates"></a></h2>
-<p>Class-membership covariates only (trajectory/time-varying covariates remain out of scope): trajeR <code>Risk</code> (numeric design matrix from <code>model.matrix</code>, no intercept column), flexmix concomitant <code>FLXPmultinom(formula)</code>, lcmm <code>classmb = formula</code> (ng &gt; 1 fits only; the 1-class init has no membership model). Verified on all three engines with a covariate-driven synthetic dataset (BIC improves by ~200). Gotchas:</p>
+<p>Class-membership covariates (time-varying covariates followed the same day; see the next section): trajeR <code>Risk</code> (numeric design matrix from <code>model.matrix</code>, no intercept column), flexmix concomitant <code>FLXPmultinom(formula)</code>, lcmm <code>classmb = formula</code> (ng &gt; 1 fits only; the 1-class init has no membership model). Verified on all three engines with a covariate-driven synthetic dataset (BIC improves by ~200). Gotchas:</p>
 <ul><li>
 <strong>trajeR theta layout with Risk</strong>: group-major blocks of (intercept, covariate effects); the k-means multi-start builds those blocks with zero effects, Method “L” only – the user-paraminit path for EM with nx &gt; 1 is not well-defined in trajeR, so multi-start falls back with a warning there.</li>
 <li>
@@ -114,6 +114,19 @@
 <strong>Engine predict paths must exclude tcov terms</strong>: flexmix’s coefficient matrix gains rows for the covariates (select only Intercept + poly rows); lcmm’s predictY needs the tcov columns in newdata (set to 0). Convention (documented in ?gbtm_spec): fitted trajectories are at tcov = 0, so users should code tcov with a meaningful zero.</li>
 <li>
 <strong>trajeR paraminit with TCOV</strong>: delta block (ng x nw, zeros as start) sits at the very end; the k-means multi-start appends it.</li>
+</ul></div>
+<div class="section level2">
+<h2 id="findings-from-parallelization-2026-07-13-fit_map-via-futureapply">Findings from parallelization (2026-07-13, <code>.fit_map</code> via future.apply)<a class="anchor" aria-label="anchor" href="#findings-from-parallelization-2026-07-13-fit_map-via-futureapply"></a></h2>
+<p>Independent fits (multi-start starts; selection-stage candidates/methods) run through <code>.fit_map</code>, which uses <code>future.apply::future_lapply(future.seed=TRUE)</code> when installed; the user controls workers via <code><a href="https://future.futureverse.org/reference/plan.html" class="external-link">future::plan()</a></code>. Notes:</p>
+<ul><li>
+<strong>Speedup is bounded by the slowest fit</strong>: measured 2.6x for 5-way multi-start and 2.0x for a 4-candidate sweep (the 4-group fit dominates).</li>
+<li>
+<strong>Seeded determinism holds under any plan</strong> (each task set.seed()s itself; verified bit-identical BICs sequential vs multicore).</li>
+<li>
+<strong>trajeR speed dead ends, measured</strong>: BLAS threading is irrelevant (44.0 s vs 43.6 s at 1 vs 8 OpenBLAS threads – per-subject matrices too small), and <code>itermax</code> has no “loose search” headroom (the optimizer self-terminates at ~50-60 iterations; itermax 60/100/400 identical, 30 truncates to a worse BIC).</li>
+<li>
+<strong>Tests use <code>plan(multicore)</code></strong> (fork): multisession workers cannot loadNamespace a devtools::load_all package; fork inherits it. Guarded by <code><a href="https://parallelly.futureverse.org/reference/supportsMulticore.html" class="external-link">future::supportsMulticore()</a></code> (unavailable on Windows/RStudio).</li>
+<li>Remaining (unimplemented) speed ideas: warm starts in the shape search via <code>paraminit</code> from the incumbent; subsample-based search; hybrid workflow (select K with flexmix, fit with trajeR).</li>
 </ul></div>
 <div class="section level2">
 <h2 id="findings-from-the-engine-benchmark-2026-07-13-benchmark_engines">Findings from the engine benchmark (2026-07-13, <code>benchmark_engines()</code>)<a class="anchor" aria-label="anchor" href="#findings-from-the-engine-benchmark-2026-07-13-benchmark_engines"></a></h2>
@@ -294,6 +307,9 @@
 </tr><tr><td>78b3806</td>
 <td>2026-07-13</td>
 <td>Vignette: grolts_report, n_starts, covariates, benchmark_engines</td>
+</tr><tr><td>a55f985</td>
+<td>2026-07-13</td>
+<td>Time-varying trajectory covariates (<code>gbtm_spec(tcov=)</code>) on all engines</td>
 </tr></tbody></table><div class="section level3">
 <h3 id="build-stages-as-executed">Build stages (as executed)<a class="anchor" aria-label="anchor" href="#build-stages-as-executed"></a></h3>
 <ol style="list-style-type: decimal"><li>
@@ -334,8 +350,7 @@
 </ul></div>
 <div class="section level2">
 <h2 id="possible-next-steps-not-done">Possible next steps (not done)<a class="anchor" aria-label="anchor" href="#possible-next-steps-not-done"></a></h2>
-<ul><li>Trajectory (time-varying) covariates.</li>
-<li>Optionally make the shipped fixtures’ covariates drive membership (data regeneration; cascades into all baked numbers).</li>
+<ul><li>Optionally make the shipped fixtures’ covariates drive membership (data regeneration; cascades into all baked numbers).</li>
 <li>Consider a CRAN submission.</li>
 <li>Optional: bump <code>JamesIves/github-pages-deploy-action</code> to clear its Node 20 deprecation warning.</li>
 </ul><p>Done along the way: v0.1.0 tag, flexmix + lcmm adapters, multi-start initialization, class-membership covariates, <code><a href="reference/benchmark_engines.html">benchmark_engines()</a></code>, <code><a href="reference/grolts_report.html">grolts_report()</a></code>, precomputed vignette (see History).</p>

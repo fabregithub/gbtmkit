@@ -2,6 +2,16 @@
 
 ## gbtmkit (development version)
 
+- Parallel execution of independent fits: multi-start initializations
+  (`n_starts`) and the candidate fits in
+  [`select_n_groups()`](https://fabregithub.github.io/gbtmkit/reference/select_n_groups.md)
+  /
+  [`select_algorithm()`](https://fabregithub.github.io/gbtmkit/reference/select_algorithm.md)
+  run via future.apply when it is installed – set
+  `future::plan(multisession)` (or `multicore`) to use several cores.
+  With a `seed`, results are identical under any plan (each
+  start/candidate seeds itself); measured ~2-2.6x wall-clock on 4-5 way
+  parallelism, bounded by the slowest fit.
 - Time-varying (trajectory) covariates:
   `gbtm_spec(tcov = list(w = c("w1", ...)))` – occasion-level variables
   that shift the outcome within a group, with group-specific

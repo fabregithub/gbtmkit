@@ -2,7 +2,10 @@
 
 Fits the model for each candidate number of groups and picks the one
 with the lowest BIC. Each candidate uses a polynomial degree of `degree`
-for every group unless a per-candidate `degrees` list is supplied.
+for every group unless a per-candidate `degrees` list is supplied. The
+candidate fits are independent and run in parallel under a
+[`future::plan()`](https://future.futureverse.org/reference/plan.html)
+when the future.apply package is installed.
 
 ## Usage
 

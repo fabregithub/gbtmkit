@@ -73,6 +73,10 @@ gbtm_fit(
   [`lcmm::gridsearch()`](https://cecileproust-lima.github.io/lcmm/reference/gridsearch.html)).
   Mixture fits can land in local optima – empty or merged groups are the
   telltale sign – and `n_starts` greater than 1 is the standard defense.
+  Independent starts run in parallel under a
+  [`future::plan()`](https://future.futureverse.org/reference/plan.html)
+  when the future.apply package is installed; with a `seed`, results are
+  identical under any plan.
 
 - ...:
 

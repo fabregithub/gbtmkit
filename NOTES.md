@@ -105,8 +105,8 @@ trough G3), with the shapes crossing mid-study. Lessons:
 
 ## Findings from covariate support (2026-07-13, `gbtm_spec(covariates=)`)
 
-Class-membership covariates only (trajectory/time-varying covariates
-remain out of scope): trajeR `Risk` (numeric design matrix from
+Class-membership covariates (time-varying covariates followed the same
+day; see the next section): trajeR `Risk` (numeric design matrix from
 `model.matrix`, no intercept column), flexmix concomitant
 `FLXPmultinom(formula)`, lcmm `classmb = formula` (ng \> 1 fits only;
 the 1-class init has no membership model). Verified on all three engines
@@ -148,6 +148,34 @@ for lcmm so effects are class-specific). Gotchas:
   meaningful zero.
 - **trajeR paraminit with TCOV**: delta block (ng x nw, zeros as start)
   sits at the very end; the k-means multi-start appends it.
+
+## Findings from parallelization (2026-07-13, `.fit_map` via future.apply)
+
+Independent fits (multi-start starts; selection-stage
+candidates/methods) run through `.fit_map`, which uses
+`future.apply::future_lapply(future.seed=TRUE)` when installed; the user
+controls workers via
+[`future::plan()`](https://future.futureverse.org/reference/plan.html).
+Notes:
+
+- **Speedup is bounded by the slowest fit**: measured 2.6x for 5-way
+  multi-start and 2.0x for a 4-candidate sweep (the 4-group fit
+  dominates).
+- **Seeded determinism holds under any plan** (each task set.seed()s
+  itself; verified bit-identical BICs sequential vs multicore).
+- **trajeR speed dead ends, measured**: BLAS threading is irrelevant
+  (44.0 s vs 43.6 s at 1 vs 8 OpenBLAS threads – per-subject matrices
+  too small), and `itermax` has no “loose search” headroom (the
+  optimizer self-terminates at ~50-60 iterations; itermax 60/100/400
+  identical, 30 truncates to a worse BIC).
+- **Tests use `plan(multicore)`** (fork): multisession workers cannot
+  loadNamespace a devtools::load_all package; fork inherits it. Guarded
+  by
+  [`future::supportsMulticore()`](https://parallelly.futureverse.org/reference/supportsMulticore.html)
+  (unavailable on Windows/RStudio).
+- Remaining (unimplemented) speed ideas: warm starts in the shape search
+  via `paraminit` from the incumbent; subsample-based search; hybrid
+  workflow (select K with flexmix, fit with trajeR).
 
 ## Findings from the engine benchmark (2026-07-13, `benchmark_engines()`)
 
@@ -257,6 +285,7 @@ Built step by step, confirming each stage, with `R CMD check` kept at
 | ca77f40 | 2026-07-13 | [`benchmark_engines()`](https://fabregithub.github.io/gbtmkit/reference/benchmark_engines.md) harness + scale results (flexmix 15-180x faster) |
 | 7a950b8 | 2026-07-13 | [`grolts_report()`](https://fabregithub.github.io/gbtmkit/reference/grolts_report.md): pipeline result -\> GRoLTS checklist reporting aid |
 | 78b3806 | 2026-07-13 | Vignette: grolts_report, n_starts, covariates, benchmark_engines |
+| a55f985 | 2026-07-13 | Time-varying trajectory covariates (`gbtm_spec(tcov=)`) on all engines |
 
 ### Build stages (as executed)
 
@@ -329,7 +358,6 @@ Built step by step, confirming each stage, with `R CMD check` kept at
 
 ## Possible next steps (not done)
 
-- Trajectory (time-varying) covariates.
 - Optionally make the shipped fixtures’ covariates drive membership
   (data regeneration; cascades into all baked numbers).
 - Consider a CRAN submission.

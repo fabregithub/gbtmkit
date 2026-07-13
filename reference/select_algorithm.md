@@ -4,7 +4,10 @@ Fits a fixed group number and shape under each candidate estimation
 method and picks the one with the lowest BIC. For engines with a single
 optimizer (see
 [`gbtm_engine_methods()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_engine_methods.md))
-this is a no-op that returns that method.
+this is a no-op that returns that method. The candidate fits are
+independent and run in parallel under a
+[`future::plan()`](https://future.futureverse.org/reference/plan.html)
+when the future.apply package is installed.
 
 ## Usage
 
