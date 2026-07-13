@@ -92,8 +92,8 @@ shapes crossing mid-study. Lessons:
 
 ## Findings from covariate support (2026-07-13, `gbtm_spec(covariates=)`)
 
-Class-membership covariates only (trajectory/time-varying covariates remain
-out of scope): trajeR `Risk` (numeric design matrix from `model.matrix`, no
+Class-membership covariates (time-varying covariates followed the same day;
+see the next section): trajeR `Risk` (numeric design matrix from `model.matrix`, no
 intercept column), flexmix concomitant `FLXPmultinom(formula)`, lcmm
 `classmb = formula` (ng > 1 fits only; the 1-class init has no membership
 model). Verified on all three engines with a covariate-driven synthetic
