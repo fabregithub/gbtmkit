@@ -7,8 +7,8 @@
 
 **gbtmkit** turns group-based trajectory modeling (GBTM) into a reproducible,
 engine-agnostic pipeline that follows the
-[GRoLTS](https://doi.org/10.1080/10705511.2016.1247646) reporting checklist by
-construction.
+[GRoLTS](https://doi.org/10.1080/10705511.2016.1247646) checklist (Guidelines
+for Reporting on Latent Trajectory Studies) by construction.
 
 📖 **Documentation site:** <https://fabregithub.github.io/gbtmkit/> — including the
 [Getting started](https://fabregithub.github.io/gbtmkit/articles/getting-started.html)
