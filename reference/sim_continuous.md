@@ -23,11 +23,11 @@ A data frame with 1200 rows and 24 columns:
 
   Covariates, present but not driving the outcome.
 
-- y1–y10:
+- y1, y2, y3, y4, y5, y6, y7, y8, y9, y10:
 
   Continuous outcomes at occasions 1–10.
 
-- t1–t10:
+- t1, t2, t3, t4, t5, t6, t7, t8, t9, t10:
 
   Occasion times.
 

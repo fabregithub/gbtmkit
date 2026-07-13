@@ -85,6 +85,17 @@
 <strong>trajeR’s EMIRLS</strong> fails numerically (“solve(): solution not found”) on the 10-occasion binary fixture; <code><a href="reference/select_algorithm.html">select_algorithm()</a></code> records it and moves on, as designed.</li>
 </ul></div>
 <div class="section level2">
+<h2 id="precomputed-vignette-2026-07-13">Precomputed vignette (2026-07-13)<a class="anchor" aria-label="anchor" href="#precomputed-vignette-2026-07-13"></a></h2>
+<p>The getting-started vignette runs ~20 min of real fits, which made every CI / pkgdown build re-run them (~2 h on a GitHub runner). It is now precomputed:</p>
+<ul><li>
+<strong>Source of truth</strong>: <code>vignettes/getting-started.Rmd.orig</code> (executable, <code>.Rbuildignore</code>d).</li>
+<li>
+<strong>Shipped file</strong>: <code>vignettes/getting-started.Rmd</code> (static: outputs baked in and <code>vignettes/getting-started-*.png</code> figures beside it, committed to git; builds in seconds). A knitr output/message hook in the <code>.orig</code> strips trajeR’s optimizer chatter; <code>fig.path</code> is a file prefix because R CMD check flags a <code>vignettes/figure/</code> directory as a knitr leftover.</li>
+<li>
+<strong>Regenerate</strong> with <code>Rscript data-raw/precompile-vignette.R</code> after editing the <code>.orig</code> or when demonstrated behavior changes, and commit the <code>.orig</code>, the regenerated <code>.Rmd</code>, and the figures together.</li>
+<li>Bug-fix verification does NOT require re-knitting: tests and direct runs verify code; the vignette is refreshed only when its shown outputs matter.</li>
+</ul></div>
+<div class="section level2">
 <h2 id="bugs-in-the-original-script-that-the-port-fixes">Bugs in the original script that the port fixes<a class="anchor" aria-label="anchor" href="#bugs-in-the-original-script-that-the-port-fixes"></a></h2>
 <ul><li>Duplicated, mutually inconsistent PMS filters -&gt; single robust min-across-group summary columns in <code><a href="reference/apply_grolts_criteria.html">apply_grolts_criteria()</a></code>.</li>
 <li>
@@ -166,6 +177,24 @@
 </tr><tr><td>f8f297d</td>
 <td>2026-07-10</td>
 <td>Expand vignette: stage-by-stage flow + continuous plot</td>
+</tr><tr><td>2759ad5</td>
+<td>2026-07-10</td>
+<td>Warn on empty groups; EM for the continuous vignette example</td>
+</tr><tr><td>f7a58a0</td>
+<td>2026-07-12</td>
+<td>Redesign example data: 10 occasions, mixed linear/cubic shapes</td>
+</tr><tr><td>3a1fdf4</td>
+<td>2026-07-12</td>
+<td>flexmix as a second estimation engine (uniform-degree capability)</td>
+</tr><tr><td>ba80163</td>
+<td>2026-07-12</td>
+<td>lcmm as a third estimation engine (hlme / thresholds link)</td>
+</tr><tr><td>038d2a2</td>
+<td>2026-07-13</td>
+<td>Vignette: “Choosing an engine” section for all three backends</td>
+</tr><tr><td>1de6584</td>
+<td>2026-07-13</td>
+<td>Precompute the vignette (static .Rmd from .orig; CI builds in seconds)</td>
 </tr></tbody></table><div class="section level3">
 <h3 id="build-stages-as-executed">Build stages (as executed)<a class="anchor" aria-label="anchor" href="#build-stages-as-executed"></a></h3>
 <ol style="list-style-type: decimal"><li>
@@ -199,7 +228,9 @@
 <div class="section level2">
 <h2 id="possible-next-steps-not-done">Possible next steps (not done)<a class="anchor" aria-label="anchor" href="#possible-next-steps-not-done"></a></h2>
 <ul><li>Tag <code>v0.1.0</code>.</li>
-<li>Second engine adapter (<code>flexmix</code>) to prove the interface generalizes; the adapter conformance test is already set up for it.</li>
+<li>
+<del>Second engine adapter (<code>flexmix</code>) to prove the interface generalizes</del> — done (2026-07-12). Notes: flexmix maps GBTM to a mixture of GLMs on long data grouped by subject (<code>y ~ poly(t, d, raw = TRUE) | id</code>); binomial needs a two-column <code>cbind(y, 1 - y)</code> response; <code>logLik</code>/<code>BIC</code>/<code>AIC</code> are S4 methods, so accessors go through <code>stats4::</code>; per-component degrees via <code>FLXMRglmfix(nested=)</code> collapse in practice, so the adapter requires uniform degrees and <code><a href="reference/evaluate_shapes.html">evaluate_shapes()</a></code> sweeps uniform shapes (<code><a href="reference/gbtm_engine_per_group_degrees.html">gbtm_engine_per_group_degrees()</a></code>); <code>flexmix::refit()</code> (the SE step) can produce NaN SEs on boundary parameters — warning, not error. On the binary fixture the flexmix pipeline matches trajeR’s recovery (0.895) and runs much faster.</li>
+<li>Third engine adapter (<code>lcmm</code>) — done (2026-07-12). Notes: GBTM = latent class growth analysis, <code>random = ~ -1</code> with class-specific effects via <code>mixture =</code>; gaussian → <code>hlme()</code>, binary → <code>lcmm(link = "thresholds")</code> (2-level ordinal ≈ probit trajectory model; conv=1 in ~30 s on the binary fixture, recovery 0.896). ng &gt; 1 requires starting values: fit ng = 1 first and pass it as <code>B</code> (deterministic init). lcmm post-processing (<code>predictY</code>) re-parses the stored <code>call</code>, so the adapter must patch <code>call$fixed</code> / <code>call$mixture</code> with the actual formula objects after fitting. Model-implied group sizes = softmax of the first ng-1 parameters (class-membership intercepts, last class is reference). <code>mixture</code> is shared across classes, so uniform degrees only — same capability flag as flexmix.</li>
 <li>
 <code>grolts_report()</code> mapping outputs to GRoLTS checklist item numbers.</li>
 <li>Multi-start initialization for CNORM.</li>

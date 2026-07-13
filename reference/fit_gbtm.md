@@ -138,59 +138,59 @@ if (requireNamespace("trajeR", quietly = TRUE))
 #> iter  23 value 
 #> 9381.028379
 #> iter  24 value 
-#> 9313.397906
+#> 9313.397905
 #> iter  25 value 
-#> 9252.675150
+#> 9252.675149
 #> iter  26 value 
-#> 9189.781789
+#> 9189.781788
 #> iter  27 value 
-#> 9136.567943
+#> 9136.567942
 #> iter  28 value 
-#> 9045.820360
+#> 9045.820359
 #> iter  29 value 
-#> 8977.811943
+#> 8977.811940
 #> iter  30 value 
-#> 8874.187057
+#> 8874.187053
 #> iter  31 value 
-#> 8771.316424
+#> 8771.316420
 #> iter  32 value 
-#> 8742.279697
+#> 8742.279694
 #> iter  33 value 
 #> 8673.319080
 #> iter  34 value 
-#> 8659.350499
+#> 8659.350498
 #> iter  35 value 
-#> 8652.300622
+#> 8652.300621
 #> iter  36 value 
-#> 8643.956171
+#> 8643.956168
 #> iter  37 value 
-#> 8636.124256
+#> 8636.124254
 #> iter  38 value 
-#> 8629.061600
+#> 8629.061597
 #> iter  39 value 
-#> 8626.065296
+#> 8626.065295
 #> iter  40 value 
-#> 8625.272830
+#> 8625.272829
 #> iter  41 value 
-#> 8624.510845
+#> 8624.510844
 #> iter  42 value 
-#> 8623.880797
+#> 8623.880796
 #> iter  43 value 
-#> 8623.106647
+#> 8623.106646
 #> iter  44 value 
 #> 8622.680867
 #> iter  45 value 
-#> 8622.200578
+#> 8622.200577
 #> iter  46 value 
 #> 8621.512124
 #> iter  47 value 
-#> 8620.887735
+#> 8620.887734
 #> iter  48 value 
-#> 8619.534632
+#> 8619.534631
 #> iter  49 value 
-#> 8619.374822
+#> 8619.374819
 #> iter  50 value 
-#> 8619.061395
+#> 8619.061394
 #> iter  51 value 
 #> 8618.492287
 #> iter  52 value 
@@ -200,7 +200,7 @@ if (requireNamespace("trajeR", quietly = TRUE))
 #> iter  54 value 
 #> 8617.825741
 #> iter  55 value 
-#> 8617.730425
+#> 8617.730424
 #> iter  56 value 
 #> 8617.663594
 #> iter  57 value 
@@ -270,11 +270,11 @@ if (requireNamespace("trajeR", quietly = TRUE))
 #> iter  89 value 
 #> 8616.683934
 #> iter  90 value 
-#> 8616.596245
+#> 8616.596246
 #> iter  91 value 
-#> 8616.436956
+#> 8616.436958
 #> iter  92 value 
-#> 8616.096503
+#> 8616.096506
 #> <gbtm_fit> engine=trajeR family=binomial
 #>   groups  : 4
 #>   degrees : 3, 3, 3, 3

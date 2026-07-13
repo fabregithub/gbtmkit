@@ -77,6 +77,27 @@ trough G3), with the shapes crossing mid-study. Lessons:
   [`select_algorithm()`](https://fabregithub.github.io/gbtmkit/reference/select_algorithm.md)
   records it and moves on, as designed.
 
+## Precomputed vignette (2026-07-13)
+
+The getting-started vignette runs ~20 min of real fits, which made every
+CI / pkgdown build re-run them (~2 h on a GitHub runner). It is now
+precomputed:
+
+- **Source of truth**: `vignettes/getting-started.Rmd.orig` (executable,
+  `.Rbuildignore`d).
+- **Shipped file**: `vignettes/getting-started.Rmd` (static: outputs
+  baked in and `vignettes/getting-started-*.png` figures beside it,
+  committed to git; builds in seconds). A knitr output/message hook in
+  the `.orig` strips trajeR’s optimizer chatter; `fig.path` is a file
+  prefix because R CMD check flags a `vignettes/figure/` directory as a
+  knitr leftover.
+- **Regenerate** with `Rscript data-raw/precompile-vignette.R` after
+  editing the `.orig` or when demonstrated behavior changes, and commit
+  the `.orig`, the regenerated `.Rmd`, and the figures together.
+- Bug-fix verification does NOT require re-knitting: tests and direct
+  runs verify code; the vignette is refreshed only when its shown
+  outputs matter.
+
 ## Bugs in the original script that the port fixes
 
 - Duplicated, mutually inconsistent PMS filters -\> single robust
@@ -116,6 +137,12 @@ Built step by step, confirming each stage, with `R CMD check` kept at
 | 4344d33 | 2026-07-10 | Add pkgdown site + GitHub Pages deploy workflow |
 | 8addca6 | 2026-07-10 | Fix pkgdown build: default `docs/` output, move design doc to `dev/DESIGN.md` |
 | f8f297d | 2026-07-10 | Expand vignette: stage-by-stage flow + continuous plot |
+| 2759ad5 | 2026-07-10 | Warn on empty groups; EM for the continuous vignette example |
+| f7a58a0 | 2026-07-12 | Redesign example data: 10 occasions, mixed linear/cubic shapes |
+| 3a1fdf4 | 2026-07-12 | flexmix as a second estimation engine (uniform-degree capability) |
+| ba80163 | 2026-07-12 | lcmm as a third estimation engine (hlme / thresholds link) |
+| 038d2a2 | 2026-07-13 | Vignette: “Choosing an engine” section for all three backends |
+| 1de6584 | 2026-07-13 | Precompute the vignette (static .Rmd from .orig; CI builds in seconds) |
 
 ### Build stages (as executed)
 
@@ -162,8 +189,32 @@ Built step by step, confirming each stage, with `R CMD check` kept at
 ## Possible next steps (not done)
 
 - Tag `v0.1.0`.
-- Second engine adapter (`flexmix`) to prove the interface generalizes;
-  the adapter conformance test is already set up for it.
+- ~~Second engine adapter (`flexmix`) to prove the interface
+  generalizes~~ — done (2026-07-12). Notes: flexmix maps GBTM to a
+  mixture of GLMs on long data grouped by subject
+  (`y ~ poly(t, d, raw = TRUE) | id`); binomial needs a two-column
+  `cbind(y, 1 - y)` response; `logLik`/`BIC`/`AIC` are S4 methods, so
+  accessors go through `stats4::`; per-component degrees via
+  `FLXMRglmfix(nested=)` collapse in practice, so the adapter requires
+  uniform degrees and
+  [`evaluate_shapes()`](https://fabregithub.github.io/gbtmkit/reference/evaluate_shapes.md)
+  sweeps uniform shapes
+  ([`gbtm_engine_per_group_degrees()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_engine_per_group_degrees.md));
+  `flexmix::refit()` (the SE step) can produce NaN SEs on boundary
+  parameters — warning, not error. On the binary fixture the flexmix
+  pipeline matches trajeR’s recovery (0.895) and runs much faster.
+- Third engine adapter (`lcmm`) — done (2026-07-12). Notes: GBTM =
+  latent class growth analysis, `random = ~ -1` with class-specific
+  effects via `mixture =`; gaussian → `hlme()`, binary →
+  `lcmm(link = "thresholds")` (2-level ordinal ≈ probit trajectory
+  model; conv=1 in ~30 s on the binary fixture, recovery 0.896). ng \> 1
+  requires starting values: fit ng = 1 first and pass it as `B`
+  (deterministic init). lcmm post-processing (`predictY`) re-parses the
+  stored `call`, so the adapter must patch `call$fixed` / `call$mixture`
+  with the actual formula objects after fitting. Model-implied group
+  sizes = softmax of the first ng-1 parameters (class-membership
+  intercepts, last class is reference). `mixture` is shared across
+  classes, so uniform degrees only — same capability flag as flexmix.
 - `grolts_report()` mapping outputs to GRoLTS checklist item numbers.
 - Multi-start initialization for CNORM.
 - Consider a CRAN submission.

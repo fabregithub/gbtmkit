@@ -63,7 +63,7 @@
 <li>
 <strong>One workflow, any outcome.</strong> Binary (LOGIT) and continuous (CNORM) outcomes run through the same specification; count and proportion families are mapped too.</li>
 <li>
-<strong>Engine-agnostic.</strong> Estimation is delegated to interchangeable backends (currently <a href="https://cran.r-project.org/package=trajeR" class="external-link"><code>trajeR</code></a>) behind a small set of accessors, so the GRoLTS diagnostics and plotting work the same regardless of engine.</li>
+<strong>Engine-agnostic.</strong> Estimation is delegated to interchangeable backends (<a href="https://cran.r-project.org/package=trajeR" class="external-link"><code>trajeR</code></a>, <a href="https://cran.r-project.org/package=flexmix" class="external-link"><code>flexmix</code></a>, and <a href="https://cran.r-project.org/package=lcmm" class="external-link"><code>lcmm</code></a>) behind a small set of accessors, so the GRoLTS diagnostics and plotting work the same regardless of engine.</li>
 <li>
 <strong>GRoLTS diagnostics built in.</strong> Entropy, average posterior probability of assignment (APPA), odds of correct classification (OCC), and group proportions are computed once from the posterior matrix.</li>
 <li>
@@ -75,9 +75,12 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"fabregithub/gbtmkit"</span><span class="op">)</span></span></code></pre></div>
-<p>The estimation engine is an optional dependency:</p>
+<p>The estimation engines are optional dependencies; install at least one:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"trajeR"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"trajeR"</span><span class="op">)</span>    <span class="co"># per-group polynomial degrees, L/EM/EMIRLS</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"flexmix"</span><span class="op">)</span>   <span class="co"># fast EM, one polynomial order for all groups</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"lcmm"</span><span class="op">)</span>      <span class="co"># hlme (gaussian) / thresholds link (binary)</span></span></code></pre></div>
+<p>Pick the backend per fit with <code>engine = "trajeR"</code> (default), <code>"flexmix"</code>, or <code>"lcmm"</code> in <code><a href="reference/gbtm_fit.html">gbtm_fit()</a></code> / <code><a href="reference/run_gbtm_pipeline.html">run_gbtm_pipeline()</a></code>.</p>
 </div>
 <div class="section level2">
 <h2 id="quick-start">Quick start<a class="anchor" aria-label="anchor" href="#quick-start"></a>

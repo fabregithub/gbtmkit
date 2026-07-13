@@ -19,6 +19,8 @@
   : Outcome families supported by an engine
 - [`gbtm_engine_methods()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_engine_methods.md)
   : Estimation methods offered by an engine
+- [`gbtm_engine_per_group_degrees()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_engine_per_group_degrees.md)
+  : Does an engine support per-group polynomial degrees?
 - [`gbtm_bic()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_accessors.md)
   [`gbtm_aic()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_accessors.md)
   [`gbtm_loglik()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_accessors.md)

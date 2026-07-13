@@ -14,9 +14,10 @@ walkthrough and the full function reference.
   outcomes run through the same specification; count and proportion
   families are mapped too.
 - **Engine-agnostic.** Estimation is delegated to interchangeable
-  backends (currently
-  [`trajeR`](https://cran.r-project.org/package=trajeR)) behind a small
-  set of accessors, so the GRoLTS diagnostics and plotting work the same
+  backends ([`trajeR`](https://cran.r-project.org/package=trajeR),
+  [`flexmix`](https://cran.r-project.org/package=flexmix), and
+  [`lcmm`](https://cran.r-project.org/package=lcmm)) behind a small set
+  of accessors, so the GRoLTS diagnostics and plotting work the same
   regardless of engine.
 - **GRoLTS diagnostics built in.** Entropy, average posterior
   probability of assignment (APPA), odds of correct classification
@@ -35,12 +36,20 @@ walkthrough and the full function reference.
 remotes::install_github("fabregithub/gbtmkit")
 ```
 
-The estimation engine is an optional dependency:
+The estimation engines are optional dependencies; install at least one:
 
 ``` r
 
-install.packages("trajeR")
+install.packages("trajeR")    # per-group polynomial degrees, L/EM/EMIRLS
+install.packages("flexmix")   # fast EM, one polynomial order for all groups
+install.packages("lcmm")      # hlme (gaussian) / thresholds link (binary)
 ```
+
+Pick the backend per fit with `engine = "trajeR"` (default),
+`"flexmix"`, or `"lcmm"` in
+[`gbtm_fit()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_fit.md)
+/
+[`run_gbtm_pipeline()`](https://fabregithub.github.io/gbtmkit/reference/run_gbtm_pipeline.md).
 
 ## Quick start
 
