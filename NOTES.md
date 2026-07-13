@@ -163,6 +163,7 @@ throughout.
 | 9fa95c4 | 2026-07-13 | Vignette: consistent headings; stages as real sub-headings |
 | 4d5a8ed | 2026-07-13 | Vignette: introduce the engine choice up front |
 | 4b17254 | 2026-07-13 | **v0.1.0**: README scope section ("does / does not do"), version bump, tag |
+| ddde39b | 2026-07-13 | Multi-start initialization (`n_starts`): k-means starts for trajeR, native for flexmix/lcmm |
 
 ### Build stages (as executed)
 
