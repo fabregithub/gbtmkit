@@ -24,7 +24,8 @@ evaluate_shapes(
   time_budget = Inf,
   max_fits = Inf,
   checkpoint = NULL,
-  verbose = TRUE
+  verbose = TRUE,
+  ...
 )
 ```
 
@@ -88,6 +89,13 @@ evaluate_shapes(
 - verbose:
 
   Print the run-time estimate and progress messages.
+
+- ...:
+
+  Passed on to
+  [`gbtm_fit()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_fit.md)
+  for every candidate fit (e.g. `n_starts`; note multi-start multiplies
+  the search cost).
 
 ## Value
 

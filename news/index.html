@@ -37,6 +37,10 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="development version" id="gbtmkit-development-version">gbtmkit (development version)<a class="anchor" aria-label="anchor" href="#gbtmkit-development-version"></a></h2>
+<ul><li>New <code>n_starts</code> argument on <code><a href="../reference/gbtm_fit.html">gbtm_fit()</a></code> (and, via <code>...</code>, on <code><a href="../reference/fit_gbtm.html">fit_gbtm()</a></code>, the stage functions, and <code><a href="../reference/run_gbtm_pipeline.html">run_gbtm_pipeline()</a></code>): multi-start initialization that keeps the best fit by BIC. Engine-specific starts: trajeR uses k-means partition starting values (its default initialization is deterministic), flexmix re-runs its random EM initialization, and lcmm delegates to <code><a href="https://cecileproust-lima.github.io/lcmm/reference/gridsearch.html" class="external-link">lcmm::gridsearch()</a></code>. On the shipped fixtures this escapes the known single-start local optima (empty/merged groups) and makes mixed per-group degrees usable on trajeR.</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.1.0" id="gbtmkit-010">gbtmkit 0.1.0<a class="anchor" aria-label="anchor" href="#gbtmkit-010"></a></h2>
 <ul><li><p>Third estimation engine: <code>lcmm</code> (<code>engine = "lcmm"</code>). Gaussian outcomes map to <code><a href="https://cecileproust-lima.github.io/lcmm/reference/hlme.html" class="external-link">lcmm::hlme()</a></code> and binary outcomes to <code>lcmm::lcmm(link = "thresholds")</code>, both as latent class growth models (<code>random = ~ -1</code>) with the canonical 1-class-fit initialization. Single optimizer; uniform polynomial order across groups (like flexmix).</p></li>
 <li><p>Second estimation engine: <code>flexmix</code> (<code>engine = "flexmix"</code>), proving the adapter interface generalizes. Supports binomial, gaussian, and poisson families with a single EM optimizer; the polynomial order is shared by all groups (<code><a href="../reference/gbtm_engine_per_group_degrees.html">gbtm_engine_per_group_degrees()</a></code>), and <code><a href="../reference/evaluate_shapes.html">evaluate_shapes()</a></code> sweeps uniform shapes for such engines.</p></li>
@@ -48,7 +52,8 @@
 <li><p><code><a href="../reference/run_gbtm_pipeline.html">run_gbtm_pipeline()</a></code> runs the whole workflow in one call and returns a <code>gbtm_result</code>; <code><a href="../reference/plot_trajectories.html">plot_trajectories()</a></code> draws fitted trajectories.</p></li>
 <li><p>Two synthetic example datasets, <code>sim_binary</code> and <code>sim_continuous</code>: ten occasions, four planted groups of mixed polynomial order (two linear, two cubic).</p></li>
 </ul></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">

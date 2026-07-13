@@ -85,6 +85,17 @@
 <strong>trajeR’s EMIRLS</strong> fails numerically (“solve(): solution not found”) on the 10-occasion binary fixture; <code><a href="reference/select_algorithm.html">select_algorithm()</a></code> records it and moves on, as designed.</li>
 </ul></div>
 <div class="section level2">
+<h2 id="findings-from-multi-start-initialization-2026-07-13-n_starts">Findings from multi-start initialization (2026-07-13, <code>n_starts</code>)<a class="anchor" aria-label="anchor" href="#findings-from-multi-start-initialization-2026-07-13-n_starts"></a></h2>
+<ul><li>
+<strong>trajeR’s default initialization is deterministic</strong> (quantile-based): re-running with different seeds gives identical fits, so multi-start must supply <code>paraminit</code>. Its layout (from source, per Method): first ng entries are membership <em>logits vs group 1</em> for <code>"L"</code> but <em>probabilities</em> for <code>"EM"</code>/<code>"EMIRLS"</code>; then per-group trajectory coefficients; then per-group residual sd (CNORM; with <code>ssigma=TRUE</code> only the first is used).</li>
+<li>
+<strong>Parameter-space noise is useless; k-means partition starts work.</strong> Random jitter of the default init either falls back into the same basin or lands in garbage. Partitioning subjects with k-means on their outcome vectors and fitting per-cluster polynomial regressions reaches the EM-quality optimum with the fast “L” optimizer (CNORM rep(1,4): 52906 vs 53012 default), and <strong>rescues mixed per-group degrees</strong>: binary c(1,3,3,1) reaches BIC 17110 vs 18175 default – better than any uniform-degree fit (18080).</li>
+<li>
+<strong>lcmm gridsearch NSE</strong>: <code>gridsearch()</code> re-parses the <code>m</code> call, so the fitting function must be bound under a plain name in the calling frame, and the <code>random()</code> in the <code>B = random(minit)</code> it builds is a <em>syntactic sentinel</em> – lcmm detects it from the unevaluated call after evaluation fails, so no <code>random</code> function may exist in that frame.</li>
+<li>
+<strong>trajeR’s POIS initialization requires overdispersion</strong> (its qgamma-based init NaNs when var(Y) &lt;= mean(Y)) – relevant for tests that fabricate count data.</li>
+</ul></div>
+<div class="section level2">
 <h2 id="precomputed-vignette-2026-07-13">Precomputed vignette (2026-07-13)<a class="anchor" aria-label="anchor" href="#precomputed-vignette-2026-07-13"></a></h2>
 <p>The getting-started vignette runs ~20 min of real fits, which made every CI / pkgdown build re-run them (~2 h on a GitHub runner). It is now precomputed:</p>
 <ul><li>

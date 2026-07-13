@@ -1,5 +1,22 @@
 # Changelog
 
+## gbtmkit (development version)
+
+- New `n_starts` argument on
+  [`gbtm_fit()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_fit.md)
+  (and, via `...`, on
+  [`fit_gbtm()`](https://fabregithub.github.io/gbtmkit/reference/fit_gbtm.md),
+  the stage functions, and
+  [`run_gbtm_pipeline()`](https://fabregithub.github.io/gbtmkit/reference/run_gbtm_pipeline.md)):
+  multi-start initialization that keeps the best fit by BIC.
+  Engine-specific starts: trajeR uses k-means partition starting values
+  (its default initialization is deterministic), flexmix re-runs its
+  random EM initialization, and lcmm delegates to
+  [`lcmm::gridsearch()`](https://cecileproust-lima.github.io/lcmm/reference/gridsearch.html).
+  On the shipped fixtures this escapes the known single-start local
+  optima (empty/merged groups) and makes mixed per-group degrees usable
+  on trajeR.
+
 ## gbtmkit 0.1.0
 
 - Third estimation engine: `lcmm` (`engine = "lcmm"`). Gaussian outcomes

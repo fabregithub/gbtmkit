@@ -86,7 +86,11 @@ run_gbtm_pipeline(
 
 - ...:
 
-  Passed to the underlying fitting calls.
+  Passed to the underlying fitting calls in every stage. In particular
+  `n_starts` (see
+  [`gbtm_fit()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_fit.md))
+  applies multi-start initialization throughout; note it multiplies the
+  cost of the shape search, which `max_fits`/`time_budget` still bound.
 
 ## Value
 

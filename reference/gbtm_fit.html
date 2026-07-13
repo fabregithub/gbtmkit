@@ -58,6 +58,7 @@ rest of the pipeline reads through the engine-agnostic accessors
 <span>  hessian <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  itermax <span class="op">=</span> <span class="fl">100L</span>,</span>
 <span>  seed <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  n_starts <span class="op">=</span> <span class="fl">1L</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -98,6 +99,15 @@ the chosen engine (ignored by engines with a single optimizer).</p></dd>
 
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
 <dd><p>Optional integer seed for reproducibility.</p></dd>
+
+
+<dt id="arg-n-starts">n_starts<a class="anchor" aria-label="anchor" href="#arg-n-starts"></a></dt>
+<dd><p>Number of initializations to try; the best fit by BIC is
+kept. The first start is the engine's default initialization; additional
+starts are engine-specific (trajeR: k-means partition starting values;
+flexmix: fresh random EM initializations; lcmm: <code><a href="https://cecileproust-lima.github.io/lcmm/reference/gridsearch.html" class="external-link">lcmm::gridsearch()</a></code>).
+Mixture fits can land in local optima – empty or merged groups are the
+telltale sign – and <code>n_starts</code> greater than 1 is the standard defense.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>

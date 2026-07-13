@@ -70,7 +70,8 @@ and an up-front run-time estimate.</p>
 <span>  time_budget <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>  max_fits <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>  checkpoint <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -131,6 +132,11 @@ resumes, skipping shapes already evaluated.</p></dd>
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
 <dd><p>Print the run-time estimate and progress messages.</p></dd>
+
+
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>Passed on to <code><a href="gbtm_fit.html">gbtm_fit()</a></code> for every candidate fit (e.g.
+<code>n_starts</code>; note multi-start multiplies the search cost).</p></dd>
 
 </dl></div>
     <div class="section level2">

@@ -127,7 +127,10 @@ to <code><a href="evaluate_shapes.html">evaluate_shapes()</a></code>.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Passed to the underlying fitting calls.</p></dd>
+<dd><p>Passed to the underlying fitting calls in every stage. In
+particular <code>n_starts</code> (see <code><a href="gbtm_fit.html">gbtm_fit()</a></code>) applies multi-start
+initialization throughout; note it multiplies the cost of the shape
+search, which <code>max_fits</code>/<code>time_budget</code> still bound.</p></dd>
 
 </dl></div>
     <div class="section level2">
