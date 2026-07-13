@@ -164,7 +164,9 @@ throughout.
 
 ## Current state
 
-- v0.1 functionally complete; CI green on all five platforms.
+- **v0.1.0 tagged (2026-07-13)**: three engines (trajeR / flexmix / lcmm), full
+  GRoLTS pipeline, precomputed vignette, README scope section; CI green on all
+  five platforms.
 - `R CMD check` 0/0/0 locally (including the pandoc-built vignette).
 - Tests: fast logic/mock/validation tests run everywhere (~1s); the 16 real-fit
   integration tests run locally (`devtools`, `NOT_CRAN=true`) and skip on CI/CRAN.

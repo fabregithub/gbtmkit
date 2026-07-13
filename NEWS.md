@@ -1,4 +1,4 @@
-# gbtmkit 0.0.0.9000
+# gbtmkit 0.1.0
 
 * Third estimation engine: `lcmm` (`engine = "lcmm"`). Gaussian outcomes map
   to `lcmm::hlme()` and binary outcomes to `lcmm::lcmm(link = "thresholds")`,
