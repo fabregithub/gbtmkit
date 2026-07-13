@@ -127,6 +127,7 @@ throughout.
 | 3a1fdf4 | 2026-07-12 | flexmix as a second estimation engine (uniform-degree capability) |
 | ba80163 | 2026-07-12 | lcmm as a third estimation engine (hlme / thresholds link) |
 | 038d2a2 | 2026-07-13 | Vignette: "Choosing an engine" section for all three backends |
+| 1de6584 | 2026-07-13 | Precompute the vignette (static .Rmd from .orig; CI builds in seconds) |
 
 ### Build stages (as executed)
 
