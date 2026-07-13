@@ -66,6 +66,24 @@ shapes crossing mid-study. Lessons:
   10-occasion binary fixture; `select_algorithm()` records it and moves on, as
   designed.
 
+## Precomputed vignette (2026-07-13)
+
+The getting-started vignette runs ~20 min of real fits, which made every CI /
+pkgdown build re-run them (~2 h on a GitHub runner). It is now precomputed:
+
+- **Source of truth**: `vignettes/getting-started.Rmd.orig` (executable,
+  `.Rbuildignore`d).
+- **Shipped file**: `vignettes/getting-started.Rmd` (static: outputs baked in
+  and `vignettes/getting-started-*.png` figures beside it, committed to git;
+  builds in seconds). A knitr output/message hook in the `.orig` strips
+  trajeR's optimizer chatter; `fig.path` is a file prefix because R CMD check
+  flags a `vignettes/figure/` directory as a knitr leftover.
+- **Regenerate** with `Rscript data-raw/precompile-vignette.R` after editing
+  the `.orig` or when demonstrated behavior changes, and commit the `.orig`,
+  the regenerated `.Rmd`, and the figures together.
+- Bug-fix verification does NOT require re-knitting: tests and direct runs
+  verify code; the vignette is refreshed only when its shown outputs matter.
+
 ## Bugs in the original script that the port fixes
 
 - Duplicated, mutually inconsistent PMS filters -> single robust min-across-group
