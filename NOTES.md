@@ -250,32 +250,38 @@ throughout.
   Getting started article (one-call pipeline, stage-by-stage flow, and binary +
   continuous examples) and the full function reference.
 
-## Possible next steps (not done)
+## Engine adapter notes (flexmix / lcmm, 2026-07-12)
 
-- Tag `v0.1.0`.
-- ~~Second engine adapter (`flexmix`) to prove the interface generalizes~~ —
-  done (2026-07-12). Notes: flexmix maps GBTM to a mixture of GLMs on long
-  data grouped by subject (`y ~ poly(t, d, raw = TRUE) | id`); binomial needs a
-  two-column `cbind(y, 1 - y)` response; `logLik`/`BIC`/`AIC` are S4 methods,
-  so accessors go through `stats4::`; per-component degrees via
-  `FLXMRglmfix(nested=)` collapse in practice, so the adapter requires uniform
-  degrees and `evaluate_shapes()` sweeps uniform shapes
+- **flexmix**: mixture of GLMs on long data grouped by subject
+  (`y ~ poly(t, d, raw = TRUE) | id`); binomial needs a two-column
+  `cbind(y, 1 - y)` response; `logLik`/`BIC`/`AIC` are S4 methods, so
+  accessors go through `stats4::`; per-component degrees via
+  `FLXMRglmfix(nested=)` collapse in practice, so the adapter requires
+  uniform degrees and `evaluate_shapes()` sweeps uniform shapes
   (`gbtm_engine_per_group_degrees()`); `flexmix::refit()` (the SE step) can
   produce NaN SEs on boundary parameters — warning, not error. On the binary
-  fixture the flexmix pipeline matches trajeR's recovery (0.895) and runs much
-  faster.
-- Third engine adapter (`lcmm`) — done (2026-07-12). Notes: GBTM = latent
-  class growth analysis, `random = ~ -1` with class-specific effects via
+  fixture the flexmix pipeline matches trajeR's recovery (0.895), much faster.
+- **lcmm**: LCGA via `random = ~ -1` with class-specific effects in
   `mixture =`; gaussian → `hlme()`, binary → `lcmm(link = "thresholds")`
-  (2-level ordinal ≈ probit trajectory model; conv=1 in ~30 s on the binary
-  fixture, recovery 0.896). ng > 1 requires starting values: fit ng = 1 first
-  and pass it as `B` (deterministic init). lcmm post-processing (`predictY`)
-  re-parses the stored `call`, so the adapter must patch `call$fixed` /
-  `call$mixture` with the actual formula objects after fitting. Model-implied
-  group sizes = softmax of the first ng-1 parameters (class-membership
-  intercepts, last class is reference). `mixture` is shared across classes, so
-  uniform degrees only — same capability flag as flexmix.
-- Multi-start initialization for CNORM.
+  (2-level ordinal ≈ probit trajectory model; recovery 0.896 on the binary
+  fixture). ng > 1 requires starting values: fit ng = 1 first and pass it as
+  `B`. Post-processing (`predictY`) re-parses the stored `call`, so the
+  adapter patches `call$fixed`/`call$mixture`/`call$classmb` with the actual
+  formula objects. Model-implied group sizes = softmax of the first ng-1
+  parameters (covariate-free fits only). `mixture` is shared across classes,
+  so uniform degrees only — same capability flag as flexmix.
+
+## Possible next steps (not done)
+
+- Combined vignette re-knit covering `n_starts`, `covariates =`,
+  `benchmark_engines()`, and `grolts_report()`.
+- Trajectory (time-varying) covariates.
+- Optionally make the shipped fixtures' covariates drive membership (data
+  regeneration; cascades into all baked numbers).
 - Consider a CRAN submission.
 - Optional: bump `JamesIves/github-pages-deploy-action` to clear its Node 20
   deprecation warning.
+
+Done along the way: v0.1.0 tag, flexmix + lcmm adapters, multi-start
+initialization, class-membership covariates, `benchmark_engines()`,
+`grolts_report()`, precomputed vignette (see History).
