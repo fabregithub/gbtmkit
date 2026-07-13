@@ -258,6 +258,7 @@ throughout.
 | 7a950b8 | 2026-07-13 | `grolts_report()`: pipeline result -> GRoLTS checklist reporting aid |
 | 78b3806 | 2026-07-13 | Vignette: grolts_report, n_starts, covariates, benchmark_engines |
 | a55f985 | 2026-07-13 | Time-varying trajectory covariates (`gbtm_spec(tcov=)`) on all engines |
+| 19717b1 | 2026-07-13 | Parallel multi-start and selection sweeps via future.apply (~2-2.6x) |
 
 ### Build stages (as executed)
 
