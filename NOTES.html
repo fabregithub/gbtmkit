@@ -94,7 +94,8 @@
 <li>
 <strong>Regenerate</strong> with <code>Rscript data-raw/precompile-vignette.R</code> after editing the <code>.orig</code> or when demonstrated behavior changes, and commit the <code>.orig</code>, the regenerated <code>.Rmd</code>, and the figures together.</li>
 <li>Bug-fix verification does NOT require re-knitting: tests and direct runs verify code; the vignette is refreshed only when its shown outputs matter.</li>
-</ul></div>
+</ul><p>The pkgdown workflow likewise builds with <code>examples = FALSE</code> (the reference examples are real fits, ~50 min on a runner; pages show the code without executed output). Since the examples are <code>\donttest</code>, nothing runs them automatically anymore – <strong>run <code>devtools::run_examples()</code> locally before a release</strong> (and after touching any roxygen example).</p>
+</div>
 <div class="section level2">
 <h2 id="bugs-in-the-original-script-that-the-port-fixes">Bugs in the original script that the port fixes<a class="anchor" aria-label="anchor" href="#bugs-in-the-original-script-that-the-port-fixes"></a></h2>
 <ul><li>Duplicated, mutually inconsistent PMS filters -&gt; single robust min-across-group summary columns in <code><a href="reference/apply_grolts_criteria.html">apply_grolts_criteria()</a></code>.</li>

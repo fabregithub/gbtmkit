@@ -114,23 +114,15 @@ variance is shared across groups. Default <code>FALSE</code>.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sim_binary"</span>, package <span class="op">=</span> <span class="st">"gbtmkit"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">spec</span> <span class="op">&lt;-</span> <span class="fu">gbtm_spec</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="va">sim_binary</span>,</span></span>
-<span class="r-in"><span>  outcomes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"y"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  time     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"t"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  id       <span class="op">=</span> <span class="st">"id"</span>,</span></span>
-<span class="r-in"><span>  family   <span class="op">=</span> <span class="st">"binomial"</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">spec</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;gbtm_spec&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   family     : binomial</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   subjects   : 1500</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   occasions  : 10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   outcomes   : y1, y2, y3, y4, y5, y6, y7, y8, y9, y10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   time       : t1, t2, t3, t4, t5, t6, t7, t8, t9, t10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   id         : id</span>
-</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sim_binary"</span>, package <span class="op">=</span> <span class="st">"gbtmkit"</span><span class="op">)</span></span>
+<span><span class="va">spec</span> <span class="op">&lt;-</span> <span class="fu">gbtm_spec</span><span class="op">(</span></span>
+<span>  <span class="va">sim_binary</span>,</span>
+<span>  outcomes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"y"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>,</span>
+<span>  time     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"t"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>,</span>
+<span>  id       <span class="op">=</span> <span class="st">"id"</span>,</span>
+<span>  family   <span class="op">=</span> <span class="st">"binomial"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">spec</span></span></code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
