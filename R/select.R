@@ -55,6 +55,8 @@
 #' Fits a fixed group number and shape under each candidate estimation method
 #' and picks the one with the lowest BIC. For engines with a single optimizer
 #' (see [gbtm_engine_methods()]) this is a no-op that returns that method.
+#' The candidate fits are independent and run in parallel under a
+#' [future::plan()] when the future.apply package is installed.
 #'
 #' @param spec A [gbtm_spec].
 #' @param engine Engine name; see [gbtm_engines()].
@@ -94,18 +96,23 @@ select_algorithm <- function(spec,
     stop("engine '", engine, "' offers no selectable methods.", call. = FALSE)
   }
 
-  rows <- vector("list", length(methods))
-  fits <- vector("list", length(methods))
+  # Method fits are independent: run through .fit_map (parallel under a
+  # future::plan()); warnings for failures are emitted afterwards, in order.
+  res <- .fit_map(seq_along(methods), function(i) {
+    .try_fit(spec, engine, n_groups, degrees, methods[i],
+             hessian, itermax, seed, ...)
+  })
+  fits <- lapply(res, `[[`, "fit")
+  rows <- lapply(seq_along(methods), function(i) {
+    data.frame(method = methods[i], bic = res[[i]]$bic, aic = res[[i]]$aic,
+               ok = res[[i]]$ok)
+  })
   for (i in seq_along(methods)) {
-    r <- .try_fit(spec, engine, n_groups, degrees, methods[i],
-                  hessian, itermax, seed, ...)
-    fits[[i]] <- r$fit
-    rows[[i]] <- data.frame(method = methods[i], bic = r$bic, aic = r$aic,
-                            ok = r$ok)
-    if (!r$ok) {
+    if (!res[[i]]$ok) {
       warning(sprintf("method '%s' did not yield a finite criterion%s.",
                       methods[i],
-                      if (!is.na(r$message)) paste0(": ", r$message) else ""),
+                      if (!is.na(res[[i]]$message))
+                        paste0(": ", res[[i]]$message) else ""),
               call. = FALSE)
     }
   }
@@ -120,7 +127,9 @@ select_algorithm <- function(spec,
 #'
 #' Fits the model for each candidate number of groups and picks the one with the
 #' lowest BIC. Each candidate uses a polynomial degree of `degree` for every
-#' group unless a per-candidate `degrees` list is supplied.
+#' group unless a per-candidate `degrees` list is supplied. The candidate fits
+#' are independent and run in parallel under a [future::plan()] when the
+#' future.apply package is installed.
 #'
 #' @param spec A [gbtm_spec].
 #' @param engine Engine name; see [gbtm_engines()].
@@ -168,19 +177,25 @@ select_n_groups <- function(spec,
     }
   }
 
-  rows <- vector("list", length(candidates))
-  fits <- vector("list", length(candidates))
-  for (i in seq_along(candidates)) {
+  # Candidate fits are independent: run through .fit_map (parallel under a
+  # future::plan()); warnings for failures are emitted afterwards, in order.
+  res <- .fit_map(seq_along(candidates), function(i) {
     ng  <- candidates[i]
     deg <- if (is.null(degrees)) rep(as.integer(degree), ng) else degrees[[i]]
     r <- .try_fit(spec, engine, ng, deg, method, hessian, itermax, seed, ...)
-    fits[[i]] <- r$fit
-    rows[[i]] <- data.frame(n_groups = ng,
-                            degrees = paste(deg, collapse = ","),
-                            bic = r$bic, aic = r$aic, ok = r$ok)
-    if (!r$ok) {
+    r$row <- data.frame(n_groups = ng,
+                        degrees = paste(deg, collapse = ","),
+                        bic = r$bic, aic = r$aic, ok = r$ok)
+    r
+  })
+  fits <- lapply(res, `[[`, "fit")
+  rows <- lapply(res, `[[`, "row")
+  for (i in seq_along(res)) {
+    if (!res[[i]]$ok) {
       warning(sprintf("n_groups = %d did not yield a finite criterion%s.",
-                      ng, if (!is.na(r$message)) paste0(": ", r$message) else ""),
+                      candidates[i],
+                      if (!is.na(res[[i]]$message))
+                        paste0(": ", res[[i]]$message) else ""),
               call. = FALSE)
     }
   }

@@ -28,6 +28,7 @@ Suggests:
     trajeR,
     flexmix,
     lcmm,
+    future,
     future.apply,
     progressr,
     ggplot2,

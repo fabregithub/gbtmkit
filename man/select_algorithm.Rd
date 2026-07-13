@@ -42,6 +42,8 @@ and the fitted models.
 Fits a fixed group number and shape under each candidate estimation method
 and picks the one with the lowest BIC. For engines with a single optimizer
 (see \code{\link[=gbtm_engine_methods]{gbtm_engine_methods()}}) this is a no-op that returns that method.
+The candidate fits are independent and run in parallel under a
+\code{\link[future:plan]{future::plan()}} when the future.apply package is installed.
 }
 \examples{
 \donttest{

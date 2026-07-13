@@ -92,6 +92,9 @@ gbtm_engine_per_group_degrees <- function(engine = gbtm_engines()) {
 #'   flexmix: fresh random EM initializations; lcmm: [lcmm::gridsearch()]).
 #'   Mixture fits can land in local optima -- empty or merged groups are the
 #'   telltale sign -- and `n_starts` greater than 1 is the standard defense.
+#'   Independent starts run in parallel under a [future::plan()] when the
+#'   future.apply package is installed; with a `seed`, results are identical
+#'   under any plan.
 #' @param ... Passed on to the underlying engine call.
 #' @return A `gbtm_fit` object (subclassed per engine).
 #' @export
@@ -222,6 +225,22 @@ print.gbtm_fit <- function(x, ...) {
 }
 
 # --- shared helpers ----------------------------------------------------------
+
+# Map over independent model fits: parallel via future.apply when it is
+# installed (the user controls workers with future::plan(); the default
+# sequential plan behaves like lapply), plain lapply otherwise.
+# future.seed = TRUE gives each task a parallel-safe RNG stream; code that
+# takes an explicit `seed` still calls set.seed() inside the task, so seeded
+# results are identical under any plan. Nested maps (e.g. parallel candidates
+# whose fits each run multi-start) are safe: future runs nested futures
+# sequentially unless the user configures a nested plan.
+.fit_map <- function(X, FUN) {
+  if (requireNamespace("future.apply", quietly = TRUE)) {
+    future.apply::future_lapply(X, FUN, future.seed = TRUE)
+  } else {
+    lapply(X, FUN)
+  }
+}
 
 # Numerically stable softmax over a vector.
 .softmax <- function(z) {

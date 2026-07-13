@@ -45,7 +45,9 @@ of groups), and the fitted models.
 \description{
 Fits the model for each candidate number of groups and picks the one with the
 lowest BIC. Each candidate uses a polynomial degree of \code{degree} for every
-group unless a per-candidate \code{degrees} list is supplied.
+group unless a per-candidate \code{degrees} list is supplied. The candidate fits
+are independent and run in parallel under a \code{\link[future:plan]{future::plan()}} when the
+future.apply package is installed.
 }
 \examples{
 \donttest{

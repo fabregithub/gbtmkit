@@ -133,6 +133,28 @@ class-specific). Gotchas:
 - **trajeR paraminit with TCOV**: delta block (ng x nw, zeros as start) sits
   at the very end; the k-means multi-start appends it.
 
+## Findings from parallelization (2026-07-13, `.fit_map` via future.apply)
+
+Independent fits (multi-start starts; selection-stage candidates/methods) run
+through `.fit_map`, which uses `future.apply::future_lapply(future.seed=TRUE)`
+when installed; the user controls workers via `future::plan()`. Notes:
+
+- **Speedup is bounded by the slowest fit**: measured 2.6x for 5-way
+  multi-start and 2.0x for a 4-candidate sweep (the 4-group fit dominates).
+- **Seeded determinism holds under any plan** (each task set.seed()s itself;
+  verified bit-identical BICs sequential vs multicore).
+- **trajeR speed dead ends, measured**: BLAS threading is irrelevant (44.0 s
+  vs 43.6 s at 1 vs 8 OpenBLAS threads -- per-subject matrices too small),
+  and `itermax` has no "loose search" headroom (the optimizer self-terminates
+  at ~50-60 iterations; itermax 60/100/400 identical, 30 truncates to a worse
+  BIC).
+- **Tests use `plan(multicore)`** (fork): multisession workers cannot
+  loadNamespace a devtools::load_all package; fork inherits it. Guarded by
+  `future::supportsMulticore()` (unavailable on Windows/RStudio).
+- Remaining (unimplemented) speed ideas: warm starts in the shape search via
+  `paraminit` from the incumbent; subsample-based search; hybrid workflow
+  (select K with flexmix, fit with trajeR).
+
 ## Findings from the engine benchmark (2026-07-13, `benchmark_engines()`)
 
 `data-raw/benchmark-scale.R` at n = 2000 / 20000 (10 occasions, 4 groups,

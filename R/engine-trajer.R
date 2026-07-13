@@ -137,27 +137,30 @@
   }
 
   # Start 1: trajeR's default (deterministic) initialization. Further starts
-  # use k-means partition starting values; the best finite BIC wins.
-  if (!is.null(seed)) set.seed(seed)
-  raw <- do.call(trajeR::trajeR, args)
-  best_bic   <- as.numeric(trajeR::trajeRBIC(raw))
-  start_bics <- best_bic
-  if (n_starts > 1L) {
-    for (s in 2:n_starts) {
+  # use k-means partition starting values; the best finite BIC wins. The
+  # starts are independent, so they run through .fit_map (parallel under a
+  # future::plan()); per-start seeding keeps results identical to sequential.
+  runs <- .fit_map(seq_len(n_starts), function(s) {
+    a <- args
+    if (s == 1L) {
+      if (!is.null(seed)) set.seed(seed)
+    } else {
       set.seed((if (is.null(seed)) 0L else seed) + s - 1L)
-      cand <- tryCatch({
-        args$paraminit <- .trajer_kmeans_start(spec, n_groups, degrees, method)
-        do.call(trajeR::trajeR, args)
-      }, error = function(e) NULL)
-      bic <- if (is.null(cand)) NA_real_ else
-        tryCatch(as.numeric(trajeR::trajeRBIC(cand)), error = function(e) NA_real_)
-      start_bics <- c(start_bics, bic)
-      if (is.finite(bic) && (!is.finite(best_bic) || bic < best_bic)) {
-        best_bic <- bic
-        raw <- cand
-      }
+      a$paraminit <- .trajer_kmeans_start(spec, n_groups, degrees, method)
     }
+    tryCatch(do.call(trajeR::trajeR, a), error = function(e) e)
+  })
+  # A failure of the default initialization is a real error, not a bad start.
+  if (inherits(runs[[1L]], "error")) stop(runs[[1L]])
+  start_bics <- vapply(runs, function(r) {
+    if (inherits(r, "error")) NA_real_ else
+      tryCatch(as.numeric(trajeR::trajeRBIC(r)), error = function(e) NA_real_)
+  }, numeric(1))
+  best <- which.min(start_bics)
+  if (!length(best)) {
+    stop("no trajeR start produced a finite BIC.", call. = FALSE)
   }
+  raw <- runs[[best]]
 
   structure(
     list(

@@ -90,22 +90,21 @@
     raw <- one_fit(1L)
     start_bics <- as.numeric(stats4::BIC(raw))
   } else {
-    raw <- NULL
-    best_bic <- Inf
-    start_bics <- numeric(0)
-    for (s in seq_len(n_starts)) {
-      cand <- tryCatch(one_fit(s), error = function(e) NULL)
-      bic <- if (is.null(cand)) NA_real_ else
-        tryCatch(as.numeric(stats4::BIC(cand)), error = function(e) NA_real_)
-      start_bics <- c(start_bics, bic)
-      if (is.finite(bic) && bic < best_bic) {
-        best_bic <- bic
-        raw <- cand
-      }
-    }
-    if (is.null(raw)) {
+    # Independent starts run through .fit_map (parallel under a
+    # future::plan()); per-start seeding keeps results identical to
+    # sequential.
+    runs <- .fit_map(seq_len(n_starts), function(s) {
+      tryCatch(one_fit(s), error = function(e) NULL)
+    })
+    start_bics <- vapply(runs, function(r) {
+      if (is.null(r)) NA_real_ else
+        tryCatch(as.numeric(stats4::BIC(r)), error = function(e) NA_real_)
+    }, numeric(1))
+    best <- which.min(start_bics)
+    if (!length(best)) {
       stop("all flexmix starts failed to produce a finite BIC.", call. = FALSE)
     }
+    raw <- runs[[best]]
   }
 
   k_actual <- length(flexmix::prior(raw))

@@ -41,7 +41,10 @@ kept. The first start is the engine's default initialization; additional
 starts are engine-specific (trajeR: k-means partition starting values;
 flexmix: fresh random EM initializations; lcmm: \code{\link[lcmm:gridsearch]{lcmm::gridsearch()}}).
 Mixture fits can land in local optima -- empty or merged groups are the
-telltale sign -- and \code{n_starts} greater than 1 is the standard defense.}
+telltale sign -- and \code{n_starts} greater than 1 is the standard defense.
+Independent starts run in parallel under a \code{\link[future:plan]{future::plan()}} when the
+future.apply package is installed; with a \code{seed}, results are identical
+under any plan.}
 
 \item{...}{Passed on to the underlying engine call.}
 }
