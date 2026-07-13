@@ -1,5 +1,11 @@
 # gbtmkit (development version)
 
+* New `benchmark_engines()`: fits the same model with each installed engine
+  and reports wall-clock time alongside the engine-neutral classification
+  diagnostics, so the fastest adequate backend can be picked per problem
+  (fit a subsample, then commit). Skips -- with a recorded note -- engines
+  that are missing, don't support the family, or need uniform degrees.
+  `data-raw/benchmark-scale.R` runs it at increasing data scale.
 * Class-membership covariates ("risk factors"): `gbtm_spec(covariates = ...)`
   now feeds a multinomial membership model on every engine (trajeR `Risk`,
   flexmix concomitant `FLXPmultinom`, lcmm `classmb`). Columns may be numeric,

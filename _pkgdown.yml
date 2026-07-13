@@ -16,6 +16,7 @@ reference:
   - gbtm_engine_families
   - gbtm_engine_methods
   - gbtm_engine_per_group_degrees
+  - benchmark_engines
   - gbtm_accessors
   - gbtm_predict
 - title: Diagnostics

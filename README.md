@@ -46,7 +46,9 @@ install.packages("lcmm")      # hlme (gaussian) / thresholds link (binary)
 ```
 
 Pick the backend per fit with `engine = "trajeR"` (default), `"flexmix"`, or
-`"lcmm"` in `gbtm_fit()` / `run_gbtm_pipeline()`.
+`"lcmm"` in `gbtm_fit()` / `run_gbtm_pipeline()` -- and let
+`benchmark_engines()` time them on (a subsample of) your own data when speed
+matters.
 
 ## Quick start
 
