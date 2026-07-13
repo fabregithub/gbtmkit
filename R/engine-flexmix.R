@@ -60,6 +60,11 @@
 
   long <- .spec_long(spec)
   rhs <- if (degree == 0L) "1" else sprintf("poly(t, %d, raw = TRUE)", degree)
+  # Time-varying covariates enter the component formula (component-specific
+  # coefficients, like the polynomial terms).
+  if (!is.null(spec$tcov)) {
+    rhs <- paste(c(rhs, paste0("`", names(spec$tcov), "`")), collapse = " + ")
+  }
   lhs <- if (spec$family == "binomial") "cbind(y, 1 - y)" else "y"
   fml <- stats::as.formula(paste(lhs, "~", rhs, "| .gid"))
 
@@ -187,9 +192,12 @@ gbtm_predict.gbtm_fit_flexmix <- function(fit, times = NULL, n = 100L, ...) {
   if (is.null(times)) times <- seq(min(A), max(A), length.out = n)
 
   # Coefficient rows (Intercept, t, t^2, ...) per component; gaussian fits also
-  # carry a sigma row, which is not part of the trajectory.
+  # carry a sigma row, and time-varying covariates their own coefficient rows.
+  # Keep only the intercept + polynomial terms: trajectories are computed at
+  # tcov = 0.
   pars <- as.matrix(flexmix::parameters(fit$raw))
-  B <- pars[grepl("^coef\\.", rownames(pars)), , drop = FALSE]
+  keep <- grepl("^coef\\.\\(Intercept\\)$|^coef\\.poly\\(", rownames(pars))
+  B <- pars[keep, , drop = FALSE]
 
   inv_link <- switch(fit$family,
     binomial = stats::plogis,

@@ -65,7 +65,10 @@
       c(log(pr[k] / pr[1]), rep(0, ncol(X)))
     }))
   }
-  c(first, b, sig)
+  # Time-varying covariate effects (delta, per group) sit at the end of
+  # trajeR's parameter vector; start them at zero.
+  delta0 <- rep(0, n_groups * length(spec$tcov))
+  c(first, b, sig, delta0)
 }
 
 # Fit and wrap. Called via gbtm_fit(spec, engine = "trajeR", ...).
@@ -108,6 +111,9 @@
   # Class-membership covariates (multinomial "risk factor" model).
   X <- .spec_X(spec)
   if (!is.null(X)) args$Risk <- X
+  # Time-varying (trajectory) covariates, covariate-major wide blocks.
+  TC <- .spec_TCOV(spec)
+  if (!is.null(TC)) args$TCOV <- TC
   # Continuous (CNORM) options.
   if (spec$family == "gaussian") {
     args$ssigma <- isTRUE(spec$ssigma)
@@ -191,9 +197,14 @@ gbtm_loglik.gbtm_fit_trajer <- function(fit, ...) {
 
 #' @export
 gbtm_posterior.gbtm_fit_trajer <- function(fit, ...) {
-  gp <- trajeR::GroupProb(fit$raw,
-                          Y = .spec_Y(fit$spec),
-                          A = .spec_A(fit$spec))
+  # TCOV and X (membership covariates) must be passed again or GroupProb
+  # evaluates the wrong likelihood/priors.
+  args <- list(fit$raw, Y = .spec_Y(fit$spec), A = .spec_A(fit$spec))
+  TC <- .spec_TCOV(fit$spec)
+  if (!is.null(TC)) args$TCOV <- TC
+  X <- .spec_X(fit$spec)
+  if (!is.null(X)) args$X <- X
+  gp <- do.call(trajeR::GroupProb, args)
   gp <- as.matrix(as.data.frame(gp))
   dimnames(gp) <- list(NULL, paste0("group", seq_len(ncol(gp))))
   gp

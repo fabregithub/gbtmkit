@@ -132,12 +132,16 @@ grolts_report <- function(result, file = NULL) {
     paste(result$chosen_degrees, collapse = ", "))
 
   # -- covariates ---------------------------------------------------------
-  cov_detail <- if (is.null(spec$covariates)) {
+  cov_parts <- c(
+    if (!is.null(spec$covariates)) sprintf(
+      "Class-membership covariates (multinomial model): %s.",
+      paste(spec$covariates, collapse = ", ")),
+    if (!is.null(spec$tcov)) sprintf(
+      "Time-varying trajectory covariates (group-specific effects; trajectories reported at tcov = 0): %s.",
+      paste(names(spec$tcov), collapse = ", "))
+  )
+  cov_detail <- if (length(cov_parts)) paste(cov_parts, collapse = " ") else
     "No covariates were used."
-  } else {
-    sprintf("Class-membership covariates (multinomial model): %s. Trajectories are functions of time only.",
-            paste(spec$covariates, collapse = ", "))
-  }
 
   # -- starts / iterations ------------------------------------------------
   starts_detail <- sprintf(

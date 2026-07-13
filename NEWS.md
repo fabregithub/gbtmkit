@@ -1,5 +1,13 @@
 # gbtmkit (development version)
 
+* Time-varying (trajectory) covariates: `gbtm_spec(tcov = list(w = c("w1",
+  ...)))` -- occasion-level variables that shift the outcome within a group,
+  with group-specific coefficients on every engine (trajeR `TCOV`; added to
+  the component/class formula for flexmix and lcmm). Fitted trajectories from
+  `gbtm_predict()` / `plot_trajectories()` are computed at `tcov = 0`.
+  `gbtm_posterior()` for trajeR now passes `TCOV`/`Risk` through to
+  `GroupProb()` (required with `tcov`; a no-op numerically for membership
+  covariates).
 * New `grolts_report()`: maps a `run_gbtm_pipeline()` result onto the GRoLTS
   checklist (van de Schoot et al. 2017). Items the pipeline can answer --
   time metric, software and engine versions, shape search, starting values

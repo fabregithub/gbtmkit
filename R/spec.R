@@ -44,6 +44,15 @@ gbtm_families <- function() {
 #'   model, lcmm `classmb`). Columns may be numeric, logical, or
 #'   factor/character (expanded via [stats::model.matrix()] where the engine
 #'   needs a numeric design) and must contain no missing values.
+#' @param tcov Optional *time-varying* (trajectory) covariates: a named list,
+#'   one element per covariate, each a character vector of column names of the
+#'   same length as `outcomes` (wide format, one column per occasion). These
+#'   shift the outcome *within* a group with group-specific coefficients
+#'   (trajeR `TCOV`; added to the component/class formula for flexmix and
+#'   lcmm). Columns must be numeric with no missing values. Fitted
+#'   trajectories from [gbtm_predict()] / [plot_trajectories()] are computed
+#'   at `tcov = 0`, so code these covariates with a meaningful zero (e.g.
+#'   0/1 exposure, or centered).
 #' @param ymin,ymax Optional censoring bounds for continuous (`"gaussian"`)
 #'   outcomes; passed through to engines that support censored-normal models.
 #' @param ssigma Logical; for continuous outcomes, whether the residual
@@ -69,6 +78,7 @@ gbtm_spec <- function(data,
                       id = NULL,
                       family = gbtm_families(),
                       covariates = NULL,
+                      tcov = NULL,
                       ymin = NULL,
                       ymax = NULL,
                       ssigma = FALSE) {
@@ -119,6 +129,33 @@ gbtm_spec <- function(data,
       }
     }
   }
+  if (!is.null(tcov)) {
+    if (!is.list(tcov) || is.null(names(tcov)) || any(!nzchar(names(tcov)))) {
+      stop("`tcov` must be a named list of column-name vectors.",
+           call. = FALSE)
+    }
+    if (any(names(tcov) %in% c("y", "t", ".gid"))) {
+      stop("`tcov` names 'y', 't', and '.gid' are reserved.", call. = FALSE)
+    }
+    for (nm in names(tcov)) {
+      cols <- tcov[[nm]]
+      .check_chr(cols, sprintf("tcov$%s", nm))
+      if (length(cols) != length(outcomes)) {
+        stop(sprintf(
+          "`tcov$%s` must name one column per occasion (%d), got %d.",
+          nm, length(outcomes), length(cols)), call. = FALSE)
+      }
+      .check_present(data, cols, sprintf("tcov$%s", nm))
+      W <- as.matrix(data[, cols, drop = FALSE])
+      if (!is.numeric(W)) {
+        stop(sprintf("`tcov$%s` columns must be numeric.", nm), call. = FALSE)
+      }
+      if (anyNA(W)) {
+        stop(sprintf("`tcov$%s` columns contain missing values.", nm),
+             call. = FALSE)
+      }
+    }
+  }
 
   # --- id --------------------------------------------------------------------
   if (!is.null(id)) {
@@ -165,6 +202,7 @@ gbtm_spec <- function(data,
       id         = id,
       family     = family,
       covariates = covariates,
+      tcov       = tcov,
       ymin       = ymin,
       ymax       = ymax,
       ssigma     = ssigma,
@@ -231,6 +269,22 @@ gbtm_spec <- function(data,
   if (is.null(spec$id)) seq_len(spec$n_subjects) else spec$data[[spec$id]]
 }
 
+# Time-varying (trajectory) covariates as a named list of subjects x occasions
+# matrices; NULL when the spec has none.
+.spec_W <- function(spec) {
+  if (is.null(spec$tcov)) return(NULL)
+  lapply(spec$tcov, function(cols) {
+    as.matrix(spec$data[, cols, drop = FALSE])
+  })
+}
+
+# trajeR's TCOV layout: covariate-major column blocks, n x (occasions * nw).
+.spec_TCOV <- function(spec) {
+  W <- .spec_W(spec)
+  if (is.null(W)) return(NULL)
+  do.call(cbind, unname(W))
+}
+
 # Class-membership covariate design matrix (subjects x p), no intercept
 # column; NULL when the spec has no covariates. Factors expand via
 # model.matrix (covariates are validated NA-free, so rows stay aligned).
@@ -259,6 +313,10 @@ print.gbtm_spec <- function(x, ...) {
   cat(sprintf("  id         : %s\n", if (is.null(x$id)) "<row number>" else x$id))
   if (!is.null(x$covariates)) {
     cat(sprintf("  covariates : %s\n", paste(x$covariates, collapse = ", ")))
+  }
+  if (!is.null(x$tcov)) {
+    cat(sprintf("  tcov       : %s (time-varying)\n",
+                paste(names(x$tcov), collapse = ", ")))
   }
   if (x$family == "gaussian" && (!is.null(x$ymin) || !is.null(x$ymax))) {
     cat(sprintf("  censoring  : [%s, %s]\n",

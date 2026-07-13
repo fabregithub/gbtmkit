@@ -246,6 +246,12 @@ print.gbtm_fit <- function(x, ...) {
   for (v in spec$covariates) {
     long[[v]] <- rep(spec$data[[v]], times = ncol(Y))
   }
+  # Time-varying covariates: same column-major flattening as y/t keeps rows
+  # aligned.
+  for (nm in names(spec$tcov)) {
+    long[[nm]] <- as.vector(as.matrix(spec$data[, spec$tcov[[nm]],
+                                                drop = FALSE]))
+  }
   long[stats::complete.cases(long), , drop = FALSE]
 }
 

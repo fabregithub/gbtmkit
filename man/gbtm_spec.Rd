@@ -11,6 +11,7 @@ gbtm_spec(
   id = NULL,
   family = gbtm_families(),
   covariates = NULL,
+  tcov = NULL,
   ymin = NULL,
   ymax = NULL,
   ssigma = FALSE
@@ -40,6 +41,16 @@ themselves. Supported by every engine (trajeR \code{Risk}, flexmix concomitant
 model, lcmm \code{classmb}). Columns may be numeric, logical, or
 factor/character (expanded via \code{\link[stats:model.matrix]{stats::model.matrix()}} where the engine
 needs a numeric design) and must contain no missing values.}
+
+\item{tcov}{Optional \emph{time-varying} (trajectory) covariates: a named list,
+one element per covariate, each a character vector of column names of the
+same length as \code{outcomes} (wide format, one column per occasion). These
+shift the outcome \emph{within} a group with group-specific coefficients
+(trajeR \code{TCOV}; added to the component/class formula for flexmix and
+lcmm). Columns must be numeric with no missing values. Fitted
+trajectories from \code{\link[=gbtm_predict]{gbtm_predict()}} / \code{\link[=plot_trajectories]{plot_trajectories()}} are computed
+at \code{tcov = 0}, so code these covariates with a meaningful zero (e.g.
+0/1 exposure, or centered).}
 
 \item{ymin, ymax}{Optional censoring bounds for continuous (\code{"gaussian"})
 outcomes; passed through to engines that support censored-normal models.}

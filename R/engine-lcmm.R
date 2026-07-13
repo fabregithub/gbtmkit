@@ -56,6 +56,11 @@
 
   long <- .spec_long(spec)
   rhs <- if (degree == 0L) "1" else sprintf("poly(t, %d, raw = TRUE)", degree)
+  # Time-varying covariates enter both `fixed` and `mixture`, making their
+  # coefficients class-specific (parity with trajeR's TCOV and flexmix).
+  if (!is.null(spec$tcov)) {
+    rhs <- paste(c(rhs, paste0("`", names(spec$tcov), "`")), collapse = " + ")
+  }
   fixed   <- stats::as.formula(paste("y ~", rhs))
   mixture <- stats::as.formula(paste("~", rhs))
 
@@ -214,6 +219,8 @@ gbtm_predict.gbtm_fit_lcmm <- function(fit, times = NULL, n = 100L, ...) {
     nd[[v]] <- if (is.numeric(col)) mean(col) else
       rep(col[1], length(times))
   }
+  # Trajectories are computed at tcov = 0 (see ?gbtm_spec).
+  for (nm in names(fit$spec$tcov)) nd[[nm]] <- 0
   pred <- lcmm::predictY(fit$raw, newdata = nd, var.time = "t")$pred
   pred <- as.matrix(pred)
 
