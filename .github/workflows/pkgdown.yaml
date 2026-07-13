@@ -40,7 +40,11 @@ jobs:
           needs: website
 
       - name: Build site
-        run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
+        # examples = FALSE: the reference examples are real model fits (~50 min
+        # on a runner); pages show the example code without executed output.
+        # They are `\donttest`, so nothing else runs them either -- execute
+        # devtools::run_examples() locally before releases (see NOTES.md).
+        run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE, examples = FALSE)
         shell: Rscript {0}
 
       - name: Deploy to GitHub pages 🚀

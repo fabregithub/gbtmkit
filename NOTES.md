@@ -84,6 +84,12 @@ pkgdown build re-run them (~2 h on a GitHub runner). It is now precomputed:
 - Bug-fix verification does NOT require re-knitting: tests and direct runs
   verify code; the vignette is refreshed only when its shown outputs matter.
 
+The pkgdown workflow likewise builds with `examples = FALSE` (the reference
+examples are real fits, ~50 min on a runner; pages show the code without
+executed output). Since the examples are `\donttest`, nothing runs them
+automatically anymore -- **run `devtools::run_examples()` locally before a
+release** (and after touching any roxygen example).
+
 ## Bugs in the original script that the port fixes
 
 - Duplicated, mutually inconsistent PMS filters -> single robust min-across-group
