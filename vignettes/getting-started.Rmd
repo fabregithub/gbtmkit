@@ -52,7 +52,7 @@ head(sim_binary)
 #> 6          4
 ```
 
-## 1. Describe the model with a spec
+## Describe the model with a spec
 
 `gbtm_spec()` records *what* to model -- the outcome and time columns (by name),
 the id, and the outcome family -- and validates it, independent of which engine
@@ -77,7 +77,7 @@ spec
 #>   id         : id
 ```
 
-## 2. Run the whole pipeline in one call
+## Run the whole pipeline in one call
 
 `run_gbtm_pipeline()` performs algorithm selection (when the engine offers a
 choice), group-number selection, the polynomial-shape search with GRoLTS
@@ -146,7 +146,7 @@ summary(res)
 #> 325 290 572 313
 ```
 
-## 3. Inspect and plot
+## Inspect and plot
 
 `gbtm_diagnostics()` gives the GRoLTS classification diagnostics, and
 `plot_trajectories()` draws the fitted group trajectories with the observed
@@ -187,15 +187,16 @@ head(res$assignment)
 #> 6  6     3 2.151267e-10 1.157310e-04 9.264874e-01 0.0733968257
 ```
 
-## 4. Or run the stages individually
+## Run the stages individually
 
 `run_gbtm_pipeline()` is a convenience wrapper. For full control you can run each
 GRoLTS stage yourself and inspect the result before moving on -- this is exactly
 what the wrapper does internally.
 
-**Stage 1 -- choose the estimation algorithm.** trajeR offers `"L"`, `"EM"` and
-`"EMIRLS"`; the one with the lowest BIC is selected. (Engines with a single
-optimizer skip this stage.)
+### Stage 1: choose the estimation algorithm
+
+trajeR offers `"L"`, `"EM"` and `"EMIRLS"`; the one with the lowest BIC is
+selected. (Engines with a single optimizer skip this stage.)
 
 
 ``` r
@@ -209,8 +210,10 @@ algo
 #>   best: L
 ```
 
-**Stage 2 -- choose the number of groups** by BIC over a set of candidates.
-Quadratic shapes are used while sweeping: with curved trajectories like these,
+### Stage 2: choose the number of groups
+
+The number of groups is chosen by BIC over a set of candidates. Quadratic
+shapes are used while sweeping: with curved trajectories like these,
 linear-only selection under-selects the number of groups:
 
 
@@ -226,9 +229,11 @@ groups
 #>   best: 4
 ```
 
-**Stage 3 -- search polynomial shapes** for the chosen number of groups, then
-apply the GRoLTS acceptance criteria (PMS > 0.05, APPA > 0.70, OCC >= 5). (The
-one-call pipeline above searched up to cubic; here we cap the search at
+### Stage 3: search polynomial shapes
+
+The polynomial shapes are searched for the chosen number of groups, then the
+GRoLTS acceptance criteria (PMS > 0.05, APPA > 0.70, OCC >= 5) are applied.
+(The one-call pipeline above searched up to cubic; here we cap the search at
 quadratic to keep the vignette quick.)
 
 
@@ -240,9 +245,11 @@ apply_grolts_criteria(shapes)
 #>   recommended: degrees 2,2,1,1  (BIC 17157.6, entropy 0.751)
 ```
 
-**Stage 4 -- fit the final model** (Hessian on, so the fit carries standard
-errors) and read off the diagnostics and per-subject assignment. Here we use the
-lowest-BIC shape found by the search:
+### Stage 4: fit the final model
+
+The final model is fit with the Hessian on, so the fit carries standard
+errors, and the diagnostics and per-subject assignment are read off it. Here
+we use the lowest-BIC shape found by the search:
 
 
 ``` r
