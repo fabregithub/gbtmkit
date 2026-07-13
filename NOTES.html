@@ -96,6 +96,16 @@
 <strong>trajeR’s POIS initialization requires overdispersion</strong> (its qgamma-based init NaNs when var(Y) &lt;= mean(Y)) – relevant for tests that fabricate count data.</li>
 </ul></div>
 <div class="section level2">
+<h2 id="findings-from-covariate-support-2026-07-13-gbtm_speccovariates">Findings from covariate support (2026-07-13, <code>gbtm_spec(covariates=)</code>)<a class="anchor" aria-label="anchor" href="#findings-from-covariate-support-2026-07-13-gbtm_speccovariates"></a></h2>
+<p>Class-membership covariates only (trajectory/time-varying covariates remain out of scope): trajeR <code>Risk</code> (numeric design matrix from <code>model.matrix</code>, no intercept column), flexmix concomitant <code>FLXPmultinom(formula)</code>, lcmm <code>classmb = formula</code> (ng &gt; 1 fits only; the 1-class init has no membership model). Verified on all three engines with a covariate-driven synthetic dataset (BIC improves by ~200). Gotchas:</p>
+<ul><li>
+<strong>trajeR theta layout with Risk</strong>: group-major blocks of (intercept, covariate effects); the k-means multi-start builds those blocks with zero effects, Method “L” only – the user-paraminit path for EM with nx &gt; 1 is not well-defined in trajeR, so multi-start falls back with a warning there.</li>
+<li>
+<strong>lcmm parameter layout with classmb</strong> is parameter-major (int c1, int c2, x1 c1, x1 c2, …), so the softmax-of-first-(K-1) shortcut for model-implied group sizes is wrong with covariates; <code><a href="reference/gbtm_accessors.html">gbtm_group_sizes()</a></code> falls back to mean posterior (which is also the honest marginal answer when proportions are subject-specific).</li>
+<li>
+<strong>lcmm predictY demands every model covariate in newdata</strong> even though classmb covariates do not enter the trajectories; the adapter supplies representative values (numeric mean / first level).</li>
+</ul></div>
+<div class="section level2">
 <h2 id="precomputed-vignette-2026-07-13">Precomputed vignette (2026-07-13)<a class="anchor" aria-label="anchor" href="#precomputed-vignette-2026-07-13"></a></h2>
 <p>The getting-started vignette runs ~20 min of real fits, which made every CI / pkgdown build re-run them (~2 h on a GitHub runner). It is now precomputed:</p>
 <ul><li>
@@ -223,6 +233,9 @@
 <td>2026-07-13</td>
 <td>
 <strong>v0.1.0</strong>: README scope section (“does / does not do”), version bump, tag</td>
+</tr><tr><td>ddde39b</td>
+<td>2026-07-13</td>
+<td>Multi-start initialization (<code>n_starts</code>): k-means starts for trajeR, native for flexmix/lcmm</td>
 </tr></tbody></table><div class="section level3">
 <h3 id="build-stages-as-executed">Build stages (as executed)<a class="anchor" aria-label="anchor" href="#build-stages-as-executed"></a></h3>
 <ol style="list-style-type: decimal"><li>

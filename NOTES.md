@@ -103,6 +103,31 @@ trough G3), with the shapes crossing mid-study. Lessons:
   qgamma-based init NaNs when var(Y) \<= mean(Y)) – relevant for tests
   that fabricate count data.
 
+## Findings from covariate support (2026-07-13, `gbtm_spec(covariates=)`)
+
+Class-membership covariates only (trajectory/time-varying covariates
+remain out of scope): trajeR `Risk` (numeric design matrix from
+`model.matrix`, no intercept column), flexmix concomitant
+`FLXPmultinom(formula)`, lcmm `classmb = formula` (ng \> 1 fits only;
+the 1-class init has no membership model). Verified on all three engines
+with a covariate-driven synthetic dataset (BIC improves by ~200).
+Gotchas:
+
+- **trajeR theta layout with Risk**: group-major blocks of (intercept,
+  covariate effects); the k-means multi-start builds those blocks with
+  zero effects, Method “L” only – the user-paraminit path for EM with nx
+  \> 1 is not well-defined in trajeR, so multi-start falls back with a
+  warning there.
+- **lcmm parameter layout with classmb** is parameter-major (int c1, int
+  c2, x1 c1, x1 c2, …), so the softmax-of-first-(K-1) shortcut for
+  model-implied group sizes is wrong with covariates;
+  [`gbtm_group_sizes()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_accessors.md)
+  falls back to mean posterior (which is also the honest marginal answer
+  when proportions are subject-specific).
+- **lcmm predictY demands every model covariate in newdata** even though
+  classmb covariates do not enter the trajectories; the adapter supplies
+  representative values (numeric mean / first level).
+
 ## Precomputed vignette (2026-07-13)
 
 The getting-started vignette runs ~20 min of real fits, which made every
@@ -181,6 +206,7 @@ Built step by step, confirming each stage, with `R CMD check` kept at
 | 9fa95c4 | 2026-07-13 | Vignette: consistent headings; stages as real sub-headings |
 | 4d5a8ed | 2026-07-13 | Vignette: introduce the engine choice up front |
 | 4b17254 | 2026-07-13 | **v0.1.0**: README scope section (“does / does not do”), version bump, tag |
+| ddde39b | 2026-07-13 | Multi-start initialization (`n_starts`): k-means starts for trajeR, native for flexmix/lcmm |
 
 ### Build stages (as executed)
 

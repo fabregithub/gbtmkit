@@ -51,8 +51,16 @@ gbtm_spec(
 
 - covariates:
 
-  Optional character vector of covariate column names (reserved for
-  group-membership models; not used by the basic pipeline).
+  Optional character vector of column names used as class-membership
+  covariates (Nagin's "risk factors"): time-stable subject-level
+  variables that predict *which group a subject belongs to* via a
+  multinomial model, without affecting the group trajectories
+  themselves. Supported by every engine (trajeR `Risk`, flexmix
+  concomitant model, lcmm `classmb`). Columns may be numeric, logical,
+  or factor/character (expanded via
+  [`stats::model.matrix()`](https://rdrr.io/r/stats/model.matrix.html)
+  where the engine needs a numeric design) and must contain no missing
+  values.
 
 - ymin, ymax:
 

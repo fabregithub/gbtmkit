@@ -92,8 +92,14 @@ for counts, <code>"beta"</code> for proportions.</p></dd>
 
 
 <dt id="arg-covariates">covariates<a class="anchor" aria-label="anchor" href="#arg-covariates"></a></dt>
-<dd><p>Optional character vector of covariate column names
-(reserved for group-membership models; not used by the basic pipeline).</p></dd>
+<dd><p>Optional character vector of column names used as
+class-membership covariates (Nagin's "risk factors"): time-stable
+subject-level variables that predict <em>which group a subject belongs to</em>
+via a multinomial model, without affecting the group trajectories
+themselves. Supported by every engine (trajeR <code>Risk</code>, flexmix concomitant
+model, lcmm <code>classmb</code>). Columns may be numeric, logical, or
+factor/character (expanded via <code><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">stats::model.matrix()</a></code> where the engine
+needs a numeric design) and must contain no missing values.</p></dd>
 
 
 <dt id="arg-ymin-ymax">ymin, ymax<a class="anchor" aria-label="anchor" href="#arg-ymin-ymax"></a></dt>
