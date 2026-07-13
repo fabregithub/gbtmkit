@@ -65,7 +65,7 @@
 <li>
 <strong>Engine-agnostic.</strong> Estimation is delegated to interchangeable backends (<a href="https://cran.r-project.org/package=trajeR" class="external-link"><code>trajeR</code></a>, <a href="https://cran.r-project.org/package=flexmix" class="external-link"><code>flexmix</code></a>, and <a href="https://cran.r-project.org/package=lcmm" class="external-link"><code>lcmm</code></a>) behind a small set of accessors, so the GRoLTS diagnostics and plotting work the same regardless of engine.</li>
 <li>
-<strong>GRoLTS diagnostics built in.</strong> Entropy, average posterior probability of assignment (APPA), odds of correct classification (OCC), and group proportions are computed once from the posterior matrix.</li>
+<strong>GRoLTS diagnostics and reporting built in.</strong> Entropy, average posterior probability of assignment (APPA), odds of correct classification (OCC), and group proportions are computed once from the posterior matrix – and <code><a href="reference/grolts_report.html">grolts_report()</a></code> maps a pipeline result onto the GRoLTS checklist, auto-filling every item the pipeline can answer (with a Markdown export for supplementary material).</li>
 <li>
 <strong>Built to scale.</strong> The shape search fits with the Hessian off, defaults to a greedy stepwise strategy, and supports a time budget, a fit cap, and on-disk checkpointing so large problems run unattended and bounded.</li>
 </ul>

@@ -233,6 +233,7 @@ Built step by step, confirming each stage, with `R CMD check` kept at
 | 4b17254 | 2026-07-13 | **v0.1.0**: README scope section (“does / does not do”), version bump, tag |
 | ddde39b | 2026-07-13 | Multi-start initialization (`n_starts`): k-means starts for trajeR, native for flexmix/lcmm |
 | 1882db3 | 2026-07-13 | Class-membership covariates (`gbtm_spec(covariates=)`) on all three engines |
+| ca77f40 | 2026-07-13 | [`benchmark_engines()`](https://fabregithub.github.io/gbtmkit/reference/benchmark_engines.md) harness + scale results (flexmix 15-180x faster) |
 
 ### Build stages (as executed)
 
@@ -307,7 +308,8 @@ Built step by step, confirming each stage, with `R CMD check` kept at
   sizes = softmax of the first ng-1 parameters (class-membership
   intercepts, last class is reference). `mixture` is shared across
   classes, so uniform degrees only — same capability flag as flexmix.
-- `grolts_report()` mapping outputs to GRoLTS checklist item numbers.
+- [`grolts_report()`](https://fabregithub.github.io/gbtmkit/reference/grolts_report.md)
+  mapping outputs to GRoLTS checklist item numbers.
 - Multi-start initialization for CNORM.
 - Consider a CRAN submission.
 - Optional: bump `JamesIves/github-pages-deploy-action` to clear its

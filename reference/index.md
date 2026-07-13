@@ -54,10 +54,12 @@
 - [`grolts_recommended()`](https://fabregithub.github.io/gbtmkit/reference/grolts_recommended.md)
   : The recommended shape from GRoLTS criteria
 
-## Orchestration and plotting
+## Orchestration, reporting, and plotting
 
 - [`run_gbtm_pipeline()`](https://fabregithub.github.io/gbtmkit/reference/run_gbtm_pipeline.md)
   : Run the full group-based trajectory pipeline
+- [`grolts_report()`](https://fabregithub.github.io/gbtmkit/reference/grolts_report.md)
+  : Map a pipeline result onto the GRoLTS checklist
 - [`plot_trajectories()`](https://fabregithub.github.io/gbtmkit/reference/plot_trajectories.md)
   : Plot fitted group trajectories
 
