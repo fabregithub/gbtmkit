@@ -214,6 +214,7 @@ throughout.
 | 1882db3 | 2026-07-13 | Class-membership covariates (`gbtm_spec(covariates=)`) on all three engines |
 | ca77f40 | 2026-07-13 | `benchmark_engines()` harness + scale results (flexmix 15-180x faster) |
 | 7a950b8 | 2026-07-13 | `grolts_report()`: pipeline result -> GRoLTS checklist reporting aid |
+| 78b3806 | 2026-07-13 | Vignette: grolts_report, n_starts, covariates, benchmark_engines |
 
 ### Build stages (as executed)
 
@@ -273,8 +274,6 @@ throughout.
 
 ## Possible next steps (not done)
 
-- Combined vignette re-knit covering `n_starts`, `covariates =`,
-  `benchmark_engines()`, and `grolts_report()`.
 - Trajectory (time-varying) covariates.
 - Optionally make the shipped fixtures' covariates drive membership (data
   regeneration; cascades into all baked numbers).
