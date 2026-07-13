@@ -88,13 +88,16 @@ group-number selection by BIC, a bounded polynomial-shape search with GRoLTS
 acceptance criteria (PMS, APPA, OCC), the final fit with standard errors, and
 per-subject group assignment. Binary and continuous outcomes work on all three
 engines; counts (Poisson) on `trajeR`/`flexmix`; proportions (beta) on
-`trajeR` only.
+`trajeR` only. Class-membership covariates (Nagin's "risk factors") are
+supported on every engine via `gbtm_spec(covariates = ...)`, and multi-start
+initialization (`n_starts`) guards against local optima.
 
 **Out of scope (currently).**
 
-- **No covariates.** Trajectories are functions of time only; covariates on
-  the outcome or on class membership are not yet exposed (the `x1`/`x2`
-  columns in the demo data are deliberately inert).
+- **No trajectory covariates.** Group trajectories are functions of time
+  only; time-varying covariates on the outcome are not yet exposed.
+  (Covariates on *class membership* are supported -- see above. The `x1`/`x2`
+  columns in the demo data are deliberately inert.)
 - **Not growth mixture models.** There are no within-class random effects; if
   you need GMM, use `lcmm::hlme()` with a `random =` formula (or similar
   tools) directly.

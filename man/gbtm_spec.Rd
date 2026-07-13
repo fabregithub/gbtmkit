@@ -32,8 +32,14 @@ numbers are used. When supplied it must contain no duplicates.}
 binary outcomes (LOGIT), \code{"gaussian"} for continuous (CNORM), \code{"poisson"}
 for counts, \code{"beta"} for proportions.}
 
-\item{covariates}{Optional character vector of covariate column names
-(reserved for group-membership models; not used by the basic pipeline).}
+\item{covariates}{Optional character vector of column names used as
+class-membership covariates (Nagin's "risk factors"): time-stable
+subject-level variables that predict \emph{which group a subject belongs to}
+via a multinomial model, without affecting the group trajectories
+themselves. Supported by every engine (trajeR \code{Risk}, flexmix concomitant
+model, lcmm \code{classmb}). Columns may be numeric, logical, or
+factor/character (expanded via \code{\link[stats:model.matrix]{stats::model.matrix()}} where the engine
+needs a numeric design) and must contain no missing values.}
 
 \item{ymin, ymax}{Optional censoring bounds for continuous (\code{"gaussian"})
 outcomes; passed through to engines that support censored-normal models.}

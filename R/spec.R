@@ -36,8 +36,14 @@ gbtm_families <- function() {
 #' @param family Outcome family; one of [gbtm_families()]. `"binomial"` for
 #'   binary outcomes (LOGIT), `"gaussian"` for continuous (CNORM), `"poisson"`
 #'   for counts, `"beta"` for proportions.
-#' @param covariates Optional character vector of covariate column names
-#'   (reserved for group-membership models; not used by the basic pipeline).
+#' @param covariates Optional character vector of column names used as
+#'   class-membership covariates (Nagin's "risk factors"): time-stable
+#'   subject-level variables that predict *which group a subject belongs to*
+#'   via a multinomial model, without affecting the group trajectories
+#'   themselves. Supported by every engine (trajeR `Risk`, flexmix concomitant
+#'   model, lcmm `classmb`). Columns may be numeric, logical, or
+#'   factor/character (expanded via [stats::model.matrix()] where the engine
+#'   needs a numeric design) and must contain no missing values.
 #' @param ymin,ymax Optional censoring bounds for continuous (`"gaussian"`)
 #'   outcomes; passed through to engines that support censored-normal models.
 #' @param ssigma Logical; for continuous outcomes, whether the residual
@@ -101,6 +107,17 @@ gbtm_spec <- function(data,
   if (!is.null(covariates)) {
     .check_chr(covariates, "covariates")
     .check_present(data, covariates, "covariates")
+    overlap <- intersect(covariates, c(outcomes, time, id))
+    if (length(overlap)) {
+      stop(sprintf("`covariates` overlap outcome/time/id columns: %s",
+                   paste(overlap, collapse = ", ")), call. = FALSE)
+    }
+    for (v in covariates) {
+      if (anyNA(data[[v]])) {
+        stop(sprintf("covariate column '%s' contains missing values.", v),
+             call. = FALSE)
+      }
+    }
   }
 
   # --- id --------------------------------------------------------------------
@@ -212,6 +229,23 @@ gbtm_spec <- function(data,
 # Subject ids (or row numbers if none supplied).
 .spec_ids <- function(spec) {
   if (is.null(spec$id)) seq_len(spec$n_subjects) else spec$data[[spec$id]]
+}
+
+# Class-membership covariate design matrix (subjects x p), no intercept
+# column; NULL when the spec has no covariates. Factors expand via
+# model.matrix (covariates are validated NA-free, so rows stay aligned).
+.spec_X <- function(spec) {
+  if (is.null(spec$covariates)) return(NULL)
+  fml <- stats::reformulate(paste0("`", spec$covariates, "`"))
+  mm  <- stats::model.matrix(fml, data = spec$data)
+  mm[, -1, drop = FALSE]
+}
+
+# Formula for engines that take the membership model as a formula
+# (flexmix concomitant, lcmm classmb); NULL when no covariates.
+.spec_X_formula <- function(spec) {
+  if (is.null(spec$covariates)) return(NULL)
+  stats::reformulate(paste0("`", spec$covariates, "`"))
 }
 
 #' @export

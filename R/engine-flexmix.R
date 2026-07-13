@@ -67,13 +67,18 @@
   # run per start; the best finite BIC wins. Start 1 uses `seed` itself, so
   # n_starts = 1 reproduces the single-start behavior exactly. Without a seed
   # the runs differ anyway (each consumes RNG state).
+  # Class-membership covariates map to flexmix's concomitant-variable model.
+  concomitant <- if (is.null(spec$covariates)) flexmix::FLXPconstant() else
+    flexmix::FLXPmultinom(.spec_X_formula(spec))
+
   one_fit <- function(s) {
     if (!is.null(seed)) set.seed(seed + s - 1L)
     flexmix::flexmix(
       fml, data = long, k = n_groups,
-      model   = flexmix::FLXMRglm(family = .flexmix_family[[spec$family]]),
-      control = utils::modifyList(list(iter.max = as.integer(itermax)),
-                                  list(...))
+      model       = flexmix::FLXMRglm(family = .flexmix_family[[spec$family]]),
+      concomitant = concomitant,
+      control     = utils::modifyList(list(iter.max = as.integer(itermax)),
+                                      list(...))
     )
   }
   if (n_starts == 1L) {

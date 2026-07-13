@@ -233,7 +233,8 @@ print.gbtm_fit <- function(x, ...) {
 # Long-format data for engines that model subject x occasion rows (flexmix,
 # lcmm): `.gid` is the subject index (1..n in spec row order). Column-major
 # flattening puts the first occasion's rows first, so `!duplicated(.gid)`
-# recovers spec row order.
+# recovers spec row order. Class-membership covariates (time-stable) are
+# replicated across a subject's rows.
 .spec_long <- function(spec) {
   Y <- .spec_Y(spec)
   A <- .spec_A(spec)
@@ -242,6 +243,9 @@ print.gbtm_fit <- function(x, ...) {
     y    = as.vector(Y),
     t    = as.vector(A)
   )
+  for (v in spec$covariates) {
+    long[[v]] <- rep(spec$data[[v]], times = ncol(Y))
+  }
   long[stats::complete.cases(long), , drop = FALSE]
 }
 

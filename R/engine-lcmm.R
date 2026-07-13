@@ -74,6 +74,10 @@
          call. = FALSE)
   )
 
+  # Class-membership covariates map to lcmm's classmb model (ng > 1 only; the
+  # 1-class init fit has no membership model).
+  classmb <- .spec_X_formula(spec)
+
   if (!is.null(seed)) set.seed(seed)
   if (n_groups == 1L) {
     raw <- fitter(1L, ...)
@@ -81,7 +85,11 @@
     # lcmm requires explicit starting values for ng > 1; the canonical init is
     # the 1-class fit.
     init <- fitter(1L)
-    raw  <- fitter(n_groups, mixture = mixture, B = init, ...)
+    raw  <- if (is.null(classmb)) {
+      fitter(n_groups, mixture = mixture, B = init, ...)
+    } else {
+      fitter(n_groups, mixture = mixture, classmb = classmb, B = init, ...)
+    }
   } else {
     # Multi-start via lcmm's own gridsearch(): `rep` runs from random
     # perturbations of the 1-class fit, then a full fit from the best one.
@@ -101,6 +109,7 @@
                    subject = ".gid", ng = n_groups, data = long,
                    link = "thresholds", maxiter = itermax_i, verbose = FALSE))
     }
+    if (!is.null(classmb)) mcall$classmb <- quote(classmb)
     gcall <- as.call(list(quote(lcmm::gridsearch), m = mcall,
                           rep = n_starts, maxiter = itermax_i, minit = init))
     raw <- eval(gcall)
@@ -109,6 +118,7 @@
   # the formula symbols must be replaced by the actual formula objects.
   raw$call$fixed   <- fixed
   raw$call$mixture <- if (n_groups > 1L) mixture else NULL
+  if (n_groups > 1L && !is.null(classmb)) raw$call$classmb <- classmb
 
   if (raw$conv != 1) {
     warning(sprintf(
@@ -171,7 +181,13 @@ gbtm_posterior.gbtm_fit_lcmm <- function(fit, ...) {
 #' @export
 gbtm_group_sizes.gbtm_fit_lcmm <- function(fit, ...) {
   K <- fit$n_groups
-  sizes <- if (K == 1L) 1 else {
+  sizes <- if (K == 1L) {
+    1
+  } else if (!is.null(fit$spec$covariates)) {
+    # With membership covariates the model-implied proportions are
+    # subject-specific; report their average, which equals the mean posterior.
+    colMeans(gbtm_posterior(fit))
+  } else {
     # Model-implied proportions: softmax of the class-membership intercepts
     # (the first K - 1 parameters; the last class is the reference).
     .softmax(c(fit$raw$best[seq_len(K - 1L)], 0))
@@ -188,9 +204,16 @@ gbtm_predict.gbtm_fit_lcmm <- function(fit, times = NULL, n = 100L, ...) {
   if (is.null(times)) times <- seq(min(A), max(A), length.out = n)
 
   # predictY returns the marginal predicted outcome per class on the outcome
-  # scale (for the thresholds link that is P(y = 1)).
-  pred <- lcmm::predictY(fit$raw, newdata = data.frame(t = times),
-                         var.time = "t")$pred
+  # scale (for the thresholds link that is P(y = 1)). It insists on every
+  # model covariate being present in newdata, even though class-membership
+  # covariates do not enter the trajectories -- supply representative values.
+  nd <- data.frame(t = times)
+  for (v in fit$spec$covariates) {
+    col <- fit$spec$data[[v]]
+    nd[[v]] <- if (is.numeric(col)) mean(col) else
+      rep(col[1], length(times))
+  }
+  pred <- lcmm::predictY(fit$raw, newdata = nd, var.time = "t")$pred
   pred <- as.matrix(pred)
 
   out <- vector("list", fit$n_groups)

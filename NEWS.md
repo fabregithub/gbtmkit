@@ -1,5 +1,11 @@
 # gbtmkit (development version)
 
+* Class-membership covariates ("risk factors"): `gbtm_spec(covariates = ...)`
+  now feeds a multinomial membership model on every engine (trajeR `Risk`,
+  flexmix concomitant `FLXPmultinom`, lcmm `classmb`). Columns may be numeric,
+  logical, or factor/character; trajectories themselves are unaffected. With
+  covariates, `gbtm_group_sizes()` reports the average model-implied
+  proportions (equal to mean posterior).
 * New `n_starts` argument on `gbtm_fit()` (and, via `...`, on `fit_gbtm()`,
   the stage functions, and `run_gbtm_pipeline()`): multi-start initialization
   that keeps the best fit by BIC. Engine-specific starts: trajeR uses k-means

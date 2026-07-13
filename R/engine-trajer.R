@@ -54,7 +54,17 @@
   }
 
   pr <- tabulate(cl, n_groups) / length(cl)
-  first <- if (method == "L") log(pr / pr[1]) else pr
+  X  <- .spec_X(spec)
+  first <- if (is.null(X)) {
+    if (method == "L") log(pr / pr[1]) else pr
+  } else {
+    # With membership covariates theta is group-major blocks of
+    # (intercept, covariate effects); start the effects at zero. Only reached
+    # for Method "L" (see the guard in .fit_trajer).
+    unlist(lapply(seq_len(n_groups), function(k) {
+      c(log(pr[k] / pr[1]), rep(0, ncol(X)))
+    }))
+  }
   c(first, b, sig)
 }
 
@@ -95,6 +105,9 @@
     Model = model, Method = method,
     hessian = hessian, itermax = as.integer(itermax)
   )
+  # Class-membership covariates (multinomial "risk factor" model).
+  X <- .spec_X(spec)
+  if (!is.null(X)) args$Risk <- X
   # Continuous (CNORM) options.
   if (spec$family == "gaussian") {
     args$ssigma <- isTRUE(spec$ssigma)
@@ -107,6 +120,13 @@
     warning(sprintf(
       "multi-start is not implemented for family '%s' with engine 'trajeR'; using the default initialization.",
       spec$family), call. = FALSE)
+    n_starts <- 1L
+  }
+  if (n_starts > 1L && !is.null(X) && method != "L") {
+    # trajeR's user-supplied-paraminit path is only well-defined for Method
+    # "L" when a Risk model is present.
+    warning("multi-start with membership covariates is only supported for method 'L' with engine 'trajeR'; using the default initialization.",
+            call. = FALSE)
     n_starts <- 1L
   }
 
