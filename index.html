@@ -80,7 +80,7 @@
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"trajeR"</span><span class="op">)</span>    <span class="co"># per-group polynomial degrees, L/EM/EMIRLS</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"flexmix"</span><span class="op">)</span>   <span class="co"># fast EM, one polynomial order for all groups</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"lcmm"</span><span class="op">)</span>      <span class="co"># hlme (gaussian) / thresholds link (binary)</span></span></code></pre></div>
-<p>Pick the backend per fit with <code>engine = "trajeR"</code> (default), <code>"flexmix"</code>, or <code>"lcmm"</code> in <code><a href="reference/gbtm_fit.html">gbtm_fit()</a></code> / <code><a href="reference/run_gbtm_pipeline.html">run_gbtm_pipeline()</a></code>.</p>
+<p>Pick the backend per fit with <code>engine = "trajeR"</code> (default), <code>"flexmix"</code>, or <code>"lcmm"</code> in <code><a href="reference/gbtm_fit.html">gbtm_fit()</a></code> / <code><a href="reference/run_gbtm_pipeline.html">run_gbtm_pipeline()</a></code> – and let <code><a href="reference/benchmark_engines.html">benchmark_engines()</a></code> time them on (a subsample of) your own data when speed matters.</p>
 </div>
 <div class="section level2">
 <h2 id="quick-start">Quick start<a class="anchor" aria-label="anchor" href="#quick-start"></a>

@@ -106,6 +106,40 @@
 <strong>lcmm predictY demands every model covariate in newdata</strong> even though classmb covariates do not enter the trajectories; the adapter supplies representative values (numeric mean / first level).</li>
 </ul></div>
 <div class="section level2">
+<h2 id="findings-from-the-engine-benchmark-2026-07-13-benchmark_engines">Findings from the engine benchmark (2026-07-13, <code>benchmark_engines()</code>)<a class="anchor" aria-label="anchor" href="#findings-from-the-engine-benchmark-2026-07-13-benchmark_engines"></a></h2>
+<p><code>data-raw/benchmark-scale.R</code> at n = 2000 / 20000 (10 occasions, 4 groups, quadratic, method “L”, itermax 200, single start; wall-clock seconds on the dev Mac):</p>
+<table class="table"><thead><tr><th>n</th>
+<th>family</th>
+<th align="right">trajeR</th>
+<th align="right">flexmix</th>
+<th align="right">lcmm</th>
+</tr></thead><tbody><tr><td>2000</td>
+<td>gaussian</td>
+<td align="right">62.4</td>
+<td align="right">0.3</td>
+<td align="right">9.3</td>
+</tr><tr><td>2000</td>
+<td>binomial</td>
+<td align="right">36.1</td>
+<td align="right">3.0</td>
+<td align="right">8.3</td>
+</tr><tr><td>20000</td>
+<td>gaussian</td>
+<td align="right">730.5</td>
+<td align="right">15.0</td>
+<td align="right">168.7</td>
+</tr><tr><td>20000</td>
+<td>binomial</td>
+<td align="right">517.5</td>
+<td align="right">36.0</td>
+<td align="right">118.0</td>
+</tr></tbody></table><ul><li>
+<strong>flexmix is 15-180x faster than trajeR</strong>, lcmm sits in between – the DESIGN.md expectation (“C/Fortran engines much faster at large N”) holds, and scaling looks roughly linear in n, so 80k extrapolates to hours for trajeR vs a minute or two for flexmix.</li>
+<li>
+<strong>Quality caveat at scale</strong>: at n = 20000 binomial, trajeR’s deterministic single-start fit collapsed to 3 effective groups (empty group, min APPA -Inf) while flexmix/lcmm found all 4 – <code>n_starts</code> matters most for trajeR.</li>
+<li>Practical guidance (now in the docs): fit a subsample with <code><a href="reference/benchmark_engines.html">benchmark_engines()</a></code>, pick the fastest engine whose classification diagnostics are adequate.</li>
+</ul></div>
+<div class="section level2">
 <h2 id="precomputed-vignette-2026-07-13">Precomputed vignette (2026-07-13)<a class="anchor" aria-label="anchor" href="#precomputed-vignette-2026-07-13"></a></h2>
 <p>The getting-started vignette runs ~20 min of real fits, which made every CI / pkgdown build re-run them (~2 h on a GitHub runner). It is now precomputed:</p>
 <ul><li>
@@ -236,6 +270,9 @@
 </tr><tr><td>ddde39b</td>
 <td>2026-07-13</td>
 <td>Multi-start initialization (<code>n_starts</code>): k-means starts for trajeR, native for flexmix/lcmm</td>
+</tr><tr><td>1882db3</td>
+<td>2026-07-13</td>
+<td>Class-membership covariates (<code>gbtm_spec(covariates=)</code>) on all three engines</td>
 </tr></tbody></table><div class="section level3">
 <h3 id="build-stages-as-executed">Build stages (as executed)<a class="anchor" aria-label="anchor" href="#build-stages-as-executed"></a></h3>
 <ol style="list-style-type: decimal"><li>

@@ -49,7 +49,10 @@ Pick the backend per fit with `engine = "trajeR"` (default),
 `"flexmix"`, or `"lcmm"` in
 [`gbtm_fit()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_fit.md)
 /
-[`run_gbtm_pipeline()`](https://fabregithub.github.io/gbtmkit/reference/run_gbtm_pipeline.md).
+[`run_gbtm_pipeline()`](https://fabregithub.github.io/gbtmkit/reference/run_gbtm_pipeline.md)
+– and let
+[`benchmark_engines()`](https://fabregithub.github.io/gbtmkit/reference/benchmark_engines.md)
+time them on (a subsample of) your own data when speed matters.
 
 ## Quick start
 

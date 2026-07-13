@@ -128,6 +128,31 @@ Gotchas:
   classmb covariates do not enter the trajectories; the adapter supplies
   representative values (numeric mean / first level).
 
+## Findings from the engine benchmark (2026-07-13, `benchmark_engines()`)
+
+`data-raw/benchmark-scale.R` at n = 2000 / 20000 (10 occasions, 4
+groups, quadratic, method “L”, itermax 200, single start; wall-clock
+seconds on the dev Mac):
+
+| n     | family   | trajeR | flexmix |  lcmm |
+|-------|----------|-------:|--------:|------:|
+| 2000  | gaussian |   62.4 |     0.3 |   9.3 |
+| 2000  | binomial |   36.1 |     3.0 |   8.3 |
+| 20000 | gaussian |  730.5 |    15.0 | 168.7 |
+| 20000 | binomial |  517.5 |    36.0 | 118.0 |
+
+- **flexmix is 15-180x faster than trajeR**, lcmm sits in between – the
+  DESIGN.md expectation (“C/Fortran engines much faster at large N”)
+  holds, and scaling looks roughly linear in n, so 80k extrapolates to
+  hours for trajeR vs a minute or two for flexmix.
+- **Quality caveat at scale**: at n = 20000 binomial, trajeR’s
+  deterministic single-start fit collapsed to 3 effective groups (empty
+  group, min APPA -Inf) while flexmix/lcmm found all 4 – `n_starts`
+  matters most for trajeR.
+- Practical guidance (now in the docs): fit a subsample with
+  [`benchmark_engines()`](https://fabregithub.github.io/gbtmkit/reference/benchmark_engines.md),
+  pick the fastest engine whose classification diagnostics are adequate.
+
 ## Precomputed vignette (2026-07-13)
 
 The getting-started vignette runs ~20 min of real fits, which made every
@@ -207,6 +232,7 @@ Built step by step, confirming each stage, with `R CMD check` kept at
 | 4d5a8ed | 2026-07-13 | Vignette: introduce the engine choice up front |
 | 4b17254 | 2026-07-13 | **v0.1.0**: README scope section (“does / does not do”), version bump, tag |
 | ddde39b | 2026-07-13 | Multi-start initialization (`n_starts`): k-means starts for trajeR, native for flexmix/lcmm |
+| 1882db3 | 2026-07-13 | Class-membership covariates (`gbtm_spec(covariates=)`) on all three engines |
 
 ### Build stages (as executed)
 

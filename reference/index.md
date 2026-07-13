@@ -21,6 +21,8 @@
   : Estimation methods offered by an engine
 - [`gbtm_engine_per_group_degrees()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_engine_per_group_degrees.md)
   : Does an engine support per-group polynomial degrees?
+- [`benchmark_engines()`](https://fabregithub.github.io/gbtmkit/reference/benchmark_engines.md)
+  : Benchmark the estimation engines on a specification
 - [`gbtm_bic()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_accessors.md)
   [`gbtm_aic()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_accessors.md)
   [`gbtm_loglik()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_accessors.md)
