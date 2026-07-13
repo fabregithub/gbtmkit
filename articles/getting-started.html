@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gbtmkit</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -254,7 +254,7 @@ a Markdown appendix for supplementary material.</p>
 <span><span class="co">#&gt;       Per-wave proportions: 0.59, 0.58, 0.57, 0.58, 0.58, 0.57, 0.53, 0.51,</span></span>
 <span><span class="co">#&gt;       0.47, 0.44.</span></span>
 <span><span class="co">#&gt;   [5] Software</span></span>
-<span><span class="co">#&gt;       R version 4.6.1 (2026-06-24); gbtmkit 0.1.0; engine trajeR (trajeR</span></span>
+<span><span class="co">#&gt;       R version 4.6.1 (2026-06-24); gbtmkit 0.2.0; engine trajeR (trajeR</span></span>
 <span><span class="co">#&gt;       0.11.1), method 'L'.</span></span>
 <span><span class="co">#&gt;   [7] Alternative trajectory shapes</span></span>
 <span><span class="co">#&gt;       15 polynomial shapes fitted (stepwise search, degrees 1..3 per</span></span>
@@ -449,7 +449,7 @@ lcmm delegates to <code><a href="https://cecileproust-lima.github.io/lcmm/refere
 <span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="../reference/gbtm_assign.html">gbtm_assign</a></span><span class="op">(</span><span class="va">good</span><span class="op">)</span><span class="op">$</span><span class="va">group</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   1   2   3   4 </span></span>
-<span><span class="co">#&gt; 313 259 307 321</span></span>
+<span><span class="co">#&gt; 259 307 321 313</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>single_start <span class="op">=</span> <span class="fu"><a href="../reference/gbtm_accessors.html">gbtm_bic</a></span><span class="op">(</span><span class="va">bad</span><span class="op">)</span>, best_of_5 <span class="op">=</span> <span class="fu"><a href="../reference/gbtm_accessors.html">gbtm_bic</a></span><span class="op">(</span><span class="va">good</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; single_start    best_of_5 </span></span>
 <span><span class="co">#&gt;     53012.35     52905.71</span></span></code></pre></div>
@@ -457,7 +457,11 @@ lcmm delegates to <code><a href="https://cecileproust-lima.github.io/lcmm/refere
 <code>n_starts</code> is accepted by every fitting function and flows
 through <code><a href="../reference/run_gbtm_pipeline.html">run_gbtm_pipeline()</a></code> to all stages (it multiplies
 the shape-search cost, which
-<code>max_fits</code>/<code>time_budget</code> still bound).</p>
+<code>max_fits</code>/<code>time_budget</code> still bound). The
+independent starts – and the candidate fits in the selection stages –
+run in parallel when the future.apply package is installed: set
+<code>future::plan(multisession)</code> to use several cores; with a
+<code>seed</code>, results are identical under any plan.</p>
 </div>
 <div class="section level2">
 <h2 id="class-membership-covariates">Class-membership covariates<a class="anchor" aria-label="anchor" href="#class-membership-covariates"></a>
@@ -578,9 +582,9 @@ data:</p>
 <span>                  method <span class="op">=</span> <span class="st">"L"</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;gbtm_benchmark&gt;  one model per engine, wall-clock seconds</span></span>
 <span><span class="co">#&gt;   engine   ok seconds      bic   loglik entropy min_appa groups_effective note</span></span>
-<span><span class="co">#&gt;   trajeR TRUE   49.97 17138.03 -8499.54    0.76     0.85                4     </span></span>
-<span><span class="co">#&gt;  flexmix TRUE    2.62 17182.07 -8499.69    0.75     0.85                4     </span></span>
-<span><span class="co">#&gt;     lcmm TRUE   32.65 17138.08 -8499.56    0.75     0.84                4     </span></span>
+<span><span class="co">#&gt;   trajeR TRUE   50.40 17138.03 -8499.54    0.76     0.85                4     </span></span>
+<span><span class="co">#&gt;  flexmix TRUE    2.87 17182.07 -8499.69    0.75     0.85                4     </span></span>
+<span><span class="co">#&gt;     lcmm TRUE   33.44 17138.08 -8499.56    0.75     0.84                4     </span></span>
 <span><span class="co">#&gt; Note: BIC/loglik are comparable only within an engine;</span></span>
 <span><span class="co">#&gt; compare engines on time and classification diagnostics.</span></span></code></pre></div>
 <p>All three engines find the same four groups with comparable

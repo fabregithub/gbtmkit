@@ -22,17 +22,28 @@ specification.
 
 ## Key decisions
 
+- **Demo-data covariates stay inert (decided 2026-07-13).** Regenerating
+  the fixtures so x1 drives membership would cascade into every baked
+  number (tests, vignette, benchmarks); the vignette’s small simulated
+  covariate example states its truth inline and is the clearer demo.
+  `x1`/`x2` being inert is documented as deliberate.
+
 - **Name** `gbtmkit` (confirmed free on CRAN/GitHub/Bioconductor).
+
 - **Engine-agnostic** architecture: one S3 adapter contract; trajeR
   first.
+
 - **Both outcome types first-class**: binary (LOGIT) and continuous
   (CNORM).
+
 - **Data is entirely synthetic and domain-neutral.** The real cohort
   data cannot be published and no external published dataset is used, to
   avoid revealing the study domain. Two generated datasets
   (`sim_binary`, `sim_continuous`) with known ground-truth groups ship
   as package data and drive tests, examples, and the vignette.
+
 - **License** MIT.
+
 - **Performance/autonomy** treated as a first-class requirement for the
   shape search (the original was slow on ~80k rows).
 
@@ -173,8 +184,18 @@ Notes:
   by
   [`future::supportsMulticore()`](https://parallelly.futureverse.org/reference/supportsMulticore.html)
   (unavailable on Windows/RStudio).
-- Remaining (unimplemented) speed ideas: warm starts in the shape search
-  via `paraminit` from the incumbent; subsample-based search; hybrid
+- **Warm starts in the shape search: tried and REJECTED (negative
+  result, 2026-07-13).** Initializing each trajeR candidate from the
+  incumbent’s parameters (coefficient blocks padded/truncated) looks
+  great per move – 1.8-3.3x faster and often better BIC when the
+  incumbent is good (it pins group identities to the degree slots). But
+  in the actual stepwise search it is poison: the search starts from the
+  *linear* incumbent, warm candidates inherit that poor basin,
+  near-converged starting points kill exploration, and the search
+  stalled at rep(1,4) (BIC 17637 vs cold 17117) despite being 14.7x
+  faster. Do not re-implement as a default; if ever revisited, it must
+  be best-of(cold, warm) per candidate, which forfeits the speedup.
+- Remaining (unimplemented) speed ideas: subsample-based search; hybrid
   workflow (select K with flexmix, fit with trajeR).
 
 ## Findings from the engine benchmark (2026-07-13, `benchmark_engines()`)
@@ -286,6 +307,7 @@ Built step by step, confirming each stage, with `R CMD check` kept at
 | 7a950b8 | 2026-07-13 | [`grolts_report()`](https://fabregithub.github.io/gbtmkit/reference/grolts_report.md): pipeline result -\> GRoLTS checklist reporting aid |
 | 78b3806 | 2026-07-13 | Vignette: grolts_report, n_starts, covariates, benchmark_engines |
 | a55f985 | 2026-07-13 | Time-varying trajectory covariates (`gbtm_spec(tcov=)`) on all engines |
+| 19717b1 | 2026-07-13 | Parallel multi-start and selection sweeps via future.apply (~2-2.6x) |
 
 ### Build stages (as executed)
 
@@ -358,8 +380,6 @@ Built step by step, confirming each stage, with `R CMD check` kept at
 
 ## Possible next steps (not done)
 
-- Optionally make the shipped fixtures’ covariates drive membership
-  (data regeneration; cascades into all baked numbers).
 - Consider a CRAN submission.
 - Optional: bump `JamesIves/github-pages-deploy-action` to clear its
   Node 20 deprecation warning.

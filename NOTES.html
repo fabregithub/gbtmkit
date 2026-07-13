@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="index.html">gbtmkit</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,18 +50,13 @@
 </ul></div>
 <div class="section level2">
 <h2 id="key-decisions">Key decisions<a class="anchor" aria-label="anchor" href="#key-decisions"></a></h2>
-<ul><li>
-<strong>Name</strong> <code>gbtmkit</code> (confirmed free on CRAN/GitHub/Bioconductor).</li>
-<li>
-<strong>Engine-agnostic</strong> architecture: one S3 adapter contract; trajeR first.</li>
-<li>
-<strong>Both outcome types first-class</strong>: binary (LOGIT) and continuous (CNORM).</li>
-<li>
-<strong>Data is entirely synthetic and domain-neutral.</strong> The real cohort data cannot be published and no external published dataset is used, to avoid revealing the study domain. Two generated datasets (<code>sim_binary</code>, <code>sim_continuous</code>) with known ground-truth groups ship as package data and drive tests, examples, and the vignette.</li>
-<li>
-<strong>License</strong> MIT.</li>
-<li>
-<strong>Performance/autonomy</strong> treated as a first-class requirement for the shape search (the original was slow on ~80k rows).</li>
+<ul><li><p><strong>Demo-data covariates stay inert (decided 2026-07-13).</strong> Regenerating the fixtures so x1 drives membership would cascade into every baked number (tests, vignette, benchmarks); the vignette’s small simulated covariate example states its truth inline and is the clearer demo. <code>x1</code>/<code>x2</code> being inert is documented as deliberate.</p></li>
+<li><p><strong>Name</strong> <code>gbtmkit</code> (confirmed free on CRAN/GitHub/Bioconductor).</p></li>
+<li><p><strong>Engine-agnostic</strong> architecture: one S3 adapter contract; trajeR first.</p></li>
+<li><p><strong>Both outcome types first-class</strong>: binary (LOGIT) and continuous (CNORM).</p></li>
+<li><p><strong>Data is entirely synthetic and domain-neutral.</strong> The real cohort data cannot be published and no external published dataset is used, to avoid revealing the study domain. Two generated datasets (<code>sim_binary</code>, <code>sim_continuous</code>) with known ground-truth groups ship as package data and drive tests, examples, and the vignette.</p></li>
+<li><p><strong>License</strong> MIT.</p></li>
+<li><p><strong>Performance/autonomy</strong> treated as a first-class requirement for the shape search (the original was slow on ~80k rows).</p></li>
 </ul></div>
 <div class="section level2">
 <h2 id="findings-established-during-the-build">Findings established during the build<a class="anchor" aria-label="anchor" href="#findings-established-during-the-build"></a></h2>
@@ -126,7 +121,9 @@
 <strong>trajeR speed dead ends, measured</strong>: BLAS threading is irrelevant (44.0 s vs 43.6 s at 1 vs 8 OpenBLAS threads – per-subject matrices too small), and <code>itermax</code> has no “loose search” headroom (the optimizer self-terminates at ~50-60 iterations; itermax 60/100/400 identical, 30 truncates to a worse BIC).</li>
 <li>
 <strong>Tests use <code>plan(multicore)</code></strong> (fork): multisession workers cannot loadNamespace a devtools::load_all package; fork inherits it. Guarded by <code><a href="https://parallelly.futureverse.org/reference/supportsMulticore.html" class="external-link">future::supportsMulticore()</a></code> (unavailable on Windows/RStudio).</li>
-<li>Remaining (unimplemented) speed ideas: warm starts in the shape search via <code>paraminit</code> from the incumbent; subsample-based search; hybrid workflow (select K with flexmix, fit with trajeR).</li>
+<li>
+<strong>Warm starts in the shape search: tried and REJECTED (negative result, 2026-07-13).</strong> Initializing each trajeR candidate from the incumbent’s parameters (coefficient blocks padded/truncated) looks great per move – 1.8-3.3x faster and often better BIC when the incumbent is good (it pins group identities to the degree slots). But in the actual stepwise search it is poison: the search starts from the <em>linear</em> incumbent, warm candidates inherit that poor basin, near-converged starting points kill exploration, and the search stalled at rep(1,4) (BIC 17637 vs cold 17117) despite being 14.7x faster. Do not re-implement as a default; if ever revisited, it must be best-of(cold, warm) per candidate, which forfeits the speedup.</li>
+<li>Remaining (unimplemented) speed ideas: subsample-based search; hybrid workflow (select K with flexmix, fit with trajeR).</li>
 </ul></div>
 <div class="section level2">
 <h2 id="findings-from-the-engine-benchmark-2026-07-13-benchmark_engines">Findings from the engine benchmark (2026-07-13, <code>benchmark_engines()</code>)<a class="anchor" aria-label="anchor" href="#findings-from-the-engine-benchmark-2026-07-13-benchmark_engines"></a></h2>
@@ -310,6 +307,9 @@
 </tr><tr><td>a55f985</td>
 <td>2026-07-13</td>
 <td>Time-varying trajectory covariates (<code>gbtm_spec(tcov=)</code>) on all engines</td>
+</tr><tr><td>19717b1</td>
+<td>2026-07-13</td>
+<td>Parallel multi-start and selection sweeps via future.apply (~2-2.6x)</td>
 </tr></tbody></table><div class="section level3">
 <h3 id="build-stages-as-executed">Build stages (as executed)<a class="anchor" aria-label="anchor" href="#build-stages-as-executed"></a></h3>
 <ol style="list-style-type: decimal"><li>
@@ -350,8 +350,7 @@
 </ul></div>
 <div class="section level2">
 <h2 id="possible-next-steps-not-done">Possible next steps (not done)<a class="anchor" aria-label="anchor" href="#possible-next-steps-not-done"></a></h2>
-<ul><li>Optionally make the shipped fixtures’ covariates drive membership (data regeneration; cascades into all baked numbers).</li>
-<li>Consider a CRAN submission.</li>
+<ul><li>Consider a CRAN submission.</li>
 <li>Optional: bump <code>JamesIves/github-pages-deploy-action</code> to clear its Node 20 deprecation warning.</li>
 </ul><p>Done along the way: v0.1.0 tag, flexmix + lcmm adapters, multi-start initialization, class-membership covariates, <code><a href="reference/benchmark_engines.html">benchmark_engines()</a></code>, <code><a href="reference/grolts_report.html">grolts_report()</a></code>, precomputed vignette (see History).</p>
 </div>

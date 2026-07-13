@@ -1,6 +1,6 @@
 # Changelog
 
-## gbtmkit (development version)
+## gbtmkit 0.2.0
 
 - Parallel execution of independent fits: multi-start initializations
   (`n_starts`) and the candidate fits in

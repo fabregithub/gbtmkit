@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gbtmkit</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,7 +37,7 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="gbtmkit-development-version">gbtmkit (development version)<a class="anchor" aria-label="anchor" href="#gbtmkit-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.2.0" id="gbtmkit-020">gbtmkit 0.2.0<a class="anchor" aria-label="anchor" href="#gbtmkit-020"></a></h2>
 <ul><li>Parallel execution of independent fits: multi-start initializations (<code>n_starts</code>) and the candidate fits in <code><a href="../reference/select_n_groups.html">select_n_groups()</a></code> / <code><a href="../reference/select_algorithm.html">select_algorithm()</a></code> run via future.apply when it is installed – set <code>future::plan(multisession)</code> (or <code>multicore</code>) to use several cores. With a <code>seed</code>, results are identical under any plan (each start/candidate seeds itself); measured ~2-2.6x wall-clock on 4-5 way parallelism, bounded by the slowest fit.</li>
 <li>Time-varying (trajectory) covariates: <code>gbtm_spec(tcov = list(w = c("w1", ...)))</code> – occasion-level variables that shift the outcome within a group, with group-specific coefficients on every engine (trajeR <code>TCOV</code>; added to the component/class formula for flexmix and lcmm). Fitted trajectories from <code><a href="../reference/gbtm_predict.html">gbtm_predict()</a></code> / <code><a href="../reference/plot_trajectories.html">plot_trajectories()</a></code> are computed at <code>tcov = 0</code>. <code><a href="../reference/gbtm_accessors.html">gbtm_posterior()</a></code> for trajeR now passes <code>TCOV</code>/<code>Risk</code> through to <code>GroupProb()</code> (required with <code>tcov</code>; a no-op numerically for membership covariates).</li>
 <li>New <code><a href="../reference/grolts_report.html">grolts_report()</a></code>: maps a <code><a href="../reference/run_gbtm_pipeline.html">run_gbtm_pipeline()</a></code> result onto the GRoLTS checklist (van de Schoot et al. 2017). Items the pipeline can answer – time metric, software and engine versions, shape search, starting values and iterations, selection tools, models fitted, class sizes, entropy – are auto-filled; items only the analyst can know (missing-data mechanism, manuscript plots, syntax availability) are flagged with context. Pass <code>file =</code> to also write a Markdown appendix. Fits now record <code>itermax</code> to support it.</li>
