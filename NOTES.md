@@ -108,6 +108,7 @@ throughout.
 | f7a58a0 | 2026-07-12 | Redesign example data: 10 occasions, mixed linear/cubic shapes |
 | 3a1fdf4 | 2026-07-12 | flexmix as a second estimation engine (uniform-degree capability) |
 | ba80163 | 2026-07-12 | lcmm as a third estimation engine (hlme / thresholds link) |
+| 038d2a2 | 2026-07-13 | Vignette: "Choosing an engine" section for all three backends |
 
 ### Build stages (as executed)
 
