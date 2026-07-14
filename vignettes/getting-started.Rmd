@@ -531,9 +531,9 @@ The four backends make different trade-offs:
 | Families | binomial, gaussian, poisson | binomial, gaussian, poisson, beta | binomial, gaussian, poisson | binomial, gaussian |
 | Optimizers | BFGS (fixed) | `"L"`, `"EM"`, `"EMIRLS"` (stage 1 picks one) | EM (fixed) | Marquardt (fixed) |
 | Per-group degrees | yes | yes | no -- one order for all groups | no -- one order for all groups |
-| Notes | built in, vectorized ML; NA-tolerant; censored normal | reference GBTM implementation | fast EM on large data | `hlme()`; binary via a thresholds link |
+| Notes | built in, vectorised ML; NA-tolerant; censored normal | reference GBTM implementation | fast EM on large data | `hlme()`; binary via a thresholds link |
 
-The native engine is a clean-room, fully vectorized maximum-likelihood
+The native engine is a clean-room, fully vectorised maximum-likelihood
 implementation validated against the others (its likelihood reproduces
 trajeR's convention exactly, and its analytic gradients are checked against
 numerical differentiation in the test suite). It is typically 10-100x faster

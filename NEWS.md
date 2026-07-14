@@ -6,7 +6,7 @@
   without engine-specific arguments keeps working and gets much faster.
 
 * New built-in estimation engine: `engine = "gbtmkit"` -- a clean-room,
-  fully vectorized maximum-likelihood implementation of Nagin-style GBTM
+  fully vectorised maximum-likelihood implementation of Nagin-style GBTM
   (BFGS with analytic gradients validated against numDeriv; the likelihood
   reproduces trajeR's convention exactly). Typically 10-100x faster than
   trajeR at matching or better optima, with per-group degrees, both covariate

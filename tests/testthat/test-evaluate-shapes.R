@@ -2,7 +2,7 @@
 # The search is exercised with a mocked .shape_fit_diag() giving a known BIC
 # surface, so it runs instantly and the optimum is known.
 
-# Fake evaluator: BIC is minimized at degrees == target (default all 2s).
+# Fake evaluator: BIC is minimised at degrees == target (default all 2s).
 fake_evaluator <- function(target = 2L, pass_criteria = TRUE) {
   function(spec, engine, n_groups, degrees, method, hessian, itermax, seed) {
     tgt <- rep(target, n_groups)
@@ -47,7 +47,7 @@ test_that("grid strategy enumerates every shape and finds the optimum", {
                         min_degree = 1, max_degree = 3, verbose = FALSE)
   expect_s3_class(sh, "gbtm_shapes")
   expect_equal(sh$n_fits, 9L)                 # 3^2 unique shapes
-  expect_equal(sh$best, c(2L, 2L))            # BIC minimized at target
+  expect_equal(sh$best, c(2L, 2L))            # BIC minimised at target
   expect_false(sh$budget_hit)
 })
 

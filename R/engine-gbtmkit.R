@@ -1,7 +1,7 @@
 # =============================================================================
 # Native estimation engine ("gbtmkit").
 #
-# A clean-room, fully vectorized implementation of Nagin-style GBTM: direct
+# A clean-room, fully vectorised implementation of Nagin-style GBTM: direct
 # maximum likelihood via stats::optim (BFGS) with analytic gradients. Written
 # from the model equations (no code shared with trajeR, which is GPL): the
 # mixture log-likelihood of per-group polynomial trajectories, optional
@@ -9,7 +9,7 @@
 # covariates (group-specific coefficients).
 #
 # Why it exists: profiling showed trajeR spends ~99.7% of a fit inside its own
-# C++ likelihood at ~130 ms per evaluation, while this vectorized R version
+# C++ likelihood at ~130 ms per evaluation, while this vectorised R version
 # evaluates the same quantity in under 1 ms -- the same models fit ~50-100x
 # faster, with per-group degrees, exposed convergence tolerance (`reltol`),
 # NA-tolerant outcomes, and native multi-start. The likelihood convention was
