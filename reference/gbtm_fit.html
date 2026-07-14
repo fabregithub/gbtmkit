@@ -104,8 +104,9 @@ the chosen engine (ignored by engines with a single optimizer).</p></dd>
 <dt id="arg-n-starts">n_starts<a class="anchor" aria-label="anchor" href="#arg-n-starts"></a></dt>
 <dd><p>Number of initializations to try; the best fit by BIC is
 kept. The first start is the engine's default initialization; additional
-starts are engine-specific (trajeR: k-means partition starting values;
-flexmix: fresh random EM initializations; lcmm: <code><a href="https://cecileproust-lima.github.io/lcmm/reference/gridsearch.html" class="external-link">lcmm::gridsearch()</a></code>).
+starts are engine-specific (trajeR and the native gbtmkit engine:
+k-means partition starting values; flexmix: fresh random EM
+initializations; lcmm: <code><a href="https://cecileproust-lima.github.io/lcmm/reference/gridsearch.html" class="external-link">lcmm::gridsearch()</a></code>).
 Mixture fits can land in local optima – empty or merged groups are the
 telltale sign – and <code>n_starts</code> greater than 1 is the standard defense.
 Independent starts run in parallel under a <code><a href="https://future.futureverse.org/reference/plan.html" class="external-link">future::plan()</a></code> when the

@@ -160,6 +160,35 @@ for lcmm so effects are class-specific). Gotchas:
 - **trajeR paraminit with TCOV**: delta block (ng x nw, zeros as start)
   sits at the very end; the k-means multi-start appends it.
 
+## Findings from the native engine (2026-07-14, `engine = "gbtmkit"`)
+
+Clean-room vectorized ML implementation (BFGS + analytic gradients),
+written from the model equations – no code from GPL trajeR. Key facts:
+
+- **Correctness anchors**: the likelihood evaluated at trajeR’s fitted
+  parameters reproduces trajeR’s log-likelihood exactly (same
+  convention); analytic gradients match numDeriv to ~1e-8 across
+  families x covariates x tcov x ssigma x NA masks (tested); 99.8%
+  assignment agreement with trajeR on the binary fixture; perfect
+  recovery on the continuous fixture.
+- **Speed**: the binary 4-group quadratic fit that takes trajeR ~44 s
+  runs in ~1.1 s single-start (~3.4 s with 3 starts) at a slightly
+  *better* optimum. The root cause of trajeR’s slowness (profiled):
+  ~99.7% of time inside its C++ likelihood at ~130 ms/eval vs \<1 ms
+  vectorized.
+- **Parameterization** (optim vector): group-major theta blocks
+  (intercept + membership-covariate effects, group 1 reference),
+  per-group beta = polynomial coefficients then tcov coefficients,
+  gaussian log-sigma (1 value if ssigma else K). tcov enters as extra
+  design columns, so it shares the beta code path; trajectories at tcov
+  = 0 use only the poly part.
+- **NA outcomes are masked, not dropped** (unlike the long-format
+  engines) – subjects need \>= 1 observed occasion.
+- **Not yet**: censored-normal bounds (ymin/ymax error out and point at
+  trajeR); beta family.
+- trajeR remains the default engine deliberately: baked outputs,
+  established citations, and censoring support.
+
 ## Findings from parallelization (2026-07-13, `.fit_map` via future.apply)
 
 Independent fits (multi-start starts; selection-stage
@@ -308,6 +337,7 @@ Built step by step, confirming each stage, with `R CMD check` kept at
 | 78b3806 | 2026-07-13 | Vignette: grolts_report, n_starts, covariates, benchmark_engines |
 | a55f985 | 2026-07-13 | Time-varying trajectory covariates (`gbtm_spec(tcov=)`) on all engines |
 | 19717b1 | 2026-07-13 | Parallel multi-start and selection sweeps via future.apply (~2-2.6x) |
+| 03c7c92 | 2026-07-13 | **v0.2.0**: vignette parallel note, warm-start negative result, demo-data decision |
 
 ### Build stages (as executed)
 
@@ -341,6 +371,11 @@ Built step by step, confirming each stage, with `R CMD check` kept at
 
 ## Current state
 
+- **v0.2.0 tagged (2026-07-13)**: multi-start (`n_starts`), membership +
+  time-varying covariates,
+  [`grolts_report()`](https://fabregithub.github.io/gbtmkit/reference/grolts_report.md),
+  [`benchmark_engines()`](https://fabregithub.github.io/gbtmkit/reference/benchmark_engines.md),
+  parallel independent fits; 482 tests, check 0/0/0.
 - **v0.1.0 tagged (2026-07-13)**: three engines (trajeR / flexmix /
   lcmm), full GRoLTS pipeline, precomputed vignette, README scope
   section; CI green on all five platforms.

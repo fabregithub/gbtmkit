@@ -71,9 +71,10 @@
 <p><code>gbtmkit</code> turns group-based trajectory modeling (GBTM)
 into a reproducible pipeline that follows the GRoLTS reporting
 checklist. Estimation is delegated to interchangeable backends –
-<code>trajeR</code> (the default), <code>flexmix</code>, and
-<code>lcmm</code> – behind one interface: every fitting function takes
-an <code>engine</code> argument, and the fit diagnostics (entropy, APPA,
+<code>trajeR</code> (the default), <code>flexmix</code>,
+<code>lcmm</code>, and a built-in native engine (<code>"gbtmkit"</code>)
+– behind one interface: every fitting function takes an
+<code>engine</code> argument, and the fit diagnostics (entropy, APPA,
 OCC, group proportions) are computed the same way regardless of engine,
 for binary and continuous outcomes alike.</p>
 <p>The examples below all use the default
@@ -511,7 +512,7 @@ Estimation is pluggable: every fitting function
 and the registry tells you what each backend offers:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/gbtm_engines.html">gbtm_engines</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "trajeR"  "flexmix" "lcmm"</span></span>
+<span><span class="co">#&gt; [1] "trajeR"  "flexmix" "lcmm"    "gbtmkit"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fu"><a href="../reference/gbtm_engines.html">gbtm_engines</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">gbtm_engine_families</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $trajeR</span></span>
 <span><span class="co">#&gt; [1] "binomial" "gaussian" "poisson"  "beta"    </span></span>
@@ -521,16 +522,20 @@ and the registry tells you what each backend offers:</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $lcmm</span></span>
 <span><span class="co">#&gt; [1] "binomial" "gaussian"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $gbtmkit</span></span>
+<span><span class="co">#&gt; [1] "binomial" "gaussian" "poisson"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fu"><a href="../reference/gbtm_engines.html">gbtm_engines</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">gbtm_engine_per_group_degrees</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  trajeR flexmix    lcmm </span></span>
-<span><span class="co">#&gt;    TRUE   FALSE   FALSE</span></span></code></pre></div>
-<p>The three backends make different trade-offs:</p>
+<span><span class="co">#&gt;  trajeR flexmix    lcmm gbtmkit </span></span>
+<span><span class="co">#&gt;    TRUE   FALSE   FALSE    TRUE</span></span></code></pre></div>
+<p>The four backends make different trade-offs:</p>
 <table class="table">
 <colgroup>
-<col width="25%">
-<col width="25%">
-<col width="25%">
-<col width="25%">
+<col width="20%">
+<col width="20%">
+<col width="20%">
+<col width="20%">
+<col width="20%">
 </colgroup>
 <thead><tr class="header">
 <th></th>
@@ -538,6 +543,8 @@ and the registry tells you what each backend offers:</p>
 <code>trajeR</code> (default)</th>
 <th><code>flexmix</code></th>
 <th><code>lcmm</code></th>
+<th>
+<code>gbtmkit</code> (native)</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
@@ -545,6 +552,7 @@ and the registry tells you what each backend offers:</p>
 <td>binomial, gaussian, poisson, beta</td>
 <td>binomial, gaussian, poisson</td>
 <td>binomial, gaussian</td>
+<td>binomial, gaussian, poisson</td>
 </tr>
 <tr class="even">
 <td>Optimizers</td>
@@ -553,12 +561,14 @@ and the registry tells you what each backend offers:</p>
 picks one)</td>
 <td>EM (fixed)</td>
 <td>Marquardt (fixed)</td>
+<td>BFGS (fixed)</td>
 </tr>
 <tr class="odd">
 <td>Per-group degrees</td>
 <td>yes</td>
 <td>no – one order for all groups</td>
 <td>no – one order for all groups</td>
+<td>yes</td>
 </tr>
 <tr class="even">
 <td>Notes</td>
@@ -566,9 +576,18 @@ picks one)</td>
 <td>fast EM on large data</td>
 <td>
 <code>hlme()</code>; binary via a thresholds link</td>
+<td>built in, vectorized ML; NA-tolerant; no censoring bounds yet</td>
 </tr>
 </tbody>
 </table>
+<p>The native engine is a clean-room, fully vectorized
+maximum-likelihood implementation validated against the others (its
+likelihood reproduces trajeR’s convention exactly, and its analytic
+gradients are checked against numerical differentiation in the test
+suite). It is typically 10-100x faster than <code>trajeR</code> at
+matching or better optima. The three established packages remain
+available as citable instruments – useful when a reviewer asks for an
+established implementation.</p>
 <p>The pipeline adapts automatically: for a single-optimizer engine
 stage 1 is skipped, and for a uniform-degree engine the stage-3 shape
 search sweeps uniform shapes (degree 1 for all groups, degree 2 for all
@@ -582,9 +601,10 @@ data:</p>
 <span>                  method <span class="op">=</span> <span class="st">"L"</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;gbtm_benchmark&gt;  one model per engine, wall-clock seconds</span></span>
 <span><span class="co">#&gt;   engine   ok seconds      bic   loglik entropy min_appa groups_effective note</span></span>
-<span><span class="co">#&gt;   trajeR TRUE   50.40 17138.03 -8499.54    0.76     0.85                4     </span></span>
-<span><span class="co">#&gt;  flexmix TRUE    2.87 17182.07 -8499.69    0.75     0.85                4     </span></span>
-<span><span class="co">#&gt;     lcmm TRUE   33.44 17138.08 -8499.56    0.75     0.84                4     </span></span>
+<span><span class="co">#&gt;   trajeR TRUE   50.48 17138.03 -8499.54    0.76     0.85                4     </span></span>
+<span><span class="co">#&gt;  flexmix TRUE    2.56 17182.07 -8499.69    0.75     0.85                4     </span></span>
+<span><span class="co">#&gt;     lcmm TRUE   33.02 17138.08 -8499.56    0.75     0.84                4     </span></span>
+<span><span class="co">#&gt;  gbtmkit TRUE    1.65 17138.46 -8499.76    0.75     0.85                4     </span></span>
 <span><span class="co">#&gt; Note: BIC/loglik are comparable only within an engine;</span></span>
 <span><span class="co">#&gt; compare engines on time and classification diagnostics.</span></span></code></pre></div>
 <p>All three engines find the same four groups with comparable

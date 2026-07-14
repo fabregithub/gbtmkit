@@ -68,8 +68,9 @@ gbtm_fit(
 
   Number of initializations to try; the best fit by BIC is kept. The
   first start is the engine's default initialization; additional starts
-  are engine-specific (trajeR: k-means partition starting values;
-  flexmix: fresh random EM initializations; lcmm:
+  are engine-specific (trajeR and the native gbtmkit engine: k-means
+  partition starting values; flexmix: fresh random EM initializations;
+  lcmm:
   [`lcmm::gridsearch()`](https://cecileproust-lima.github.io/lcmm/reference/gridsearch.html)).
   Mixture fits can land in local optima – empty or merged groups are the
   telltale sign – and `n_starts` greater than 1 is the standard defense.
