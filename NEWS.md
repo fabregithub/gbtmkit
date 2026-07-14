@@ -7,10 +7,12 @@
   trajeR at matching or better optima, with per-group degrees, both covariate
   kinds, shared or per-group residual variance, NA-tolerant outcomes (masked,
   not dropped), exposed convergence tolerance (`reltol`), native k-means
-  multi-start, and standard errors via `hessian = TRUE` (`fit$vcov`).
-  Censored-normal bounds (ymin/ymax) are not supported yet -- use trajeR for
-  those. trajeR remains the default engine; the three established packages
-  stay available as citable instruments.
+  multi-start, standard errors via `hessian = TRUE` (`fit$vcov`), and
+  censored-normal (Tobit) outcomes via the spec's `ymin`/`ymax` bounds --
+  validated against trajeR's CNORM (identical log-likelihood at the same
+  parameters) and shown to recover latent trajectory parameters through ~13%
+  censoring. trajeR remains the default engine; the three established
+  packages stay available as citable instruments.
 
 # gbtmkit 0.2.0
 

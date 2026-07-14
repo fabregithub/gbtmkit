@@ -41,7 +41,20 @@
   if (!is.null(Wl) && any(vapply(Wl, anyNA, logical(1)))) {
     stop("tcov matrices must not contain missing values.", call. = FALSE)
   }
+  # Censored-normal (Tobit) cells: observed values at/below ymin are
+  # left-censored, at/above ymax right-censored.
+  censored <- spec$family == "gaussian" &&
+    (!is.null(spec$ymin) || !is.null(spec$ymax))
+  Cl <- if (censored && !is.null(spec$ymin)) M & Y <= spec$ymin else
+    matrix(FALSE, nrow(Y), ncol(Y))
+  Cr <- if (censored && !is.null(spec$ymax)) M & Y >= spec$ymax else
+    matrix(FALSE, nrow(Y), ncol(Y))
   list(
+    censored = censored,
+    ymin    = spec$ymin,
+    ymax    = spec$ymax,
+    Cl      = Cl,
+    Cr      = Cr,
     Y0      = ifelse(M, Y, 0),
     M       = M,
     P       = lapply(0:max(degrees), function(j) A^j),
@@ -98,15 +111,15 @@
   eta - m - log(rowSums(exp(eta - m)))
 }
 
-# Per-subject per-group conditional log-likelihood (n x K) and the residual
-# matrices that drive the beta gradients.
+# Per-subject per-group conditional log-likelihood (n x K), the d/d(eta)
+# residual matrices that drive the beta gradients, and (gaussian) the
+# d/d(log sigma) cell matrices that drive the sigma gradients.
 .ngb_llgroups <- function(p, ctx) {
   L <- matrix(0, ctx$n, ctx$K)
   R <- vector("list", ctx$K)
-  E <- vector("list", ctx$K)
+  S <- vector("list", ctx$K)
   for (k in seq_len(ctx$K)) {
     e <- .ngb_eta(p$beta[[k]], k, ctx)
-    E[[k]] <- e
     if (ctx$family == "binomial") {
       cell   <- ctx$Y0 * stats::plogis(e, log.p = TRUE) +
         (1 - ctx$Y0) * stats::plogis(-e, log.p = TRUE)
@@ -115,13 +128,37 @@
       cell   <- ctx$Y0 * e - exp(e) - lgamma(ctx$Y0 + 1)
       R[[k]] <- (ctx$Y0 - exp(e)) * ctx$M
     } else {
-      s      <- exp(p$log_sigma[k])
-      cell   <- stats::dnorm(ctx$Y0, e, s, log = TRUE)
-      R[[k]] <- ((ctx$Y0 - e) / s^2) * ctx$M
+      s    <- exp(p$log_sigma[k])
+      cell <- stats::dnorm(ctx$Y0, e, s, log = TRUE)
+      r    <- (ctx$Y0 - e) / s^2
+      sc   <- ((ctx$Y0 - e) / s)^2 - 1
+      if (ctx$censored) {
+        # Tobit cells: replace censored entries with tail probabilities and
+        # their derivatives (Mills ratios, computed on the log scale for
+        # stability in the far tails).
+        if (any(ctx$Cl)) {
+          zl <- (ctx$ymin - e) / s
+          ll <- stats::pnorm(zl, log.p = TRUE)
+          ml <- exp(stats::dnorm(zl, log = TRUE) - ll)
+          cell[ctx$Cl] <- ll[ctx$Cl]
+          r[ctx$Cl]    <- (-ml / s)[ctx$Cl]
+          sc[ctx$Cl]   <- (-zl * ml)[ctx$Cl]
+        }
+        if (any(ctx$Cr)) {
+          zr <- (ctx$ymax - e) / s
+          lr <- stats::pnorm(zr, lower.tail = FALSE, log.p = TRUE)
+          mr <- exp(stats::dnorm(zr, log = TRUE) - lr)
+          cell[ctx$Cr] <- lr[ctx$Cr]
+          r[ctx$Cr]    <- (mr / s)[ctx$Cr]
+          sc[ctx$Cr]   <- (zr * mr)[ctx$Cr]
+        }
+      }
+      R[[k]] <- r * ctx$M
+      S[[k]] <- sc * ctx$M
     }
     L[, k] <- rowSums(cell * ctx$M)
   }
-  list(L = L, R = R, E = E)
+  list(L = L, R = R, S = S)
 }
 
 .ngb_loglik <- function(par, ctx) {
@@ -160,9 +197,7 @@
   g_sig <- c()
   if (ctx$family == "gaussian") {
     for (k in seq_len(ctx$K)) {
-      s <- exp(p$log_sigma[k])
-      dcell <- (((ctx$Y0 - lg$E[[k]])^2 / s^2) - 1) * ctx$M
-      g_sig <- c(g_sig, sum(W[, k] * rowSums(dcell)))
+      g_sig <- c(g_sig, sum(W[, k] * rowSums(lg$S[[k]])))
     }
     if (ctx$ssigma) g_sig <- sum(g_sig)
   }
@@ -232,10 +267,6 @@
   if (!is.null(method) && !is.na(method)) {
     stop("engine 'gbtmkit' has a single optimizer (BFGS); leave `method` unset.",
          call. = FALSE)
-  }
-  if (spec$family == "gaussian" && (!is.null(spec$ymin) || !is.null(spec$ymax))) {
-    stop("engine 'gbtmkit' does not support censoring bounds (ymin/ymax) yet; ",
-         "use engine 'trajeR' for censored-normal outcomes.", call. = FALSE)
   }
   ctx <- .ngb_ctx(spec, degrees)
 

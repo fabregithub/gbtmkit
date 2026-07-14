@@ -525,7 +525,7 @@ The four backends make different trade-offs:
 | Families | binomial, gaussian, poisson, beta | binomial, gaussian, poisson | binomial, gaussian | binomial, gaussian, poisson |
 | Optimizers | `"L"`, `"EM"`, `"EMIRLS"` (stage 1 picks one) | EM (fixed) | Marquardt (fixed) | BFGS (fixed) |
 | Per-group degrees | yes | no -- one order for all groups | no -- one order for all groups | yes |
-| Notes | reference GBTM implementation | fast EM on large data | `hlme()`; binary via a thresholds link | built in, vectorized ML; NA-tolerant; no censoring bounds yet |
+| Notes | reference GBTM implementation | fast EM on large data | `hlme()`; binary via a thresholds link | built in, vectorized ML; NA-tolerant; censored normal |
 
 The native engine is a clean-room, fully vectorized maximum-likelihood
 implementation validated against the others (its likelihood reproduces
@@ -550,10 +550,10 @@ benchmark_engines(spec, n_groups = 4, degrees = rep(3, 4),
                   method = "L", seed = 1)
 #> <gbtm_benchmark>  one model per engine, wall-clock seconds
 #>   engine   ok seconds      bic   loglik entropy min_appa groups_effective note
-#>   trajeR TRUE   50.48 17138.03 -8499.54    0.76     0.85                4     
-#>  flexmix TRUE    2.56 17182.07 -8499.69    0.75     0.85                4     
-#>     lcmm TRUE   33.02 17138.08 -8499.56    0.75     0.84                4     
-#>  gbtmkit TRUE    1.65 17138.46 -8499.76    0.75     0.85                4     
+#>   trajeR TRUE   50.59 17138.03 -8499.54    0.76     0.85                4     
+#>  flexmix TRUE    2.67 17182.07 -8499.69    0.75     0.85                4     
+#>     lcmm TRUE   33.42 17138.08 -8499.56    0.75     0.84                4     
+#>  gbtmkit TRUE    1.63 17138.46 -8499.76    0.75     0.85                4     
 #> Note: BIC/loglik are comparable only within an engine;
 #> compare engines on time and classification diagnostics.
 ```

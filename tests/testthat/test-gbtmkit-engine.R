@@ -63,6 +63,15 @@ test_that("analytic gradients match numDeriv across families and features", {
                       family = "poisson")
   set.seed(5); par <- c(rnorm(1, 0, .3), rnorm(2 + 2, 1, .2))
   expect_lt(check(spec_p, c(1L, 1L), par), 1e-4)
+
+  # censored normal (both tails present in the data)
+  dc <- d
+  dc[paste0("y", 1:6)] <- lapply(d[paste0("y", 1:6)],
+                                 function(x) pmin(pmax(x, 16), 24))
+  spec_c <- gbtm_spec(dc, paste0("y", 1:6), paste0("t", 1:6), id = "id",
+                      family = "gaussian", ymin = 16, ymax = 24)
+  set.seed(6); par <- c(rnorm(1, 0, .3), rnorm(2 + 2, 20, 2), log(c(3, 4)))
+  expect_lt(check(spec_c, c(1L, 1L), par), 1e-4)
 })
 
 # -- engine contract ----------------------------------------------------------
@@ -180,12 +189,36 @@ test_that("validation and capability advertising", {
   expect_error(gbtm_fit(bin_spec(50), engine = "gbtmkit", n_groups = 2,
                         degrees = c(1, 1), method = "L"),
                "single optimizer")
-  data("sim_continuous", package = "gbtmkit", envir = environment())
-  cens <- gbtm_spec(sim_continuous, paste0("y", 1:10), paste0("t", 1:10),
-                    id = "id", family = "gaussian", ymin = 10, ymax = 40)
-  expect_error(gbtm_fit(cens, engine = "gbtmkit", n_groups = 2,
-                        degrees = c(1, 1)),
-               "censoring")
+})
+
+test_that("censored normal recovers latent parameters and matches trajeR", {
+  skip_on_cran()
+  # 2 groups, latent normal clipped at [12, 28] (~13% of cells censored)
+  set.seed(21)
+  n <- 800; nt <- 8; times <- 1:nt
+  grp <- sample(1:2, n, TRUE)
+  mu <- rbind(10 + 1.5 * times, 30 - 1.5 * times)
+  Y  <- pmin(pmax(t(sapply(seq_len(n), function(i)
+    rnorm(nt, mu[grp[i], ], 2))), 12), 28)
+  d <- data.frame(id = seq_len(n))
+  d[paste0("y", 1:nt)] <- as.data.frame(Y)
+  d[paste0("t", 1:nt)] <- as.data.frame(matrix(rep(times, each = n), n, nt))
+  spec <- gbtm_spec(d, paste0("y", 1:nt), paste0("t", 1:nt), id = "id",
+                    family = "gaussian", ymin = 12, ymax = 28)
+  fit <- gbtm_fit(spec, engine = "gbtmkit", n_groups = 2, degrees = c(1, 1),
+                  itermax = 400, seed = 1)
+  expect_valid_fit(fit, 2)
+  # Tobit correction recovers the LATENT trajectory parameters
+  b <- fit$params$beta[order(vapply(fit$params$beta, `[`, numeric(1), 1))]
+  expect_equal(unlist(b), c(10, 1.5, 30, -1.5), tolerance = 0.05,
+               ignore_attr = TRUE)
+  expect_equal(unname(exp(fit$params$log_sigma)), c(2, 2), tolerance = 0.05)
+
+  # same likelihood convention as trajeR CNORM with explicit bounds
+  skip_if_not_installed("trajeR")
+  ft <- gbtm_fit(spec, engine = "trajeR", n_groups = 2, degrees = c(1, 1),
+                 method = "L", itermax = 400, seed = 1)
+  expect_equal(gbtm_loglik(fit), gbtm_loglik(ft), tolerance = 1e-4)
 })
 
 test_that("multi-start bookkeeping and print", {
