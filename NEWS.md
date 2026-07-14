@@ -1,3 +1,17 @@
+# gbtmkit (development version)
+
+* New built-in estimation engine: `engine = "gbtmkit"` -- a clean-room,
+  fully vectorized maximum-likelihood implementation of Nagin-style GBTM
+  (BFGS with analytic gradients validated against numDeriv; the likelihood
+  reproduces trajeR's convention exactly). Typically 10-100x faster than
+  trajeR at matching or better optima, with per-group degrees, both covariate
+  kinds, shared or per-group residual variance, NA-tolerant outcomes (masked,
+  not dropped), exposed convergence tolerance (`reltol`), native k-means
+  multi-start, and standard errors via `hessian = TRUE` (`fit$vcov`).
+  Censored-normal bounds (ymin/ymax) are not supported yet -- use trajeR for
+  those. trajeR remains the default engine; the three established packages
+  stay available as citable instruments.
+
 # gbtmkit 0.2.0
 
 * Parallel execution of independent fits: multi-start initializations

@@ -139,6 +139,32 @@ class-specific). Gotchas:
 - **trajeR paraminit with TCOV**: delta block (ng x nw, zeros as start) sits
   at the very end; the k-means multi-start appends it.
 
+## Findings from the native engine (2026-07-14, `engine = "gbtmkit"`)
+
+Clean-room vectorized ML implementation (BFGS + analytic gradients), written
+from the model equations -- no code from GPL trajeR. Key facts:
+
+- **Correctness anchors**: the likelihood evaluated at trajeR's fitted
+  parameters reproduces trajeR's log-likelihood exactly (same convention);
+  analytic gradients match numDeriv to ~1e-8 across families x covariates x
+  tcov x ssigma x NA masks (tested); 99.8% assignment agreement with trajeR
+  on the binary fixture; perfect recovery on the continuous fixture.
+- **Speed**: the binary 4-group quadratic fit that takes trajeR ~44 s runs in
+  ~1.1 s single-start (~3.4 s with 3 starts) at a slightly *better* optimum.
+  The root cause of trajeR's slowness (profiled): ~99.7% of time inside its
+  C++ likelihood at ~130 ms/eval vs <1 ms vectorized.
+- **Parameterization** (optim vector): group-major theta blocks
+  (intercept + membership-covariate effects, group 1 reference), per-group
+  beta = polynomial coefficients then tcov coefficients, gaussian log-sigma
+  (1 value if ssigma else K). tcov enters as extra design columns, so it
+  shares the beta code path; trajectories at tcov = 0 use only the poly part.
+- **NA outcomes are masked, not dropped** (unlike the long-format engines) --
+  subjects need >= 1 observed occasion.
+- **Not yet**: censored-normal bounds (ymin/ymax error out and point at
+  trajeR); beta family.
+- trajeR remains the default engine deliberately: baked outputs, established
+  citations, and censoring support.
+
 ## Findings from parallelization (2026-07-13, `.fit_map` via future.apply)
 
 Independent fits (multi-start starts; selection-stage candidates/methods) run

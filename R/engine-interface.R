@@ -16,7 +16,7 @@
 #'   [gbtm_fit()].
 #' @export
 gbtm_engines <- function() {
-  c("trajeR", "flexmix", "lcmm")
+  c("trajeR", "flexmix", "lcmm", "gbtmkit")
 }
 
 #' Outcome families supported by an engine
@@ -29,7 +29,8 @@ gbtm_engine_families <- function(engine = gbtm_engines()) {
   switch(engine,
     trajeR  = c("binomial", "gaussian", "poisson", "beta"),
     flexmix = c("binomial", "gaussian", "poisson"),
-    lcmm    = c("binomial", "gaussian")
+    lcmm    = c("binomial", "gaussian"),
+    gbtmkit = c("binomial", "gaussian", "poisson")
   )
 }
 
@@ -47,16 +48,18 @@ gbtm_engine_methods <- function(engine = gbtm_engines()) {
   switch(engine,
     trajeR  = c("L", "EM", "EMIRLS"),
     flexmix = NA_character_,
-    lcmm    = NA_character_
+    lcmm    = NA_character_,
+    gbtmkit = NA_character_
   )
 }
 
 #' Does an engine support per-group polynomial degrees?
 #'
-#' trajeR fits a separate polynomial order per group. flexmix and lcmm fit one
-#' model formula shared by all components/classes, so the degree is uniform
-#' across groups; [evaluate_shapes()] then sweeps uniform shapes instead of
-#' per-group combinations.
+#' trajeR and the native gbtmkit engine fit a separate polynomial order per
+#' group. flexmix and lcmm fit one model formula shared by all
+#' components/classes, so the degree is uniform across groups;
+#' [evaluate_shapes()] then sweeps uniform shapes instead of per-group
+#' combinations.
 #'
 #' @param engine Engine name; see [gbtm_engines()].
 #' @return `TRUE` if `degrees` may differ across groups, `FALSE` otherwise.
@@ -66,7 +69,8 @@ gbtm_engine_per_group_degrees <- function(engine = gbtm_engines()) {
   switch(engine,
     trajeR  = TRUE,
     flexmix = FALSE,
-    lcmm    = FALSE
+    lcmm    = FALSE,
+    gbtmkit = TRUE
   )
 }
 
@@ -88,8 +92,9 @@ gbtm_engine_per_group_degrees <- function(engine = gbtm_engines()) {
 #' @param seed Optional integer seed for reproducibility.
 #' @param n_starts Number of initializations to try; the best fit by BIC is
 #'   kept. The first start is the engine's default initialization; additional
-#'   starts are engine-specific (trajeR: k-means partition starting values;
-#'   flexmix: fresh random EM initializations; lcmm: [lcmm::gridsearch()]).
+#'   starts are engine-specific (trajeR and the native gbtmkit engine:
+#'   k-means partition starting values; flexmix: fresh random EM
+#'   initializations; lcmm: [lcmm::gridsearch()]).
 #'   Mixture fits can land in local optima -- empty or merged groups are the
 #'   telltale sign -- and `n_starts` greater than 1 is the standard defense.
 #'   Independent starts run in parallel under a [future::plan()] when the
@@ -132,7 +137,11 @@ gbtm_fit <- function(spec,
     lcmm    = .fit_lcmm(spec, n_groups = n_groups, degrees = degrees,
                         method = method, hessian = hessian,
                         itermax = itermax, seed = seed,
-                        n_starts = n_starts, ...)
+                        n_starts = n_starts, ...),
+    gbtmkit = .fit_gbtmkit(spec, n_groups = n_groups, degrees = degrees,
+                           method = method, hessian = hessian,
+                           itermax = itermax, seed = seed,
+                           n_starts = n_starts, ...)
   )
 }
 

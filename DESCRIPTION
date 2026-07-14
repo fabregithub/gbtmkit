@@ -29,6 +29,7 @@ Suggests:
     flexmix,
     lcmm,
     future,
+    numDeriv,
     future.apply,
     progressr,
     ggplot2,

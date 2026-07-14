@@ -38,8 +38,9 @@ the chosen engine (ignored by engines with a single optimizer).}
 
 \item{n_starts}{Number of initializations to try; the best fit by BIC is
 kept. The first start is the engine's default initialization; additional
-starts are engine-specific (trajeR: k-means partition starting values;
-flexmix: fresh random EM initializations; lcmm: \code{\link[lcmm:gridsearch]{lcmm::gridsearch()}}).
+starts are engine-specific (trajeR and the native gbtmkit engine:
+k-means partition starting values; flexmix: fresh random EM
+initializations; lcmm: \code{\link[lcmm:gridsearch]{lcmm::gridsearch()}}).
 Mixture fits can land in local optima -- empty or merged groups are the
 telltale sign -- and \code{n_starts} greater than 1 is the standard defense.
 Independent starts run in parallel under a \code{\link[future:plan]{future::plan()}} when the

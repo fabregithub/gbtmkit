@@ -13,8 +13,9 @@ gbtm_engine_per_group_degrees(engine = gbtm_engines())
 \code{TRUE} if \code{degrees} may differ across groups, \code{FALSE} otherwise.
 }
 \description{
-trajeR fits a separate polynomial order per group. flexmix and lcmm fit one
-model formula shared by all components/classes, so the degree is uniform
-across groups; \code{\link[=evaluate_shapes]{evaluate_shapes()}} then sweeps uniform shapes instead of
-per-group combinations.
+trajeR and the native gbtmkit engine fit a separate polynomial order per
+group. flexmix and lcmm fit one model formula shared by all
+components/classes, so the degree is uniform across groups;
+\code{\link[=evaluate_shapes]{evaluate_shapes()}} then sweeps uniform shapes instead of per-group
+combinations.
 }

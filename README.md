@@ -17,12 +17,15 @@ walkthrough and the full function reference.
 - **One workflow, any outcome.** Binary (LOGIT) and continuous (CNORM) outcomes
   run through the same specification; count and proportion families are mapped
   too.
-- **Engine-agnostic.** Estimation is delegated to interchangeable backends
-  ([`trajeR`](https://cran.r-project.org/package=trajeR),
+- **Four engines, one interface.** A built-in native engine (vectorized
+  maximum likelihood -- typically 10-100x faster than `trajeR`, with
+  per-group degrees and NA-tolerant outcomes) plus three established
+  packages ([`trajeR`](https://cran.r-project.org/package=trajeR),
   [`flexmix`](https://cran.r-project.org/package=flexmix), and
-  [`lcmm`](https://cran.r-project.org/package=lcmm)) behind a small set
-  of accessors, so the GRoLTS diagnostics and plotting work the same
-  regardless of engine.
+  [`lcmm`](https://cran.r-project.org/package=lcmm)) behind a small set of
+  accessors, so the GRoLTS diagnostics and plotting work the same regardless
+  of engine -- use the native engine for speed, or a citable established
+  instrument when a reviewer asks for one.
 - **GRoLTS diagnostics and reporting built in.** Entropy, average posterior
   probability of assignment (APPA), odds of correct classification (OCC), and
   group proportions are computed once from the posterior matrix -- and
@@ -40,7 +43,8 @@ walkthrough and the full function reference.
 remotes::install_github("fabregithub/gbtmkit")
 ```
 
-The estimation engines are optional dependencies; install at least one:
+The native engine (`engine = "gbtmkit"`) has no extra dependencies. The
+established engines are optional:
 
 ```r
 install.packages("trajeR")    # per-group polynomial degrees, L/EM/EMIRLS
@@ -48,8 +52,8 @@ install.packages("flexmix")   # fast EM, one polynomial order for all groups
 install.packages("lcmm")      # hlme (gaussian) / thresholds link (binary)
 ```
 
-Pick the backend per fit with `engine = "trajeR"` (default), `"flexmix"`, or
-`"lcmm"` in `gbtm_fit()` / `run_gbtm_pipeline()` -- and let
+Pick the backend per fit with `engine = "trajeR"` (default), `"flexmix"`,
+`"lcmm"`, or `"gbtmkit"` in `gbtm_fit()` / `run_gbtm_pipeline()` -- and let
 `benchmark_engines()` time them on (a subsample of) your own data when speed
 matters.
 
@@ -91,9 +95,9 @@ random effects. On top of that one model class, gbtmkit standardizes the whole
 GRoLTS workflow: optimizer selection (for engines that offer a choice),
 group-number selection by BIC, a bounded polynomial-shape search with GRoLTS
 acceptance criteria (PMS, APPA, OCC), the final fit with standard errors, and
-per-subject group assignment. Binary and continuous outcomes work on all three
-engines; counts (Poisson) on `trajeR`/`flexmix`; proportions (beta) on
-`trajeR` only. Covariates work on every engine: class-membership covariates
+per-subject group assignment. Binary and continuous outcomes work on all four
+engines; counts (Poisson) on the native engine, `trajeR`, and `flexmix`;
+proportions (beta) on `trajeR` only. Covariates work on every engine: class-membership covariates
 (Nagin's "risk factors") via `gbtm_spec(covariates = ...)` and time-varying
 trajectory covariates with group-specific effects via `gbtm_spec(tcov = ...)`
 (fitted trajectories are reported at `tcov = 0`). Multi-start initialization
@@ -103,9 +107,9 @@ trajectory covariates with group-specific effects via `gbtm_spec(tcov = ...)`
 - **Not growth mixture models.** There are no within-class random effects; if
   you need GMM, use `lcmm::hlme()` with a `random =` formula (or similar
   tools) directly.
-- **Per-group polynomial degrees are `trajeR`-only.** `flexmix` and `lcmm`
-  fit one polynomial order shared by all groups; the shape search adapts
-  automatically (see `gbtm_engine_per_group_degrees()`).
+- **Per-group polynomial degrees need the native engine or `trajeR`.**
+  `flexmix` and `lcmm` fit one polynomial order shared by all groups; the
+  shape search adapts automatically (see `gbtm_engine_per_group_degrees()`).
 - **No cross-engine BIC.** Engines define their likelihoods differently, so
   compare BIC only within an engine; use the classification diagnostics
   (entropy, APPA, OCC) to sanity-check fits across engines.
