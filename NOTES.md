@@ -301,6 +301,7 @@ throughout.
 | a55f985 | 2026-07-13 | Time-varying trajectory covariates (`gbtm_spec(tcov=)`) on all engines |
 | 19717b1 | 2026-07-13 | Parallel multi-start and selection sweeps via future.apply (~2-2.6x) |
 | 03c7c92 | 2026-07-13 | **v0.2.0**: vignette parallel note, warm-start negative result, demo-data decision |
+| 4e97507 | 2026-07-14 | Native engine (`engine = "gbtmkit"`): vectorized ML, ~30-60x faster than trajeR |
 
 ### Build stages (as executed)
 
