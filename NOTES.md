@@ -168,7 +168,7 @@ for lcmm so effects are class-specific). Gotchas:
 
 ## Findings from the native engine (2026-07-14, `engine = "gbtmkit"`)
 
-Clean-room vectorized ML implementation (BFGS + analytic gradients),
+Clean-room vectorised ML implementation (BFGS + analytic gradients),
 written from the model equations – no code from GPL trajeR. Key facts:
 
 - **Correctness anchors**: the likelihood evaluated at trajeR’s fitted
@@ -181,7 +181,7 @@ written from the model equations – no code from GPL trajeR. Key facts:
   runs in ~1.1 s single-start (~3.4 s with 3 starts) at a slightly
   *better* optimum. The root cause of trajeR’s slowness (profiled):
   ~99.7% of time inside its C++ likelihood at ~130 ms/eval vs \<1 ms
-  vectorized.
+  vectorised.
 - **Parameterisation** (optim vector): group-major theta blocks
   (intercept + membership-covariate effects, group 1 reference),
   per-group beta = polynomial coefficients then tcov coefficients,
@@ -221,7 +221,7 @@ written from the model equations – no code from GPL trajeR. Key facts:
   remain selectable as established, citable instruments (a reviewer may
   ask for one).
 
-## Findings from parallelization (2026-07-13, `.fit_map` via future.apply)
+## Findings from parallelisation (2026-07-13, `.fit_map` via future.apply)
 
 Independent fits (multi-start starts; selection-stage
 candidates/methods) run through `.fit_map`, which uses
@@ -333,7 +333,7 @@ Built step by step, confirming each stage, with `R CMD check` kept at
 |----|----|----|
 | d79f091 | 2026-07-07 | Design document + `.gitignore`; folder renamed to `gbtmkit`, git init |
 | 0c3b17e | 2026-07-07 | Synthetic data simulator + first fixture (BIC recovers planted groups) |
-| 0278f9e | 2026-07-07 | Genericize data: domain-neutral binary + continuous fixtures |
+| 0278f9e | 2026-07-07 | Genericise data: domain-neutral binary + continuous fixtures |
 | b88165c | 2026-07-07 | Scrub design doc: synthetic-only, remove domain/published-data refs |
 | 583d62f | 2026-07-07 | Package skeleton (DESCRIPTION/MIT/NAMESPACE/testthat), data as package data |
 | a3a8f2b | 2026-07-07 | [`gbtm_spec()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_spec.md) — validated, name-based model specification |
@@ -370,7 +370,9 @@ Built step by step, confirming each stage, with `R CMD check` kept at
 | a55f985 | 2026-07-13 | Time-varying trajectory covariates (`gbtm_spec(tcov=)`) on all engines |
 | 19717b1 | 2026-07-13 | Parallel multi-start and selection sweeps via future.apply (~2-2.6x) |
 | 03c7c92 | 2026-07-13 | **v0.2.0**: vignette parallel note, warm-start negative result, demo-data decision |
-| 4e97507 | 2026-07-14 | Native engine (`engine = "gbtmkit"`): vectorized ML, ~30-60x faster than trajeR |
+| 4e97507 | 2026-07-14 | Native engine (`engine = "gbtmkit"`): vectorised ML, ~30-60x faster than trajeR |
+| 3f11fba | 2026-07-14 | Native engine: censored-normal (Tobit) support |
+| 72add36 | 2026-07-14 | **v0.3.0**: native engine as default; British English; RNG-reproducible multi-start |
 
 ### Build stages (as executed)
 

@@ -14,7 +14,7 @@ walkthrough and the full function reference.
   outcomes run through the same specification; count and proportion
   families are mapped too.
 - **Four engines, one interface.** A built-in native engine – the
-  default: vectorized maximum likelihood, typically 10-100x faster than
+  default: vectorised maximum likelihood, typically 10-100x faster than
   `trajeR`, with per-group degrees and NA-tolerant outcomes – plus three
   established packages
   ([`trajeR`](https://cran.r-project.org/package=trajeR),
@@ -104,7 +104,7 @@ for a full walkthrough.
 **In scope.** Nagin-style GBTM (latent class growth analysis): each
 latent group follows its own polynomial trajectory over time, with *no*
 within-group random effects. On top of that one model class, gbtmkit
-standardizes the whole GRoLTS workflow: optimiser selection (for engines
+standardises the whole GRoLTS workflow: optimiser selection (for engines
 that offer a choice), group-number selection by BIC, a bounded
 polynomial-shape search with GRoLTS acceptance criteria (PMS, APPA,
 OCC), the final fit with standard errors, and per-subject group

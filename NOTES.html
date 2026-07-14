@@ -113,11 +113,11 @@
 </ul></div>
 <div class="section level2">
 <h2 id="findings-from-the-native-engine-2026-07-14-engine--gbtmkit">Findings from the native engine (2026-07-14, <code>engine = "gbtmkit"</code>)<a class="anchor" aria-label="anchor" href="#findings-from-the-native-engine-2026-07-14-engine--gbtmkit"></a></h2>
-<p>Clean-room vectorized ML implementation (BFGS + analytic gradients), written from the model equations – no code from GPL trajeR. Key facts:</p>
+<p>Clean-room vectorised ML implementation (BFGS + analytic gradients), written from the model equations – no code from GPL trajeR. Key facts:</p>
 <ul><li>
 <strong>Correctness anchors</strong>: the likelihood evaluated at trajeR’s fitted parameters reproduces trajeR’s log-likelihood exactly (same convention); analytic gradients match numDeriv to ~1e-8 across families x covariates x tcov x ssigma x NA masks (tested); 99.8% assignment agreement with trajeR on the binary fixture; perfect recovery on the continuous fixture.</li>
 <li>
-<strong>Speed</strong>: the binary 4-group quadratic fit that takes trajeR ~44 s runs in ~1.1 s single-start (~3.4 s with 3 starts) at a slightly <em>better</em> optimum. The root cause of trajeR’s slowness (profiled): ~99.7% of time inside its C++ likelihood at ~130 ms/eval vs &lt;1 ms vectorized.</li>
+<strong>Speed</strong>: the binary 4-group quadratic fit that takes trajeR ~44 s runs in ~1.1 s single-start (~3.4 s with 3 starts) at a slightly <em>better</em> optimum. The root cause of trajeR’s slowness (profiled): ~99.7% of time inside its C++ likelihood at ~130 ms/eval vs &lt;1 ms vectorised.</li>
 <li>
 <strong>Parameterisation</strong> (optim vector): group-major theta blocks (intercept + membership-covariate effects, group 1 reference), per-group beta = polynomial coefficients then tcov coefficients, gaussian log-sigma (1 value if ssigma else K). tcov enters as extra design columns, so it shares the beta code path; trajectories at tcov = 0 use only the poly part.</li>
 <li>
@@ -133,7 +133,7 @@
 <li>The native engine is the default from v0.3.0; trajeR/flexmix/lcmm remain selectable as established, citable instruments (a reviewer may ask for one).</li>
 </ul></div>
 <div class="section level2">
-<h2 id="findings-from-parallelization-2026-07-13-fit_map-via-futureapply">Findings from parallelization (2026-07-13, <code>.fit_map</code> via future.apply)<a class="anchor" aria-label="anchor" href="#findings-from-parallelization-2026-07-13-fit_map-via-futureapply"></a></h2>
+<h2 id="findings-from-parallelisation-2026-07-13-fit_map-via-futureapply">Findings from parallelisation (2026-07-13, <code>.fit_map</code> via future.apply)<a class="anchor" aria-label="anchor" href="#findings-from-parallelisation-2026-07-13-fit_map-via-futureapply"></a></h2>
 <p>Independent fits (multi-start starts; selection-stage candidates/methods) run through <code>.fit_map</code>, which uses <code>future.apply::future_lapply(future.seed=TRUE)</code> when installed; the user controls workers via <code><a href="https://future.futureverse.org/reference/plan.html" class="external-link">future::plan()</a></code>. Notes:</p>
 <ul><li>
 <strong>Speedup is bounded by the slowest fit</strong>: measured 2.6x for 5-way multi-start and 2.0x for a 4-candidate sweep (the 4-group fit dominates).</li>
@@ -216,7 +216,7 @@
 <td>Synthetic data simulator + first fixture (BIC recovers planted groups)</td>
 </tr><tr><td>0278f9e</td>
 <td>2026-07-07</td>
-<td>Genericize data: domain-neutral binary + continuous fixtures</td>
+<td>Genericise data: domain-neutral binary + continuous fixtures</td>
 </tr><tr><td>b88165c</td>
 <td>2026-07-07</td>
 <td>Scrub design doc: synthetic-only, remove domain/published-data refs</td>
@@ -338,7 +338,14 @@
 <strong>v0.2.0</strong>: vignette parallel note, warm-start negative result, demo-data decision</td>
 </tr><tr><td>4e97507</td>
 <td>2026-07-14</td>
-<td>Native engine (<code>engine = "gbtmkit"</code>): vectorized ML, ~30-60x faster than trajeR</td>
+<td>Native engine (<code>engine = "gbtmkit"</code>): vectorised ML, ~30-60x faster than trajeR</td>
+</tr><tr><td>3f11fba</td>
+<td>2026-07-14</td>
+<td>Native engine: censored-normal (Tobit) support</td>
+</tr><tr><td>72add36</td>
+<td>2026-07-14</td>
+<td>
+<strong>v0.3.0</strong>: native engine as default; British English; RNG-reproducible multi-start</td>
 </tr></tbody></table><div class="section level3">
 <h3 id="build-stages-as-executed">Build stages (as executed)<a class="anchor" aria-label="anchor" href="#build-stages-as-executed"></a></h3>
 <ol style="list-style-type: decimal"><li>
