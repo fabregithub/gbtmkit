@@ -1,6 +1,6 @@
-#' gbtmkit: Engine-Agnostic Group-Based Trajectory Modeling
+#' gbtmkit: Engine-Agnostic Group-Based Trajectory Modelling
 #'
-#' A generic, reproducible pipeline for group-based trajectory modeling (GBTM)
+#' A generic, reproducible pipeline for group-based trajectory modelling (GBTM)
 #' that follows the GRoLTS reporting checklist. Estimation is delegated to
 #' interchangeable backends behind a single interface, so binary and continuous
 #' outcomes are handled through one specification.

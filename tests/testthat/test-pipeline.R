@@ -11,7 +11,7 @@ test_that("fit_gbtm computes the Hessian by default", {
   skip_on_cran()
   skip_if_not_installed("trajeR")
   fit <- fit_gbtm(bspec(), n_groups = 3, degrees = c(1, 1, 1),
-                  method = "L", itermax = 80, seed = 1)
+                  engine = "trajeR", method = "L", itermax = 80, seed = 1)
   expect_s3_class(fit, "gbtm_fit")
   expect_true(fit$hessian)
 })
@@ -20,7 +20,7 @@ test_that("gbtm_predict returns fitted trajectories on the outcome scale", {
   skip_on_cran()
   skip_if_not_installed("trajeR")
   fit <- fit_gbtm(bspec(), n_groups = 3, degrees = c(1, 2, 1),
-                  method = "L", hessian = FALSE, itermax = 80, seed = 1)
+                  engine = "trajeR", method = "L", hessian = FALSE, itermax = 80, seed = 1)
   pred <- gbtm_predict(fit, n = 25)
   expect_setequal(names(pred), c("group", "time", "fitted"))
   expect_equal(length(unique(pred$group)), 3)
@@ -35,7 +35,7 @@ test_that("gbtm_predict accepts explicit times", {
   skip_on_cran()
   skip_if_not_installed("trajeR")
   fit <- fit_gbtm(bspec(), n_groups = 2, degrees = c(1, 1),
-                  method = "L", hessian = FALSE, itermax = 60, seed = 1)
+                  engine = "trajeR", method = "L", hessian = FALSE, itermax = 60, seed = 1)
   pred <- gbtm_predict(fit, times = c(1, 2, 3, 4))
   expect_equal(sort(unique(pred$time)), c(1, 2, 3, 4))
 })
@@ -49,7 +49,7 @@ test_that("gbtm_predict warns when a fit has a degenerate empty group", {
   # forcing linear shapes on the (partly cubic) planted groups drives method
   # "L" into a degenerate solution with one empty group
   dfit <- fit_gbtm(cspec, n_groups = 4, degrees = rep(1, 4),
-                   method = "L", seed = 1)
+                   engine = "trajeR", method = "L", seed = 1)
   expect_warning(gbtm_predict(dfit), "no assigned members")
 })
 
@@ -58,7 +58,7 @@ test_that("plot_trajectories returns a ggplot", {
   skip_if_not_installed("trajeR")
   skip_if_not_installed("ggplot2")
   fit <- fit_gbtm(bspec(), n_groups = 3, degrees = c(1, 1, 1),
-                  method = "L", hessian = FALSE, itermax = 60, seed = 1)
+                  engine = "trajeR", method = "L", hessian = FALSE, itermax = 60, seed = 1)
   p <- plot_trajectories(fit, observed = TRUE)
   expect_s3_class(p, "ggplot")
 })
@@ -73,7 +73,7 @@ test_that("run_gbtm_pipeline runs end-to-end and returns a full result", {
   # criteria-passing is not asserted here (see the fallback test); a single
   # linear shape may fall back to lowest-BIC, so tolerate that warning.
   res <- suppressWarnings(run_gbtm_pipeline(
-    bspec(), candidates = 3:4, degree = 2, method = "L",
+    bspec(), candidates = 3:4, degree = 2, engine = "trajeR", method = "L",
     min_degree = 1, max_degree = 1, max_passes = 1,
     itermax = 300, seed = 1, verbose = FALSE
   ))
@@ -95,7 +95,7 @@ test_that("pipeline falls back to lowest-BIC shape when no shape passes", {
   # Impossible OCC threshold -> nothing passes -> fallback + warning + flag.
   expect_warning(
     res <- run_gbtm_pipeline(
-      bspec(), candidates = 4, degree = 1, method = "L",
+      bspec(), candidates = 4, degree = 1, engine = "trajeR", method = "L",
       min_degree = 1, max_degree = 1, occ_min = 1e6,
       itermax = 80, seed = 1, verbose = FALSE
     ),

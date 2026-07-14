@@ -81,7 +81,7 @@ test_that("a supplied method is rejected (lcmm is Marquardt-only)", {
   expect_error(
     gbtm_fit(continuous_spec(), engine = "lcmm",
              n_groups = 2, degrees = c(1, 1), method = "EM"),
-    "single optimizer"
+    "single optimiser"
   )
 })
 

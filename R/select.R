@@ -2,7 +2,7 @@
 # Stages 1-2 of the pipeline: model selection by information criterion.
 #
 #   select_algorithm() : given a fixed group number and shape, pick the
-#                        estimation method (engines with a single optimizer are
+#                        estimation method (engines with a single optimiser are
 #                        a no-op).
 #   select_n_groups()  : sweep the number of groups, pick by BIC.
 #
@@ -53,7 +53,7 @@
 #' Stage 1: select the estimation algorithm
 #'
 #' Fits a fixed group number and shape under each candidate estimation method
-#' and picks the one with the lowest BIC. For engines with a single optimizer
+#' and picks the one with the lowest BIC. For engines with a single optimiser
 #' (see [gbtm_engine_methods()]) this is a no-op that returns that method.
 #' The candidate fits are independent and run in parallel under a
 #' [future::plan()] when the future.apply package is installed.
@@ -64,7 +64,7 @@
 #' @param degrees Integer vector of polynomial degrees, length `n_groups`.
 #' @param methods Character vector of methods to compare; defaults to all
 #'   methods the engine offers.
-#' @param by Criterion to minimize, `"bic"` (default) or `"aic"`.
+#' @param by Criterion to minimise, `"bic"` (default) or `"aic"`.
 #' @param hessian,itermax,seed,... Passed to [gbtm_fit()]. `hessian` defaults to
 #'   `FALSE` (selection does not need standard errors).
 #' @return A `gbtm_selection` object with `$table`, `$best` (the chosen method),
@@ -75,7 +75,8 @@
 #' spec <- gbtm_spec(sim_binary, paste0("y", 1:10),
 #'                   paste0("t", 1:10), id = "id", family = "binomial")
 #' if (requireNamespace("trajeR", quietly = TRUE))
-#'   select_algorithm(spec, n_groups = 4, degrees = rep(1, 4))
+#'   select_algorithm(spec, engine = "trajeR", n_groups = 4,
+#'                    degrees = rep(1, 4))
 #' }
 #' @export
 select_algorithm <- function(spec,
@@ -140,7 +141,7 @@ select_algorithm <- function(spec,
 #'   control of the shape at each group number.
 #' @param method Estimation method to use (e.g. the winner of
 #'   [select_algorithm()]).
-#' @param by Criterion to minimize, `"bic"` (default) or `"aic"`.
+#' @param by Criterion to minimise, `"bic"` (default) or `"aic"`.
 #' @param hessian,itermax,seed,... Passed to [gbtm_fit()].
 #' @return A `gbtm_selection` object with `$table`, `$best` (the chosen number
 #'   of groups), and the fitted models.
@@ -149,8 +150,7 @@ select_algorithm <- function(spec,
 #' data("sim_binary", package = "gbtmkit")
 #' spec <- gbtm_spec(sim_binary, paste0("y", 1:10),
 #'                   paste0("t", 1:10), id = "id", family = "binomial")
-#' if (requireNamespace("trajeR", quietly = TRUE))
-#'   select_n_groups(spec, candidates = 2:5, degree = 2)
+#' select_n_groups(spec, candidates = 2:5, degree = 2)
 #' }
 #' @export
 select_n_groups <- function(spec,

@@ -23,8 +23,7 @@
 #' data("sim_binary", package = "gbtmkit")
 #' spec <- gbtm_spec(sim_binary, paste0("y", 1:10),
 #'                   paste0("t", 1:10), id = "id", family = "binomial")
-#' if (requireNamespace("trajeR", quietly = TRUE))
-#'   fit_gbtm(spec, n_groups = 4, degrees = rep(3, 4), method = "L")
+#' fit_gbtm(spec, n_groups = 4, degrees = rep(3, 4))
 #' }
 #' @export
 fit_gbtm <- function(spec, n_groups, degrees, method = NULL,

@@ -157,7 +157,7 @@ test_that("criteria errors on a missing required column", {
 test_that("evaluate_shapes runs end-to-end on real data", {
   skip_on_cran()
   skip_if_not_installed("trajeR")
-  sh <- evaluate_shapes(fake_spec(), n_groups = 4, method = "L",
+  sh <- evaluate_shapes(fake_spec(), n_groups = 4, engine = "trajeR", method = "L",
                         strategy = "stepwise", min_degree = 1, max_degree = 2,
                         max_passes = 1, itermax = 80, seed = 1, verbose = FALSE)
   expect_true(sh$n_fits >= 4)

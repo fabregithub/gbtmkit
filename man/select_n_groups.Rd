@@ -34,7 +34,7 @@ control of the shape at each group number.}
 \item{method}{Estimation method to use (e.g. the winner of
 \code{\link[=select_algorithm]{select_algorithm()}}).}
 
-\item{by}{Criterion to minimize, \code{"bic"} (default) or \code{"aic"}.}
+\item{by}{Criterion to minimise, \code{"bic"} (default) or \code{"aic"}.}
 
 \item{hessian, itermax, seed, ...}{Passed to \code{\link[=gbtm_fit]{gbtm_fit()}}.}
 }
@@ -54,7 +54,6 @@ future.apply package is installed.
 data("sim_binary", package = "gbtmkit")
 spec <- gbtm_spec(sim_binary, paste0("y", 1:10),
                   paste0("t", 1:10), id = "id", family = "binomial")
-if (requireNamespace("trajeR", quietly = TRUE))
-  select_n_groups(spec, candidates = 2:5, degree = 2)
+select_n_groups(spec, candidates = 2:5, degree = 2)
 }
 }

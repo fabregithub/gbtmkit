@@ -29,7 +29,7 @@
 #'   Engines whose package is not installed or whose families do not include
 #'   `spec$family` are recorded as skipped.
 #' @param method Estimation method for engines that offer a choice (trajeR);
-#'   ignored by single-optimizer engines.
+#'   ignored by single-optimiser engines.
 #' @param hessian,itermax,seed,... Passed to [gbtm_fit()] (e.g. `n_starts`).
 #' @return An object of class `gbtm_benchmark`: a data frame with one row per
 #'   engine (`engine`, `ok`, `seconds`, `bic`, `loglik`, `entropy`,

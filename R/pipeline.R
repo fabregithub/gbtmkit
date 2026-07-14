@@ -2,7 +2,7 @@
 # The orchestrator: run the whole GRoLTS pipeline with one call.
 #
 #   stage 1  select_algorithm()      (skipped if `method` is given or the engine
-#                                      has a single optimizer)
+#                                      has a single optimiser)
 #   stage 2  select_n_groups()       -> number of groups
 #   stage 3  evaluate_shapes()       -> per-group polynomial degrees
 #            apply_grolts_criteria()  -> shapes meeting GRoLTS thresholds
@@ -39,7 +39,7 @@
 #' @param verbose Print progress messages.
 #' @param ... Passed to the underlying fitting calls in every stage. In
 #'   particular `n_starts` (see [gbtm_fit()]) applies multi-start
-#'   initialization throughout; note it multiplies the cost of the shape
+#'   initialisation throughout; note it multiplies the cost of the shape
 #'   search, which `max_fits`/`time_budget` still bound.
 #' @return An object of class `gbtm_result` with elements `spec`, `engine`,
 #'   `method`, `algorithm_selection`, `group_selection`, `n_groups`, `shapes`,
@@ -52,10 +52,8 @@
 #' data("sim_binary", package = "gbtmkit")
 #' spec <- gbtm_spec(sim_binary, paste0("y", 1:10),
 #'                   paste0("t", 1:10), id = "id", family = "binomial")
-#' if (requireNamespace("trajeR", quietly = TRUE)) {
-#'   res <- run_gbtm_pipeline(spec, candidates = 2:5, method = "L")
-#'   res
-#' }
+#' res <- run_gbtm_pipeline(spec, candidates = 2:5)
+#' res
 #' }
 #' @export
 run_gbtm_pipeline <- function(spec,

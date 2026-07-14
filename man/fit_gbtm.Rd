@@ -24,13 +24,13 @@ fit_gbtm(
 \item{degrees}{Integer vector of polynomial degrees, length \code{n_groups}.}
 
 \item{method}{Estimation method; must be one of \code{\link[=gbtm_engine_methods]{gbtm_engine_methods()}} for
-the chosen engine (ignored by engines with a single optimizer).}
+the chosen engine (ignored by engines with a single optimiser).}
 
 \item{engine}{Engine name; see \code{\link[=gbtm_engines]{gbtm_engines()}}.}
 
 \item{hessian}{Logical; compute the Hessian (standard errors). Default \code{TRUE}.}
 
-\item{itermax}{Maximum optimizer iterations.}
+\item{itermax}{Maximum optimiser iterations.}
 
 \item{seed}{Optional integer seed for reproducibility.}
 
@@ -49,8 +49,7 @@ defaulting \code{hessian = TRUE}, so the result includes standard errors.
 data("sim_binary", package = "gbtmkit")
 spec <- gbtm_spec(sim_binary, paste0("y", 1:10),
                   paste0("t", 1:10), id = "id", family = "binomial")
-if (requireNamespace("trajeR", quietly = TRUE))
-  fit_gbtm(spec, n_groups = 4, degrees = rep(3, 4), method = "L")
+fit_gbtm(spec, n_groups = 4, degrees = rep(3, 4))
 }
 }
 \seealso{

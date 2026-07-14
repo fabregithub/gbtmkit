@@ -25,7 +25,7 @@ has_flexmix <- requireNamespace("flexmix", quietly = TRUE)
 has_lcmm    <- requireNamespace("lcmm", quietly = TRUE)
 has_ggplot  <- requireNamespace("ggplot2", quietly = TRUE)
 
-# trajeR prints optimizer progress (Starting Values / iter ... value ... /
+# trajeR prints optimiser progress (Starting Values / iter ... value ... /
 # converged) while fitting -- some of it on stdout, some on stderr. Strip that
 # chatter from the displayed output and message streams so the vignette shows
 # results, not solver logs. The hooks see text with the `comment` prefix (#>)
@@ -53,19 +53,19 @@ knitr::knit_hooks$set(
 )
 ```
 
-`gbtmkit` turns group-based trajectory modeling (GBTM) into a reproducible
+`gbtmkit` turns group-based trajectory modelling (GBTM) into a reproducible
 pipeline that follows the GRoLTS reporting checklist. Estimation is delegated
-to interchangeable backends -- `trajeR` (the default), `flexmix`, `lcmm`, and
-a built-in native engine (`"gbtmkit"`) -- behind one interface: every fitting
-function takes an `engine` argument, and the fit diagnostics (entropy, APPA,
-OCC, group proportions) are computed the same way regardless of engine, for
-binary and continuous outcomes alike.
+to interchangeable backends -- a built-in native engine (`"gbtmkit"`, the
+default) and the established `trajeR`, `flexmix`, and `lcmm` packages --
+behind one interface: every fitting function takes an `engine` argument, and
+the fit diagnostics (entropy, APPA, OCC, group proportions) are computed the
+same way regardless of engine, for binary and continuous outcomes alike.
 
-The examples below all use the default `engine = "trajeR"`; the
+The examples below all use the default native engine; the
 [Choosing an engine](#choosing-an-engine) section at the end compares and
 benchmarks the backends and shows how to switch. Along the way we turn the
 finished result into a GRoLTS reporting aid (`grolts_report()`), escape a
-local optimum with multi-start initialization (`n_starts`), and predict group
+local optimum with multi-start initialisation (`n_starts`), and predict group
 membership from covariates (`gbtm_spec(covariates = ...)`).
 
 ```{r setup}
@@ -109,13 +109,12 @@ choice), group-number selection, the polynomial-shape search with GRoLTS
 acceptance criteria, and the final Hessian-on fit. Here we use a small search to
 keep the vignette quick.
 
-```{r, eval = has_trajer}
+```{r}
 res <- run_gbtm_pipeline(
   spec,
   candidates = 2:5,     # consider 2 to 5 groups
   degree     = 2,       # quadratic while choosing the number of groups --
                         # with curved shapes, linear-only selection under-selects
-  method     = "L",     # fix the algorithm (skip stage 1) for speed
   max_degree = 3,       # allow up to cubic in the shape search
   seed       = 1,
   verbose    = FALSE
@@ -126,11 +125,11 @@ res
 The pipeline recovers the four planted groups. Everything each stage produced is
 kept on the result object:
 
-```{r, eval = has_trajer}
+```{r}
 res$group_selection      # BIC for each candidate number of groups
 ```
 
-```{r, eval = has_trajer}
+```{r}
 summary(res)
 ```
 
@@ -140,18 +139,18 @@ summary(res)
 `plot_trajectories()` draws the fitted group trajectories with the observed
 per-group means overlaid.
 
-```{r, eval = has_trajer}
+```{r}
 res$diagnostics$groups
 ```
 
-```{r, eval = has_trajer && has_ggplot, fig.alt = "Fitted group trajectories"}
+```{r, eval = has_ggplot, fig.alt = "Fitted group trajectories"}
 plot_trajectories(res$final_fit)
 ```
 
 Per-subject group assignment (the analogue of exporting a group column) is in
 `res$assignment`:
 
-```{r, eval = has_trajer}
+```{r}
 head(res$assignment)
 ```
 
@@ -165,7 +164,7 @@ missing-data mechanism, what appears in the manuscript, syntax availability)
 are flagged with whatever context the result contributes. Pass `file =` to
 also write the report as a Markdown appendix for supplementary material.
 
-```{r, eval = has_trajer}
+```{r}
 grolts_report(res)
 ```
 
@@ -177,11 +176,14 @@ what the wrapper does internally.
 
 ### Stage 1: choose the estimation algorithm
 
-trajeR offers `"L"`, `"EM"` and `"EMIRLS"`; the one with the lowest BIC is
-selected. (Engines with a single optimizer skip this stage.)
+This stage only applies to engines that offer several optimisers -- of the
+four backends, only `trajeR` does (`"L"`, `"EM"`, `"EMIRLS"`); the one with
+the lowest BIC is selected. Single-optimiser engines (including the default
+native engine) skip this stage automatically.
 
 ```{r, eval = has_trajer}
-algo <- select_algorithm(spec, n_groups = 2, degrees = c(1, 1))
+algo <- select_algorithm(spec, engine = "trajeR", n_groups = 2,
+                         degrees = c(1, 1))
 algo
 ```
 
@@ -191,21 +193,19 @@ The number of groups is chosen by BIC over a set of candidates. Quadratic
 shapes are used while sweeping: with curved trajectories like these,
 linear-only selection under-selects the number of groups:
 
-```{r, eval = has_trajer}
-groups <- select_n_groups(spec, candidates = 2:5, degree = 2, method = "L")
+```{r}
+groups <- select_n_groups(spec, candidates = 2:5, degree = 2, seed = 1)
 groups
 ```
 
 ### Stage 3: search polynomial shapes
 
 The polynomial shapes are searched for the chosen number of groups, then the
-GRoLTS acceptance criteria (PMS > 0.05, APPA > 0.70, OCC >= 5) are applied.
-(The one-call pipeline above searched up to cubic; here we cap the search at
-quadratic to keep the vignette quick.)
+GRoLTS acceptance criteria (PMS > 0.05, APPA > 0.70, OCC >= 5) are applied:
 
-```{r, eval = has_trajer}
-shapes <- evaluate_shapes(spec, n_groups = groups$best, method = "L",
-                          max_degree = 2, verbose = FALSE)
+```{r}
+shapes <- evaluate_shapes(spec, n_groups = groups$best,
+                          max_degree = 3, seed = 1, verbose = FALSE)
 apply_grolts_criteria(shapes)
 ```
 
@@ -215,8 +215,8 @@ The final model is fit with the Hessian on, so the fit carries standard
 errors, and the diagnostics and per-subject assignment are read off it. Here
 we use the lowest-BIC shape found by the search:
 
-```{r, eval = has_trajer}
-fit <- fit_gbtm(spec, n_groups = groups$best, degrees = shapes$best, method = "L")
+```{r}
+fit <- fit_gbtm(spec, n_groups = groups$best, degrees = shapes$best, seed = 1)
 gbtm_diagnostics(fit)
 head(gbtm_assign(fit))
 ```
@@ -224,14 +224,17 @@ head(gbtm_assign(fit))
 ## Continuous outcomes
 
 The same pipeline handles continuous outcomes: switch the family to
-`"gaussian"` (mapped to a censored-normal model) and point the spec at a
-continuous dataset. `sim_continuous` has the same four shape types on a
-continuous scale.
+`"gaussian"` and point the spec at a continuous dataset. `sim_continuous` has
+the same four shape types on a continuous scale. (Set `ymin`/`ymax` on the
+spec for censored, Tobit-style outcomes; the native engine and trajeR both
+support them.)
 
 We fit cubic shapes in all four groups (in a real analysis the shape search
-refines the per-group degrees, as above):
+refines the per-group degrees, as above), with `n_starts = 3`: from a single
+start this particular fit lands in a degenerate local optimum with an empty
+group -- exactly the failure mode the next section demonstrates.
 
-```{r, eval = has_trajer}
+```{r}
 data("sim_continuous", package = "gbtmkit")
 cspec <- gbtm_spec(
   sim_continuous,
@@ -240,7 +243,8 @@ cspec <- gbtm_spec(
   id       = "id",
   family   = "gaussian"
 )
-cfit <- fit_gbtm(cspec, n_groups = 4, degrees = rep(3, 4), method = "L")
+cfit <- fit_gbtm(cspec, n_groups = 4, degrees = rep(3, 4),
+                 itermax = 400, seed = 1, n_starts = 3)
 gbtm_diagnostics(cfit)$entropy
 ```
 
@@ -248,32 +252,33 @@ gbtm_diagnostics(cfit)$entropy
 lines and the observed points are on the outcome's own scale (means, not
 probabilities):
 
-```{r, eval = has_trajer && has_ggplot, fig.alt = "Fitted continuous group trajectories"}
+```{r, eval = has_ggplot, fig.alt = "Fitted continuous group trajectories"}
 plot_trajectories(cfit)
 ```
 
-## Local optima and multi-start initialization
+## Local optima and multi-start initialisation
 
 Mixture fits can land in a degenerate local optimum -- an empty or merged
 group is the telltale sign, and `plot_trajectories()` / `gbtm_predict()` warn
 when they see one. On this data, forcing *linear* shapes with the `"L"`
-optimizer does exactly that: one group comes out empty.
+optimiser does exactly that: one group comes out empty. (We use the trajeR
+engine here to demonstrate; its behaviour motivated the feature.)
 
 ```{r, eval = has_trajer}
-bad <- gbtm_fit(cspec, n_groups = 4, degrees = rep(1, 4), method = "L",
-                itermax = 300, seed = 1)
+bad <- gbtm_fit(cspec, engine = "trajeR", n_groups = 4, degrees = rep(1, 4),
+                method = "L", itermax = 300, seed = 1)
 table(factor(gbtm_assign(bad)$group, 1:4))
 ```
 
-The standard defense is multi-start initialization: `n_starts` re-fits the
+The standard defence is multi-start initialisation: `n_starts` re-fits the
 model from several starting points and keeps the best BIC. (For trajeR, whose
-default initialization is deterministic, the extra starts come from k-means
+default initialisation is deterministic, the extra starts come from k-means
 partitions of the subjects' outcome vectors; flexmix re-runs its random EM
-initialization; lcmm delegates to `lcmm::gridsearch()`.)
+initialisation; lcmm delegates to `lcmm::gridsearch()`.)
 
 ```{r, eval = has_trajer}
-good <- gbtm_fit(cspec, n_groups = 4, degrees = rep(1, 4), method = "L",
-                 itermax = 300, seed = 1, n_starts = 5)
+good <- gbtm_fit(cspec, engine = "trajeR", n_groups = 4, degrees = rep(1, 4),
+                 method = "L", itermax = 300, seed = 1, n_starts = 5)
 table(factor(gbtm_assign(good)$group, 1:4))
 c(single_start = gbtm_bic(bad), best_of_5 = gbtm_bic(good))
 ```
@@ -326,7 +331,8 @@ criterion is for.)
 
 ## Choosing an engine
 
-Everything above used the default engine, `trajeR`. Estimation is pluggable:
+Everything above used the default engine -- the built-in native one.
+Estimation is pluggable:
 every fitting function (`gbtm_fit()`, the stage functions, and
 `run_gbtm_pipeline()`) takes an `engine` argument, and the registry tells you
 what each backend offers:
@@ -339,12 +345,12 @@ sapply(gbtm_engines(), gbtm_engine_per_group_degrees)
 
 The four backends make different trade-offs:
 
-| | `trajeR` (default) | `flexmix` | `lcmm` | `gbtmkit` (native) |
+| | `gbtmkit` (native, default) | `trajeR` | `flexmix` | `lcmm` |
 |---|---|---|---|---|
-| Families | binomial, gaussian, poisson, beta | binomial, gaussian, poisson | binomial, gaussian | binomial, gaussian, poisson |
-| Optimizers | `"L"`, `"EM"`, `"EMIRLS"` (stage 1 picks one) | EM (fixed) | Marquardt (fixed) | BFGS (fixed) |
-| Per-group degrees | yes | no -- one order for all groups | no -- one order for all groups | yes |
-| Notes | reference GBTM implementation | fast EM on large data | `hlme()`; binary via a thresholds link | built in, vectorized ML; NA-tolerant; censored normal |
+| Families | binomial, gaussian, poisson | binomial, gaussian, poisson, beta | binomial, gaussian, poisson | binomial, gaussian |
+| Optimizers | BFGS (fixed) | `"L"`, `"EM"`, `"EMIRLS"` (stage 1 picks one) | EM (fixed) | Marquardt (fixed) |
+| Per-group degrees | yes | yes | no -- one order for all groups | no -- one order for all groups |
+| Notes | built in, vectorized ML; NA-tolerant; censored normal | reference GBTM implementation | fast EM on large data | `hlme()`; binary via a thresholds link |
 
 The native engine is a clean-room, fully vectorized maximum-likelihood
 implementation validated against the others (its likelihood reproduces
@@ -354,7 +360,7 @@ than `trajeR` at matching or better optima. The three established packages
 remain available as citable instruments -- useful when a reviewer asks for an
 established implementation.
 
-The pipeline adapts automatically: for a single-optimizer engine stage 1 is
+The pipeline adapts automatically: for a single-optimiser engine stage 1 is
 skipped, and for a uniform-degree engine the stage-3 shape search sweeps
 uniform shapes (degree 1 for all groups, degree 2 for all groups, ...) instead
 of per-group combinations.
@@ -365,7 +371,7 @@ diagnostics -- here the 4-group cubic model on the binary data:
 
 ```{r, eval = has_trajer && has_flexmix && has_lcmm, warning = FALSE}
 benchmark_engines(spec, n_groups = 4, degrees = rep(3, 4),
-                  method = "L", seed = 1)
+                  method = "L", seed = 1)   # method applies to trajeR only
 ```
 
 All three engines find the same four groups with comparable classification

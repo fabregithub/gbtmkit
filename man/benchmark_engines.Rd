@@ -31,7 +31,7 @@ Engines whose package is not installed or whose families do not include
 \code{spec$family} are recorded as skipped.}
 
 \item{method}{Estimation method for engines that offer a choice (trajeR);
-ignored by single-optimizer engines.}
+ignored by single-optimiser engines.}
 
 \item{hessian, itermax, seed, ...}{Passed to \code{\link[=gbtm_fit]{gbtm_fit()}} (e.g. \code{n_starts}).}
 }

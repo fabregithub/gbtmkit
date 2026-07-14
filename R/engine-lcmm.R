@@ -18,7 +18,7 @@
 #     model, equivalent to a probit-type binary trajectory model).
 #   * ng > 1 fits require starting values: the adapter first fits the 1-class
 #     model and passes it as `B` -- lcmm's canonical, deterministic init.
-#   * Single optimizer (Marquardt): `gbtm_engine_methods()` returns NA and the
+#   * Single optimiser (Marquardt): `gbtm_engine_methods()` returns NA and the
 #     algorithm-selection stage is a no-op. Standard errors always come with
 #     the fit, so `hessian` is a no-op too.
 # =============================================================================
@@ -49,7 +49,7 @@
          paste(degrees, collapse = ", "), ".", call. = FALSE)
   }
   if (!is.null(method) && !is.na(method)) {
-    stop("engine 'lcmm' has a single optimizer (Marquardt); leave `method` unset.",
+    stop("engine 'lcmm' has a single optimiser (Marquardt); leave `method` unset.",
          call. = FALSE)
   }
   degree <- degrees[1L]

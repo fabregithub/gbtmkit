@@ -27,22 +27,22 @@ gbtm_fit(
 \item{degrees}{Integer vector of polynomial degrees, length \code{n_groups}.}
 
 \item{method}{Estimation method; must be one of \code{\link[=gbtm_engine_methods]{gbtm_engine_methods()}} for
-the chosen engine (ignored by engines with a single optimizer).}
+the chosen engine (ignored by engines with a single optimiser).}
 
 \item{hessian}{Logical; compute the Hessian (standard errors). Default
 \code{FALSE} for speed during model search -- set \code{TRUE} for the final model.}
 
-\item{itermax}{Maximum optimizer iterations.}
+\item{itermax}{Maximum optimiser iterations.}
 
 \item{seed}{Optional integer seed for reproducibility.}
 
-\item{n_starts}{Number of initializations to try; the best fit by BIC is
-kept. The first start is the engine's default initialization; additional
+\item{n_starts}{Number of initialisations to try; the best fit by BIC is
+kept. The first start is the engine's default initialisation; additional
 starts are engine-specific (trajeR and the native gbtmkit engine:
 k-means partition starting values; flexmix: fresh random EM
-initializations; lcmm: \code{\link[lcmm:gridsearch]{lcmm::gridsearch()}}).
+initialisations; lcmm: \code{\link[lcmm:gridsearch]{lcmm::gridsearch()}}).
 Mixture fits can land in local optima -- empty or merged groups are the
-telltale sign -- and \code{n_starts} greater than 1 is the standard defense.
+telltale sign -- and \code{n_starts} greater than 1 is the standard defence.
 Independent starts run in parallel under a \code{\link[future:plan]{future::plan()}} when the
 future.apply package is installed; with a \code{seed}, results are identical
 under any plan.}

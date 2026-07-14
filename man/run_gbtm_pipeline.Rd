@@ -57,7 +57,7 @@ to \code{\link[=evaluate_shapes]{evaluate_shapes()}}.}
 
 \item{...}{Passed to the underlying fitting calls in every stage. In
 particular \code{n_starts} (see \code{\link[=gbtm_fit]{gbtm_fit()}}) applies multi-start
-initialization throughout; note it multiplies the cost of the shape
+initialisation throughout; note it multiplies the cost of the shape
 search, which \code{max_fits}/\code{time_budget} still bound.}
 }
 \value{
@@ -80,10 +80,8 @@ lowest-BIC shape and records \code{criteria_met = FALSE}.
 data("sim_binary", package = "gbtmkit")
 spec <- gbtm_spec(sim_binary, paste0("y", 1:10),
                   paste0("t", 1:10), id = "id", family = "binomial")
-if (requireNamespace("trajeR", quietly = TRUE)) {
-  res <- run_gbtm_pipeline(spec, candidates = 2:5, method = "L")
-  res
-}
+res <- run_gbtm_pipeline(spec, candidates = 2:5)
+res
 }
 }
 \seealso{

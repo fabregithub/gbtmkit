@@ -1,4 +1,4 @@
-# Tests for multi-start initialization (n_starts). The flagship regression is
+# Tests for multi-start initialisation (n_starts). The flagship regression is
 # the known trajeR CNORM local optimum: linear shapes with method "L" on
 # sim_continuous collapse to 3 effective groups from the default start; the
 # k-means starts recover the 4-group optimum (the same one EM finds).
@@ -28,9 +28,9 @@ test_that("trajeR multi-start escapes the known CNORM local optimum", {
   skip_on_cran()
   skip_if_not_installed("trajeR")
   spec <- cont_spec()
-  single <- gbtm_fit(spec, n_groups = 4, degrees = rep(1, 4), method = "L",
+  single <- gbtm_fit(spec, n_groups = 4, degrees = rep(1, 4), engine = "trajeR", method = "L",
                      itermax = 300, seed = 1)
-  multi  <- gbtm_fit(spec, n_groups = 4, degrees = rep(1, 4), method = "L",
+  multi  <- gbtm_fit(spec, n_groups = 4, degrees = rep(1, 4), engine = "trajeR", method = "L",
                      itermax = 300, seed = 1, n_starts = 5)
   # default start collapses to 3 effective groups; multi-start finds all 4
   expect_lt(length(unique(gbtm_assign(single)$group)), 4)
@@ -46,9 +46,9 @@ test_that("trajeR multi-start never does worse than the default start", {
   skip_on_cran()
   skip_if_not_installed("trajeR")
   spec <- bin_spec()
-  single <- gbtm_fit(spec, n_groups = 3, degrees = rep(2, 3), method = "L",
+  single <- gbtm_fit(spec, n_groups = 3, degrees = rep(2, 3), engine = "trajeR", method = "L",
                      itermax = 200, seed = 1)
-  multi  <- gbtm_fit(spec, n_groups = 3, degrees = rep(2, 3), method = "L",
+  multi  <- gbtm_fit(spec, n_groups = 3, degrees = rep(2, 3), engine = "trajeR", method = "L",
                      itermax = 200, seed = 1, n_starts = 3)
   expect_lte(gbtm_bic(multi), gbtm_bic(single) + 1e-6)
 })
@@ -58,7 +58,7 @@ test_that("trajeR multi-start warns and falls back for unsupported families", {
   skip_if_not_installed("trajeR")
   # plausible count data: scaled continuous outcomes, rounded. The x3 scaling
   # makes the counts overdispersed (var > mean), which trajeR's POIS
-  # initialization requires (its qgamma-based init NaNs otherwise).
+  # initialisation requires (its qgamma-based init NaNs otherwise).
   data("sim_continuous", package = "gbtmkit", envir = environment())
   d <- sim_continuous
   d[paste0("y", 1:10)] <- lapply(d[paste0("y", 1:10)],
@@ -66,7 +66,7 @@ test_that("trajeR multi-start warns and falls back for unsupported families", {
   spec <- gbtm_spec(d, paste0("y", 1:10), paste0("t", 1:10),
                     id = "id", family = "poisson")
   expect_warning(
-    fit <- gbtm_fit(spec, n_groups = 2, degrees = c(1, 1), method = "L",
+    fit <- gbtm_fit(spec, n_groups = 2, degrees = c(1, 1), engine = "trajeR", method = "L",
                     itermax = 60, seed = 1, n_starts = 2),
     "multi-start is not implemented"
   )
@@ -98,7 +98,7 @@ test_that("lcmm multi-start runs through gridsearch and satisfies the contract",
 test_that("print shows the number of starts", {
   skip_on_cran()
   skip_if_not_installed("trajeR")
-  fit <- gbtm_fit(bin_spec(), n_groups = 2, degrees = c(1, 1), method = "L",
+  fit <- gbtm_fit(bin_spec(), n_groups = 2, degrees = c(1, 1), engine = "trajeR", method = "L",
                   itermax = 60, seed = 1, n_starts = 2)
   expect_output(print(fit), "starts  : 2")
 })

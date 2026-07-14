@@ -13,7 +13,7 @@ gbtm_engine_methods(engine = gbtm_engines())
 Character vector of method names, or \code{NA_character_}.
 }
 \description{
-Engines that expose a choice of optimizer return the available method names;
-engines with a single fixed optimizer return \code{NA_character_}, which the
+Engines that expose a choice of optimiser return the available method names;
+engines with a single fixed optimiser return \code{NA_character_}, which the
 algorithm-selection stage treats as a no-op.
 }

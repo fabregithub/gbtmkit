@@ -5,7 +5,7 @@ Working notes on how this package was built. Not part of the shipped package
 
 ## What this package is
 
-`gbtmkit` generalizes a one-off group-based trajectory modeling (GBTM) analysis
+`gbtmkit` generalises a one-off group-based trajectory modelling (GBTM) analysis
 script into a reproducible, **engine-agnostic** R package that follows the
 GRoLTS reporting checklist. The estimation engine is pluggable (trajeR now;
 flexmix/lcmm designed for) behind a small accessor interface, so the diagnostics
@@ -18,6 +18,12 @@ run through one specification.
 - Full design rationale: `dev/DESIGN.md`
 
 ## Key decisions
+
+- **Native engine is the default (decided 2026-07-14, v0.3.0).** Same models,
+  ~30-60x faster, validated against the established engines; trajeR/flexmix/
+  lcmm remain selectable as citable instruments. Breaking edge: default-engine
+  calls that passed trajeR-specific arguments (method=) now need
+  engine = "trajeR".
 
 - **Demo-data covariates stay inert (decided 2026-07-13).** Regenerating the
   fixtures so x1 drives membership would cascade into every baked number
@@ -44,7 +50,7 @@ run through one specification.
   so the search runs Hessian-off and only the final model is refit with it.
 - **CNORM local optima**: continuous fits fall into local optima under tight
   group separation (BIC under-selects). The synthetic continuous fixture uses
-  wide separation; multi-start initialization noted as a future improvement.
+  wide separation; multi-start initialisation noted as a future improvement.
 - **Binary is low-information**: 4 binary occasions cap per-subject
   classification (~0.83) even when BIC recovers the right group count; the
   synthetic binary fixture uses wide separation so recovery is reliable.
@@ -61,7 +67,7 @@ shapes crossing mid-study. Lessons:
   `degree = 2`.
 - **Mixed per-group degrees are fragile in single-start fits**: fixing
   `degrees = c(1, 3, 3, 1)` (the truth) pins each degree to an arbitrary
-  initialization slot; with method "L" this lands in local optima (empty or
+  initialisation slot; with method "L" this lands in local optima (empty or
   merged groups) on both fixtures. Uniform `rep(3, 4)` recovers cleanly, so
   examples use it and per-group degrees are left to the shape search.
 - **Binary separation must stay wide even with 10 occasions**: crossing
@@ -72,9 +78,9 @@ shapes crossing mid-study. Lessons:
   10-occasion binary fixture; `select_algorithm()` records it and moves on, as
   designed.
 
-## Findings from multi-start initialization (2026-07-13, `n_starts`)
+## Findings from multi-start initialisation (2026-07-13, `n_starts`)
 
-- **trajeR's default initialization is deterministic** (quantile-based):
+- **trajeR's default initialisation is deterministic** (quantile-based):
   re-running with different seeds gives identical fits, so multi-start must
   supply `paraminit`. Its layout (from source, per Method): first ng entries
   are membership *logits vs group 1* for `"L"` but *probabilities* for
@@ -84,7 +90,7 @@ shapes crossing mid-study. Lessons:
   jitter of the default init either falls back into the same basin or lands in
   garbage. Partitioning subjects with k-means on their outcome vectors and
   fitting per-cluster polynomial regressions reaches the EM-quality optimum
-  with the fast "L" optimizer (CNORM rep(1,4): 52906 vs 53012 default), and
+  with the fast "L" optimiser (CNORM rep(1,4): 52906 vs 53012 default), and
   **rescues mixed per-group degrees**: binary c(1,3,3,1) reaches BIC 17110 vs
   18175 default -- better than any uniform-degree fit (18080).
 - **lcmm gridsearch NSE**: `gridsearch()` re-parses the `m` call, so the
@@ -92,7 +98,7 @@ shapes crossing mid-study. Lessons:
   the `random()` in the `B = random(minit)` it builds is a *syntactic
   sentinel* -- lcmm detects it from the unevaluated call after evaluation
   fails, so no `random` function may exist in that frame.
-- **trajeR's POIS initialization requires overdispersion** (its qgamma-based
+- **trajeR's POIS initialisation requires overdispersion** (its qgamma-based
   init NaNs when var(Y) <= mean(Y)) -- relevant for tests that fabricate count
   data.
 
@@ -153,7 +159,7 @@ from the model equations -- no code from GPL trajeR. Key facts:
   ~1.1 s single-start (~3.4 s with 3 starts) at a slightly *better* optimum.
   The root cause of trajeR's slowness (profiled): ~99.7% of time inside its
   C++ likelihood at ~130 ms/eval vs <1 ms vectorized.
-- **Parameterization** (optim vector): group-major theta blocks
+- **Parameterisation** (optim vector): group-major theta blocks
   (intercept + membership-covariate effects, group 1 reference), per-group
   beta = polynomial coefficients then tcov coefficients, gaussian log-sigma
   (1 value if ssigma else K). tcov enters as extra design columns, so it
@@ -167,9 +173,24 @@ from the model equations -- no code from GPL trajeR. Key facts:
   CNORM with explicit bounds exactly. Note trajeR *defaults* ymin/ymax to
   min/max of Y (treating the extremes as censored); the native engine censors
   only when the spec sets bounds explicitly.
+- **Multi-start starts** (v0.3.0): start 1 is the deterministic quantile-
+  intercept "default" init; starts >= 2 are k-means partitions + per-cluster
+  polynomial/GLM regressions (full coefficient starts, not just intercepts).
+  The regression starts are what escape merged-group local optima on curved
+  data: continuous `rep(3,4)` single-start collapses to 3 groups (BIC 54200),
+  but n_starts >= 2 finds the good optimum (BIC 47205, exactly matching
+  trajeR) and perfect recovery.
+- **RNG-kind reproducibility trap (found + fixed 2026-07-14)**: multi-start
+  runs through `.fit_map` -> `future.apply(future.seed = TRUE)`, which
+  switches the RNG to L'Ecuyer-CMRG. A bare `set.seed(v)` inside the worker
+  then seeds *that* stream, so `kmeans` produced different partitions under a
+  future plan vs a plain call -- the same seed gave different fits in
+  `devtools::test()` vs interactively. Fix: seed with an explicit
+  `kind = "Mersenne-Twister"` (see `seed_start()` in `.fit_gbtmkit`). Lesson
+  for any future engine doing RNG in a `.fit_map` worker: pin the kind.
 - **Not yet**: beta family.
-- trajeR remains the default engine deliberately: baked outputs, established
-  citations, and censoring support.
+- The native engine is the default from v0.3.0; trajeR/flexmix/lcmm remain
+  selectable as established, citable instruments (a reviewer may ask for one).
 
 ## Findings from parallelization (2026-07-13, `.fit_map` via future.apply)
 
@@ -183,14 +204,14 @@ when installed; the user controls workers via `future::plan()`. Notes:
   verified bit-identical BICs sequential vs multicore).
 - **trajeR speed dead ends, measured**: BLAS threading is irrelevant (44.0 s
   vs 43.6 s at 1 vs 8 OpenBLAS threads -- per-subject matrices too small),
-  and `itermax` has no "loose search" headroom (the optimizer self-terminates
+  and `itermax` has no "loose search" headroom (the optimiser self-terminates
   at ~50-60 iterations; itermax 60/100/400 identical, 30 truncates to a worse
   BIC).
 - **Tests use `plan(multicore)`** (fork): multisession workers cannot
   loadNamespace a devtools::load_all package; fork inherits it. Guarded by
   `future::supportsMulticore()` (unavailable on Windows/RStudio).
 - **Warm starts in the shape search: tried and REJECTED (negative result,
-  2026-07-13).** Initializing each trajeR candidate from the incumbent's
+  2026-07-13).** Initialising each trajeR candidate from the incumbent's
   parameters (coefficient blocks padded/truncated) looks great per move --
   1.8-3.3x faster and often better BIC when the incumbent is good (it pins
   group identities to the degree slots). But in the actual stepwise search it
@@ -236,10 +257,10 @@ pkgdown build re-run them (~2 h on a GitHub runner). It is now precomputed:
 - **Shipped file**: `vignettes/getting-started.Rmd` (static: outputs baked in
   and `vignettes/getting-started-*.png` figures beside it, committed to git;
   builds in seconds). A knitr output/message hook in the `.orig` strips
-  trajeR's optimizer chatter; `fig.path` is a file prefix because R CMD check
+  trajeR's optimiser chatter; `fig.path` is a file prefix because R CMD check
   flags a `vignettes/figure/` directory as a knitr leftover.
 - **Regenerate** with `Rscript data-raw/precompile-vignette.R` after editing
-  the `.orig` or when demonstrated behavior changes, and commit the `.orig`,
+  the `.orig` or when demonstrated behaviour changes, and commit the `.orig`,
   the regenerated `.Rmd`, and the figures together.
 - Bug-fix verification does NOT require re-knitting: tests and direct runs
   verify code; the vignette is refreshed only when its shown outputs matter.
@@ -258,7 +279,7 @@ release** (and after touching any roxygen example).
 - Out-of-bounds `test_algo[i]` in the group loop.
 - Silently dropped failed fits (`.errorhandling = "remove"`) -> failures are now
   recorded as `NA` with a warning.
-- Mis-applied entropy (Shannon of proportions) -> standard normalized
+- Mis-applied entropy (Shannon of proportions) -> standard normalised
   classification entropy in [0, 1].
 
 ## History (chronological)
@@ -299,7 +320,7 @@ throughout.
 | 9fa95c4 | 2026-07-13 | Vignette: consistent headings; stages as real sub-headings |
 | 4d5a8ed | 2026-07-13 | Vignette: introduce the engine choice up front |
 | 4b17254 | 2026-07-13 | **v0.1.0**: README scope section ("does / does not do"), version bump, tag |
-| ddde39b | 2026-07-13 | Multi-start initialization (`n_starts`): k-means starts for trajeR, native for flexmix/lcmm |
+| ddde39b | 2026-07-13 | Multi-start initialisation (`n_starts`): k-means starts for trajeR, native for flexmix/lcmm |
 | 1882db3 | 2026-07-13 | Class-membership covariates (`gbtm_spec(covariates=)`) on all three engines |
 | ca77f40 | 2026-07-13 | `benchmark_engines()` harness + scale results (flexmix 15-180x faster) |
 | 7a950b8 | 2026-07-13 | `grolts_report()`: pipeline result -> GRoLTS checklist reporting aid |
@@ -375,5 +396,5 @@ throughout.
   deprecation warning.
 
 Done along the way: v0.1.0 tag, flexmix + lcmm adapters, multi-start
-initialization, class-membership covariates, `benchmark_engines()`,
+initialisation, class-membership covariates, `benchmark_engines()`,
 `grolts_report()`, precomputed vignette (see History).

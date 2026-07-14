@@ -11,5 +11,7 @@ Character vector of engine names usable as the \code{engine} argument to
 \code{\link[=gbtm_fit]{gbtm_fit()}}.
 }
 \description{
-Registered estimation engines
+The first entry -- the built-in native engine \code{"gbtmkit"} -- is the default
+everywhere an \code{engine} argument exists. The established packages (trajeR,
+flexmix, lcmm) remain available as citable instruments.
 }

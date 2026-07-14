@@ -116,7 +116,7 @@ test_that("native optimum matches or beats trajeR's on the same model", {
                  itermax = 400, seed = 1, n_starts = 3)
   ft <- gbtm_fit(spec, engine = "trajeR", n_groups = 4, degrees = rep(2, 4),
                  method = "L", itermax = 400, seed = 1)
-  # same likelihood convention; the native optimizer must not be worse
+  # same likelihood convention; the native optimiser must not be worse
   expect_gte(gbtm_loglik(fn), gbtm_loglik(ft) - 0.5)
   # near-identical classification (allow label permutation)
   an <- gbtm_assign(fn)$group
@@ -188,7 +188,7 @@ test_that("validation and capability advertising", {
 
   expect_error(gbtm_fit(bin_spec(50), engine = "gbtmkit", n_groups = 2,
                         degrees = c(1, 1), method = "L"),
-               "single optimizer")
+               "single optimiser")
 })
 
 test_that("censored normal recovers latent parameters and matches trajeR", {

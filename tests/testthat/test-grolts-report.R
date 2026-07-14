@@ -113,7 +113,7 @@ test_that("grolts_report works on a real pipeline result", {
   spec <- gbtm_spec(sim_binary[1:300, ], paste0("y", 1:10),
                     paste0("t", 1:10), id = "id", family = "binomial")
   res <- suppressWarnings(run_gbtm_pipeline(
-    spec, candidates = 2:3, degree = 1, method = "L",
+    spec, candidates = 2:3, degree = 1, engine = "trajeR", method = "L",
     min_degree = 1, max_degree = 1, itermax = 80, seed = 1,
     verbose = FALSE))
   rep <- grolts_report(res)

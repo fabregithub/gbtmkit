@@ -52,11 +52,8 @@
 #' data("sim_binary", package = "gbtmkit")
 #' spec <- gbtm_spec(sim_binary, paste0("y", 1:10),
 #'                   paste0("t", 1:10), id = "id", family = "binomial")
-#' if (requireNamespace("trajeR", quietly = TRUE)) {
-#'   res <- run_gbtm_pipeline(spec, candidates = 2:5, method = "L",
-#'                            seed = 1, verbose = FALSE)
-#'   grolts_report(res)
-#' }
+#' res <- run_gbtm_pipeline(spec, candidates = 2:5, seed = 1, verbose = FALSE)
+#' grolts_report(res)
 #' }
 #' @export
 grolts_report <- function(result, file = NULL) {
@@ -145,12 +142,15 @@ grolts_report <- function(result, file = NULL) {
 
   # -- starts / iterations ------------------------------------------------
   starts_detail <- sprintf(
-    "Final fit: %s initialization%s; iteration cap %s. (trajeR's default initialization is deterministic; additional starts are k-means-based.)",
+    "Final fit: %s initialisation%s; iteration cap %s.%s",
     if (is.null(fit$n_starts) || fit$n_starts == 1L) "single (default)"
     else sprintf("best of %d", fit$n_starts),
     if (!is.null(fit$n_starts) && fit$n_starts > 1L)
       sprintf(" (per-start BICs recorded on the fit)") else "",
-    if (is.null(fit$itermax)) "not recorded" else fit$itermax)
+    if (is.null(fit$itermax)) "not recorded" else fit$itermax,
+    if (result$engine %in% c("trajeR", "gbtmkit"))
+      " (This engine's default initialisation is deterministic; additional starts are k-means partitions.)"
+    else "")
 
   # -- selection tools ------------------------------------------------------
   cand <- result$group_selection$table$n_groups
@@ -179,7 +179,7 @@ grolts_report <- function(result, file = NULL) {
     result$n_groups,
     paste(d$groups$n_assigned, collapse = ", "),
     paste(sprintf("%.2f", d$groups$prop_assigned), collapse = ", "))
-  entropy_detail <- sprintf("Normalized classification entropy: %.3f (APPA per class: %s).",
+  entropy_detail <- sprintf("Normalised classification entropy: %.3f (APPA per class: %s).",
                             d$entropy,
                             paste(sprintf("%.2f", d$groups$appa), collapse = ", "))
 

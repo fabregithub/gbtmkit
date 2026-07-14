@@ -4,9 +4,9 @@
 \name{gbtmkit-package}
 \alias{gbtmkit}
 \alias{gbtmkit-package}
-\title{gbtmkit: Engine-Agnostic Group-Based Trajectory Modeling}
+\title{gbtmkit: Engine-Agnostic Group-Based Trajectory Modelling}
 \description{
-A generic, reproducible pipeline for group-based trajectory modeling (GBTM)
+A generic, reproducible pipeline for group-based trajectory modelling (GBTM)
 that follows the GRoLTS reporting checklist. Estimation is delegated to
 interchangeable backends behind a single interface, so binary and continuous
 outcomes are handled through one specification.

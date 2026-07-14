@@ -54,18 +54,21 @@ test_that("group sizes match mean posterior at convergence", {
 test_that("seed makes fits reproducible", {
   skip_on_cran()
   skip_if_not_installed("trajeR")
-  f1 <- gbtm_fit(binary_spec(), n_groups = 3, degrees = c(1, 1, 1),
-                 seed = 42, itermax = 60)
-  f2 <- gbtm_fit(binary_spec(), n_groups = 3, degrees = c(1, 1, 1),
-                 seed = 42, itermax = 60)
+  f1 <- gbtm_fit(binary_spec(), engine = "trajeR", n_groups = 3,
+                 degrees = c(1, 1, 1), seed = 42, itermax = 60)
+  f2 <- gbtm_fit(binary_spec(), engine = "trajeR", n_groups = 3,
+                 degrees = c(1, 1, 1), seed = 42, itermax = 60)
   expect_equal(gbtm_bic(f1), gbtm_bic(f2))
 })
 
 test_that("invalid arguments are rejected before fitting", {
   spec <- binary_spec()
-  expect_error(gbtm_fit(spec, n_groups = 3, degrees = c(1, 1)), "length n_groups")
-  expect_error(gbtm_fit(spec, n_groups = 2, degrees = c(1, -1)), "non-negative")
-  expect_error(gbtm_fit(spec, n_groups = 2, degrees = c(1, 1), method = "XYZ"),
+  expect_error(gbtm_fit(spec, engine = "trajeR", n_groups = 3,
+                        degrees = c(1, 1)), "length n_groups")
+  expect_error(gbtm_fit(spec, engine = "trajeR", n_groups = 2,
+                        degrees = c(1, -1)), "non-negative")
+  expect_error(gbtm_fit(spec, engine = "trajeR", n_groups = 2,
+                        degrees = c(1, 1), method = "XYZ"),
                "not supported")
   expect_error(gbtm_fit("not a spec", n_groups = 2, degrees = c(1, 1)),
                "must be a gbtm_spec")
@@ -82,6 +85,7 @@ test_that("engine rejects an unsupported family", {
   # guard directly with a spec whose family the engine table would reject.
   spec <- binary_spec()
   spec$family <- "gamma"  # not in gbtm_engine_families()
-  expect_error(gbtm_fit(spec, n_groups = 2, degrees = c(1, 1)),
+  expect_error(gbtm_fit(spec, engine = "trajeR", n_groups = 2,
+                        degrees = c(1, 1)),
                "does not support family")
 })

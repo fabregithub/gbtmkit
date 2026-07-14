@@ -18,7 +18,7 @@
 # Data-driven random starting values for one multi-start attempt: partition
 # the subjects with k-means on their outcome vectors (RNG-dependent, so each
 # attempt differs), then fit a per-cluster polynomial regression for the
-# trajectory coefficients. trajeR's default initialization is deterministic
+# trajectory coefficients. trajeR's default initialisation is deterministic
 # (quantile-based, seed-independent), so this is what makes n_starts > 1
 # explore different basins. Layout of the returned `paraminit` (per trajeR
 # source): the first ng entries are group-membership logits vs group 1 for
@@ -124,19 +124,19 @@
 
   if (n_starts > 1L && !spec$family %in% c("binomial", "gaussian")) {
     warning(sprintf(
-      "multi-start is not implemented for family '%s' with engine 'trajeR'; using the default initialization.",
+      "multi-start is not implemented for family '%s' with engine 'trajeR'; using the default initialisation.",
       spec$family), call. = FALSE)
     n_starts <- 1L
   }
   if (n_starts > 1L && !is.null(X) && method != "L") {
     # trajeR's user-supplied-paraminit path is only well-defined for Method
     # "L" when a Risk model is present.
-    warning("multi-start with membership covariates is only supported for method 'L' with engine 'trajeR'; using the default initialization.",
+    warning("multi-start with membership covariates is only supported for method 'L' with engine 'trajeR'; using the default initialisation.",
             call. = FALSE)
     n_starts <- 1L
   }
 
-  # Start 1: trajeR's default (deterministic) initialization. Further starts
+  # Start 1: trajeR's default (deterministic) initialisation. Further starts
   # use k-means partition starting values; the best finite BIC wins. The
   # starts are independent, so they run through .fit_map (parallel under a
   # future::plan()); per-start seeding keeps results identical to sequential.
@@ -150,7 +150,7 @@
     }
     tryCatch(do.call(trajeR::trajeR, a), error = function(e) e)
   })
-  # A failure of the default initialization is a real error, not a bad start.
+  # A failure of the default initialisation is a real error, not a bad start.
   if (inherits(runs[[1L]], "error")) stop(runs[[1L]])
   start_bics <- vapply(runs, function(r) {
     if (inherits(r, "error")) NA_real_ else

@@ -12,11 +12,15 @@
 
 #' Registered estimation engines
 #'
+#' The first entry -- the built-in native engine `"gbtmkit"` -- is the default
+#' everywhere an `engine` argument exists. The established packages (trajeR,
+#' flexmix, lcmm) remain available as citable instruments.
+#'
 #' @return Character vector of engine names usable as the `engine` argument to
 #'   [gbtm_fit()].
 #' @export
 gbtm_engines <- function() {
-  c("trajeR", "flexmix", "lcmm", "gbtmkit")
+  c("gbtmkit", "trajeR", "flexmix", "lcmm")
 }
 
 #' Outcome families supported by an engine
@@ -36,8 +40,8 @@ gbtm_engine_families <- function(engine = gbtm_engines()) {
 
 #' Estimation methods offered by an engine
 #'
-#' Engines that expose a choice of optimizer return the available method names;
-#' engines with a single fixed optimizer return `NA_character_`, which the
+#' Engines that expose a choice of optimiser return the available method names;
+#' engines with a single fixed optimiser return `NA_character_`, which the
 #' algorithm-selection stage treats as a no-op.
 #'
 #' @param engine Engine name; see [gbtm_engines()].
@@ -85,18 +89,18 @@ gbtm_engine_per_group_degrees <- function(engine = gbtm_engines()) {
 #' @param n_groups Number of latent groups.
 #' @param degrees Integer vector of polynomial degrees, length `n_groups`.
 #' @param method Estimation method; must be one of [gbtm_engine_methods()] for
-#'   the chosen engine (ignored by engines with a single optimizer).
+#'   the chosen engine (ignored by engines with a single optimiser).
 #' @param hessian Logical; compute the Hessian (standard errors). Default
 #'   `FALSE` for speed during model search -- set `TRUE` for the final model.
-#' @param itermax Maximum optimizer iterations.
+#' @param itermax Maximum optimiser iterations.
 #' @param seed Optional integer seed for reproducibility.
-#' @param n_starts Number of initializations to try; the best fit by BIC is
-#'   kept. The first start is the engine's default initialization; additional
+#' @param n_starts Number of initialisations to try; the best fit by BIC is
+#'   kept. The first start is the engine's default initialisation; additional
 #'   starts are engine-specific (trajeR and the native gbtmkit engine:
 #'   k-means partition starting values; flexmix: fresh random EM
-#'   initializations; lcmm: [lcmm::gridsearch()]).
+#'   initialisations; lcmm: [lcmm::gridsearch()]).
 #'   Mixture fits can land in local optima -- empty or merged groups are the
-#'   telltale sign -- and `n_starts` greater than 1 is the standard defense.
+#'   telltale sign -- and `n_starts` greater than 1 is the standard defence.
 #'   Independent starts run in parallel under a [future::plan()] when the
 #'   future.apply package is installed; with a `seed`, results are identical
 #'   under any plan.

@@ -21,9 +21,9 @@ test_that("trajeR multi-start is identical under a parallel plan", {
   skip_if_not_installed("future.apply")
   skip_if_not(future::supportsMulticore())
   seq_fit <- gbtm_fit(small_bin(), n_groups = 2, degrees = c(1, 1),
-                      method = "L", itermax = 100, seed = 1, n_starts = 3)
+                      engine = "trajeR", method = "L", itermax = 100, seed = 1, n_starts = 3)
   par_fit <- with_plan(3, gbtm_fit(small_bin(), n_groups = 2,
-                                   degrees = c(1, 1), method = "L",
+                                   degrees = c(1, 1), engine = "trajeR", method = "L",
                                    itermax = 100, seed = 1, n_starts = 3))
   expect_equal(gbtm_bic(par_fit), gbtm_bic(seq_fit))
   expect_equal(par_fit$start_bics, seq_fit$start_bics)

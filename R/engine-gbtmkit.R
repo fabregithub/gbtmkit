@@ -205,7 +205,7 @@
 }
 
 # Deterministic default start (quantile-spread intercepts, like the classic
-# GBTM initialization) and k-means partition starts for multi-start.
+# GBTM initialisation) and k-means partition starts for multi-start.
 .ngb_init <- function(ctx, start = c("default", "kmeans")) {
   start <- match.arg(start)
   K <- ctx$K
@@ -226,18 +226,38 @@
       beta0 <- c(beta0, icpt, rep(0, ctx$degrees[k] + ctx$nw))
     }
   } else {
+    # k-means partition + per-cluster regression: full coefficient starts,
+    # not just intercepts -- essential when the true shapes are curved (an
+    # intercept-only start strands BFGS in merged-group local optima).
     Yk <- ctx$Y0
     Yk[!ctx$M] <- mean(yv)
     cl <- stats::kmeans(Yk, centers = K, nstart = 1)$cluster
+    sig0 <- c()
     for (k in seq_len(K)) {
       rows <- cl == k
-      mk <- mean(ctx$Y0[rows, ][ctx$M[rows, ]])
-      icpt <- switch(ctx$family,
-        binomial = stats::qlogis(pmin(pmax(mk, 0.05), 0.95)),
-        poisson  = log(max(mk, 0.1)),
-        gaussian = mk)
-      beta0 <- c(beta0, icpt, rep(0, ctx$degrees[k] + ctx$nw))
+      Mk <- ctx$M[rows, , drop = FALSE]
+      yk <- ctx$Y0[rows, , drop = FALSE][Mk]
+      Xk <- cbind(
+        do.call(cbind, lapply(seq_len(ctx$degrees[k] + 1L), function(j)
+          ctx$P[[j]][rows, , drop = FALSE][Mk])),
+        do.call(cbind, c(lapply(seq_len(ctx$nw), function(w)
+          ctx$W[[w]][rows, , drop = FALSE][Mk]), list(NULL))))
+      co <- tryCatch(switch(ctx$family,
+        gaussian = stats::lm.fit(Xk, yk)$coefficients,
+        binomial = suppressWarnings(stats::glm.fit(
+          Xk, yk, family = stats::binomial())$coefficients),
+        poisson  = suppressWarnings(stats::glm.fit(
+          Xk, yk, family = stats::poisson())$coefficients)
+      ), error = function(e) rep(0, ncol(Xk)))
+      co[!is.finite(co)] <- 0
+      if (ctx$family != "gaussian") co <- pmax(pmin(co, 5), -5)
+      beta0 <- c(beta0, co)
+      if (ctx$family == "gaussian") {
+        res <- yk - drop(Xk %*% co)
+        sig0 <- c(sig0, log(max(stats::sd(res), 1e-3)))
+      }
     }
+    if (ctx$family == "gaussian" && ctx$ssigma) sig0 <- mean(sig0)
     pr <- tabulate(cl, K) / ctx$n
     if (K > 1L) {
       th <- matrix(0, 1L + ctx$px, K - 1L)
@@ -265,17 +285,27 @@
     stop("`degrees` must be non-negative integers.", call. = FALSE)
   }
   if (!is.null(method) && !is.na(method)) {
-    stop("engine 'gbtmkit' has a single optimizer (BFGS); leave `method` unset.",
+    stop("engine 'gbtmkit' has a single optimiser (BFGS); leave `method` unset.",
          call. = FALSE)
   }
   ctx <- .ngb_ctx(spec, degrees)
 
+  # Pin the RNG kind: .fit_map runs starts through future.apply with
+  # future.seed = TRUE, which switches to L'Ecuyer-CMRG. Without forcing the
+  # kind, set.seed() below would seed whichever stream is active, so the
+  # k-means partitions (and thus results) would differ between a plain call
+  # and one under a future::plan() -- a reproducibility hazard. Forcing
+  # Mersenne-Twister makes the seeded starts identical in every context.
+  seed_start <- function(v) {
+    set.seed(v, kind = "Mersenne-Twister", normal.kind = "Inversion",
+             sample.kind = "Rejection")
+  }
   one_start <- function(s) {
     if (s == 1L) {
-      if (!is.null(seed)) set.seed(seed)
+      if (!is.null(seed)) seed_start(seed)
       init <- .ngb_init(ctx, "default")
     } else {
-      set.seed((if (is.null(seed)) 0L else seed) + s - 1L)
+      seed_start((if (is.null(seed)) 0L else seed) + s - 1L)
       init <- .ngb_init(ctx, "kmeans")
     }
     tryCatch(

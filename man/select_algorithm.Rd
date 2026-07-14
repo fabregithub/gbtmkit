@@ -29,7 +29,7 @@ select_algorithm(
 \item{methods}{Character vector of methods to compare; defaults to all
 methods the engine offers.}
 
-\item{by}{Criterion to minimize, \code{"bic"} (default) or \code{"aic"}.}
+\item{by}{Criterion to minimise, \code{"bic"} (default) or \code{"aic"}.}
 
 \item{hessian, itermax, seed, ...}{Passed to \code{\link[=gbtm_fit]{gbtm_fit()}}. \code{hessian} defaults to
 \code{FALSE} (selection does not need standard errors).}
@@ -40,7 +40,7 @@ and the fitted models.
 }
 \description{
 Fits a fixed group number and shape under each candidate estimation method
-and picks the one with the lowest BIC. For engines with a single optimizer
+and picks the one with the lowest BIC. For engines with a single optimiser
 (see \code{\link[=gbtm_engine_methods]{gbtm_engine_methods()}}) this is a no-op that returns that method.
 The candidate fits are independent and run in parallel under a
 \code{\link[future:plan]{future::plan()}} when the future.apply package is installed.
@@ -51,6 +51,7 @@ data("sim_binary", package = "gbtmkit")
 spec <- gbtm_spec(sim_binary, paste0("y", 1:10),
                   paste0("t", 1:10), id = "id", family = "binomial")
 if (requireNamespace("trajeR", quietly = TRUE))
-  select_algorithm(spec, n_groups = 4, degrees = rep(1, 4))
+  select_algorithm(spec, engine = "trajeR", n_groups = 4,
+                   degrees = rep(1, 4))
 }
 }

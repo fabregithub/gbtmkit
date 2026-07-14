@@ -14,7 +14,7 @@
 #     degree is uniform across groups (`gbtm_engine_per_group_degrees()` returns
 #     FALSE and the shape search sweeps uniform shapes only). Component-specific
 #     designs exist (FLXMRglmfix `nested`) but collapse in practice.
-#   * Single optimizer (EM): `gbtm_engine_methods()` returns NA and the
+#   * Single optimiser (EM): `gbtm_engine_methods()` returns NA and the
 #     algorithm-selection stage is a no-op.
 #   * flexmix may drop components that empty out during EM; the wrapper warns
 #     and reports the actual number of groups.
@@ -53,7 +53,7 @@
          paste(degrees, collapse = ", "), ".", call. = FALSE)
   }
   if (!is.null(method) && !is.na(method)) {
-    stop("engine 'flexmix' has a single optimizer (EM); leave `method` unset.",
+    stop("engine 'flexmix' has a single optimiser (EM); leave `method` unset.",
          call. = FALSE)
   }
   degree <- degrees[1L]
@@ -68,9 +68,9 @@
   lhs <- if (spec$family == "binomial") "cbind(y, 1 - y)" else "y"
   fml <- stats::as.formula(paste(lhs, "~", rhs, "| .gid"))
 
-  # flexmix's EM initialization is random, so multi-start is simply a fresh
+  # flexmix's EM initialisation is random, so multi-start is simply a fresh
   # run per start; the best finite BIC wins. Start 1 uses `seed` itself, so
-  # n_starts = 1 reproduces the single-start behavior exactly. Without a seed
+  # n_starts = 1 reproduces the single-start behaviour exactly. Without a seed
   # the runs differ anyway (each consumes RNG state).
   # Class-membership covariates map to flexmix's concomitant-variable model.
   concomitant <- if (is.null(spec$covariates)) flexmix::FLXPconstant() else

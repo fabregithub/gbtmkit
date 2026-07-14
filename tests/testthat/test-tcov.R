@@ -54,9 +54,9 @@ test_that("trajeR: tcov improves BIC, recovers effects, predicts at tcov = 0", {
   spec0 <- gbtm_spec(make_tcov_data(), paste0("y", 1:8), paste0("t", 1:8),
                      id = "id", family = "gaussian")
   b0 <- gbtm_bic(gbtm_fit(spec0, n_groups = 2, degrees = c(1, 1),
-                          method = "L", itermax = 300, seed = 1))
+                          engine = "trajeR", method = "L", itermax = 300, seed = 1))
   fit <- gbtm_fit(tcov_spec(), n_groups = 2, degrees = c(1, 1),
-                  method = "L", itermax = 300, seed = 1)
+                  engine = "trajeR", method = "L", itermax = 300, seed = 1)
   expect_valid_fit(fit, 2)
   expect_lt(gbtm_bic(fit), b0 - 100)
   # group-specific effects (truth -3 and 3, in some group order)
@@ -72,9 +72,9 @@ test_that("trajeR: multi-start works with tcov", {
   skip_on_cran()
   skip_if_not_installed("trajeR")
   single <- gbtm_fit(tcov_spec(), n_groups = 2, degrees = c(1, 1),
-                     method = "L", itermax = 300, seed = 1)
+                     engine = "trajeR", method = "L", itermax = 300, seed = 1)
   multi <- gbtm_fit(tcov_spec(), n_groups = 2, degrees = c(1, 1),
-                    method = "L", itermax = 300, seed = 1, n_starts = 3)
+                    engine = "trajeR", method = "L", itermax = 300, seed = 1, n_starts = 3)
   expect_lte(gbtm_bic(multi), gbtm_bic(single) + 1e-6)
 })
 

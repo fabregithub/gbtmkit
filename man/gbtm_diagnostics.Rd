@@ -20,7 +20,7 @@ on a fit it also carries \code{bic}, \code{aic}, \code{loglik}, and \code{degree
 Computes the group-based trajectory fit diagnostics used by the GRoLTS
 checklist -- assigned and model-implied group proportions and their mismatch,
 average posterior probability of assignment (APPA), odds of correct
-classification (OCC), and the normalized classification entropy -- entirely
+classification (OCC), and the normalised classification entropy -- entirely
 from the posterior matrix and model group sizes, so the result is identical
 regardless of estimation engine.
 }
@@ -29,9 +29,7 @@ regardless of estimation engine.
 data("sim_binary", package = "gbtmkit")
 spec <- gbtm_spec(sim_binary, paste0("y", 1:10),
                   paste0("t", 1:10), id = "id", family = "binomial")
-if (requireNamespace("trajeR", quietly = TRUE)) {
-  fit <- gbtm_fit(spec, n_groups = 4, degrees = rep(3, 4), seed = 1)
-  gbtm_diagnostics(fit)
-}
+fit <- gbtm_fit(spec, n_groups = 4, degrees = rep(3, 4), seed = 1)
+gbtm_diagnostics(fit)
 }
 }

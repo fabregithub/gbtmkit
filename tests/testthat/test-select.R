@@ -9,8 +9,8 @@ bspec <- function() {
 test_that("select_algorithm compares methods and picks a finite-BIC winner", {
   skip_on_cran()
   skip_if_not_installed("trajeR")
-  sel <- select_algorithm(bspec(), n_groups = 3, degrees = c(1, 1, 1),
-                          itermax = 80, seed = 1)
+  sel <- select_algorithm(bspec(), engine = "trajeR", n_groups = 3,
+                          degrees = c(1, 1, 1), itermax = 80, seed = 1)
   expect_s3_class(sel, "gbtm_selection")
   expect_equal(sel$type, "algorithm")
   expect_setequal(sel$table$method, c("L", "EM", "EMIRLS"))
@@ -27,7 +27,7 @@ test_that("select_n_groups sweeps candidates and recovers the planted 4", {
   # degree 2: with curved (cubic) planted shapes, linear-only selection
   # under-selects -- quadratic is enough for BIC to find the planted 4.
   sel <- select_n_groups(bspec(), candidates = 2:5, degree = 2,
-                         method = "L", itermax = 300, seed = 1)
+                         engine = "trajeR", method = "L", itermax = 300, seed = 1)
   expect_equal(sel$type, "n_groups")
   expect_equal(sort(sel$table$n_groups), 2:5)
   # sim_binary has 4 planted groups -> BIC should choose 4
@@ -40,7 +40,7 @@ test_that("select_n_groups accepts a per-candidate degrees list", {
   skip_if_not_installed("trajeR")
   sel <- select_n_groups(bspec(), candidates = c(2, 3),
                          degrees = list(c(1, 1), c(1, 1, 1)),
-                         method = "L", itermax = 60, seed = 1)
+                         engine = "trajeR", method = "L", itermax = 60, seed = 1)
   expect_equal(sel$table$degrees, c("1,1", "1,1,1"))
 })
 
@@ -48,7 +48,7 @@ test_that("by = 'aic' selects on AIC", {
   skip_on_cran()
   skip_if_not_installed("trajeR")
   sel <- select_n_groups(bspec(), candidates = 2:4, degree = 1,
-                         method = "L", by = "aic", itermax = 80, seed = 1)
+                         engine = "trajeR", method = "L", by = "aic", itermax = 80, seed = 1)
   ok <- sel$table[sel$table$ok, ]
   expect_equal(sel$best, ok$n_groups[which.min(ok$aic)])
 })

@@ -64,9 +64,9 @@ test_that("trajeR: membership covariates improve BIC on covariate-driven data", 
   skip_on_cran()
   skip_if_not_installed("trajeR")
   b0 <- gbtm_bic(gbtm_fit(cov_spec(), n_groups = 3, degrees = rep(1, 3),
-                          method = "L", itermax = 200, seed = 1))
+                          engine = "trajeR", method = "L", itermax = 200, seed = 1))
   fit <- gbtm_fit(cov_spec(c("x1", "x2")), n_groups = 3, degrees = rep(1, 3),
-                  method = "L", itermax = 200, seed = 1)
+                  engine = "trajeR", method = "L", itermax = 200, seed = 1)
   expect_valid_fit(fit, 3)
   expect_lt(gbtm_bic(fit), b0 - 50)
 })
@@ -75,10 +75,10 @@ test_that("trajeR: multi-start works with covariates (method L)", {
   skip_on_cran()
   skip_if_not_installed("trajeR")
   single <- gbtm_fit(cov_spec(c("x1", "x2")), n_groups = 3,
-                     degrees = rep(1, 3), method = "L", itermax = 200,
+                     degrees = rep(1, 3), engine = "trajeR", method = "L", itermax = 200,
                      seed = 1)
   multi <- gbtm_fit(cov_spec(c("x1", "x2")), n_groups = 3,
-                    degrees = rep(1, 3), method = "L", itermax = 200,
+                    degrees = rep(1, 3), engine = "trajeR", method = "L", itermax = 200,
                     seed = 1, n_starts = 3)
   expect_lte(gbtm_bic(multi), gbtm_bic(single) + 1e-6)
 })
@@ -88,7 +88,7 @@ test_that("trajeR: multi-start with covariates falls back for EM", {
   skip_if_not_installed("trajeR")
   expect_warning(
     fit <- gbtm_fit(cov_spec("x1"), n_groups = 2, degrees = c(1, 1),
-                    method = "EM", itermax = 60, seed = 1, n_starts = 2),
+                    engine = "trajeR", method = "EM", itermax = 60, seed = 1, n_starts = 2),
     "only supported for method 'L'"
   )
   expect_equal(fit$n_starts, 1L)

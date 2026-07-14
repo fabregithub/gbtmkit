@@ -1,6 +1,6 @@
 Package: gbtmkit
-Title: Engine-Agnostic Pipeline for Group-Based Trajectory Modeling
-Version: 0.2.0
+Title: Engine-Agnostic Pipeline for Group-Based Trajectory Modelling
+Version: 0.3.0
 Authors@R:
     person(given = "Shoji F.",
            family = "Nakayama",
@@ -8,7 +8,7 @@ Authors@R:
            email = "nies.sfn@gmail.com",
            comment = c(ORCID = "0000-0001-7772-0389"))
 Description: A generic, reproducible pipeline for group-based trajectory
-    modeling (GBTM) that follows the GRoLTS reporting checklist by
+    modelling (GBTM) that follows the GRoLTS reporting checklist by
     construction. Model estimation is delegated to interchangeable backends
     (currently 'trajeR') behind a single interface, so binary and continuous
     outcomes are handled through one specification. The package provides

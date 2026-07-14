@@ -90,7 +90,7 @@ test_that("a supplied method is rejected (flexmix is EM-only)", {
   expect_error(
     gbtm_fit(binary_spec(), engine = "flexmix",
              n_groups = 2, degrees = c(1, 1), method = "L"),
-    "single optimizer"
+    "single optimiser"
   )
 })
 
