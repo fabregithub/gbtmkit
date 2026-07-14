@@ -576,7 +576,7 @@ picks one)</td>
 <td>fast EM on large data</td>
 <td>
 <code>hlme()</code>; binary via a thresholds link</td>
-<td>built in, vectorized ML; NA-tolerant; no censoring bounds yet</td>
+<td>built in, vectorized ML; NA-tolerant; censored normal</td>
 </tr>
 </tbody>
 </table>
@@ -601,10 +601,10 @@ data:</p>
 <span>                  method <span class="op">=</span> <span class="st">"L"</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;gbtm_benchmark&gt;  one model per engine, wall-clock seconds</span></span>
 <span><span class="co">#&gt;   engine   ok seconds      bic   loglik entropy min_appa groups_effective note</span></span>
-<span><span class="co">#&gt;   trajeR TRUE   50.48 17138.03 -8499.54    0.76     0.85                4     </span></span>
-<span><span class="co">#&gt;  flexmix TRUE    2.56 17182.07 -8499.69    0.75     0.85                4     </span></span>
-<span><span class="co">#&gt;     lcmm TRUE   33.02 17138.08 -8499.56    0.75     0.84                4     </span></span>
-<span><span class="co">#&gt;  gbtmkit TRUE    1.65 17138.46 -8499.76    0.75     0.85                4     </span></span>
+<span><span class="co">#&gt;   trajeR TRUE   50.59 17138.03 -8499.54    0.76     0.85                4     </span></span>
+<span><span class="co">#&gt;  flexmix TRUE    2.67 17182.07 -8499.69    0.75     0.85                4     </span></span>
+<span><span class="co">#&gt;     lcmm TRUE   33.42 17138.08 -8499.56    0.75     0.84                4     </span></span>
+<span><span class="co">#&gt;  gbtmkit TRUE    1.63 17138.46 -8499.76    0.75     0.85                4     </span></span>
 <span><span class="co">#&gt; Note: BIC/loglik are comparable only within an engine;</span></span>
 <span><span class="co">#&gt; compare engines on time and classification diagnostics.</span></span></code></pre></div>
 <p>All three engines find the same four groups with comparable

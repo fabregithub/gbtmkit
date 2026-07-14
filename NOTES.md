@@ -184,8 +184,15 @@ written from the model equations – no code from GPL trajeR. Key facts:
   = 0 use only the poly part.
 - **NA outcomes are masked, not dropped** (unlike the long-format
   engines) – subjects need \>= 1 observed occasion.
-- **Not yet**: censored-normal bounds (ymin/ymax error out and point at
-  trajeR); beta family.
+- **Censored normal (added 2026-07-14)**: Tobit cells (y \<= ymin left-,
+  y \>= ymax right-censored) with Mills-ratio gradients computed on the
+  log scale; gradient matches numDeriv to ~1e-7 on censored data,
+  recovers latent parameters through ~13% censoring, and the
+  log-likelihood matches trajeR’s CNORM with explicit bounds exactly.
+  Note trajeR *defaults* ymin/ymax to min/max of Y (treating the
+  extremes as censored); the native engine censors only when the spec
+  sets bounds explicitly.
+- **Not yet**: beta family.
 - trajeR remains the default engine deliberately: baked outputs,
   established citations, and censoring support.
 
@@ -338,6 +345,7 @@ Built step by step, confirming each stage, with `R CMD check` kept at
 | a55f985 | 2026-07-13 | Time-varying trajectory covariates (`gbtm_spec(tcov=)`) on all engines |
 | 19717b1 | 2026-07-13 | Parallel multi-start and selection sweeps via future.apply (~2-2.6x) |
 | 03c7c92 | 2026-07-13 | **v0.2.0**: vignette parallel note, warm-start negative result, demo-data decision |
+| 4e97507 | 2026-07-14 | Native engine (`engine = "gbtmkit"`): vectorized ML, ~30-60x faster than trajeR |
 
 ### Build stages (as executed)
 

@@ -122,7 +122,9 @@
 <li>
 <strong>NA outcomes are masked, not dropped</strong> (unlike the long-format engines) – subjects need &gt;= 1 observed occasion.</li>
 <li>
-<strong>Not yet</strong>: censored-normal bounds (ymin/ymax error out and point at trajeR); beta family.</li>
+<strong>Censored normal (added 2026-07-14)</strong>: Tobit cells (y &lt;= ymin left-, y &gt;= ymax right-censored) with Mills-ratio gradients computed on the log scale; gradient matches numDeriv to ~1e-7 on censored data, recovers latent parameters through ~13% censoring, and the log-likelihood matches trajeR’s CNORM with explicit bounds exactly. Note trajeR <em>defaults</em> ymin/ymax to min/max of Y (treating the extremes as censored); the native engine censors only when the spec sets bounds explicitly.</li>
+<li>
+<strong>Not yet</strong>: beta family.</li>
 <li>trajeR remains the default engine deliberately: baked outputs, established citations, and censoring support.</li>
 </ul></div>
 <div class="section level2">
@@ -329,6 +331,9 @@
 <td>2026-07-13</td>
 <td>
 <strong>v0.2.0</strong>: vignette parallel note, warm-start negative result, demo-data decision</td>
+</tr><tr><td>4e97507</td>
+<td>2026-07-14</td>
+<td>Native engine (<code>engine = "gbtmkit"</code>): vectorized ML, ~30-60x faster than trajeR</td>
 </tr></tbody></table><div class="section level3">
 <h3 id="build-stages-as-executed">Build stages (as executed)<a class="anchor" aria-label="anchor" href="#build-stages-as-executed"></a></h3>
 <ol style="list-style-type: decimal"><li>
