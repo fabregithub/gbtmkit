@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="index.html">gbtmkit</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,7 +41,7 @@
 <p>Working notes on how this package was built. Not part of the shipped package (excluded via <code>.Rbuildignore</code>); intended as a record for maintainers.</p>
 <div class="section level2">
 <h2 id="what-this-package-is">What this package is<a class="anchor" aria-label="anchor" href="#what-this-package-is"></a></h2>
-<p><code>gbtmkit</code> generalizes a one-off group-based trajectory modeling (GBTM) analysis script into a reproducible, <strong>engine-agnostic</strong> R package that follows the GRoLTS reporting checklist. The estimation engine is pluggable (trajeR now; flexmix/lcmm designed for) behind a small accessor interface, so the diagnostics and plotting work the same for any backend, and binary and continuous outcomes run through one specification.</p>
+<p><code>gbtmkit</code> generalises a one-off group-based trajectory modelling (GBTM) analysis script into a reproducible, <strong>engine-agnostic</strong> R package that follows the GRoLTS reporting checklist. The estimation engine is pluggable (trajeR now; flexmix/lcmm designed for) behind a small accessor interface, so the diagnostics and plotting work the same for any backend, and binary and continuous outcomes run through one specification.</p>
 <ul><li>Repo: <a href="https://github.com/fabregithub/gbtmkit" class="external-link uri">https://github.com/fabregithub/gbtmkit</a> (public, MIT)</li>
 <li>Docs site: <a href="https://fabregithub.github.io/gbtmkit/" class="uri">https://fabregithub.github.io/gbtmkit/</a> (pkgdown, auto-deployed)</li>
 <li>Author: Shoji F. Nakayama (ORCID 0000-0001-7772-0389)</li>
@@ -50,7 +50,8 @@
 </ul></div>
 <div class="section level2">
 <h2 id="key-decisions">Key decisions<a class="anchor" aria-label="anchor" href="#key-decisions"></a></h2>
-<ul><li><p><strong>Demo-data covariates stay inert (decided 2026-07-13).</strong> Regenerating the fixtures so x1 drives membership would cascade into every baked number (tests, vignette, benchmarks); the vignette’s small simulated covariate example states its truth inline and is the clearer demo. <code>x1</code>/<code>x2</code> being inert is documented as deliberate.</p></li>
+<ul><li><p><strong>Native engine is the default (decided 2026-07-14, v0.3.0).</strong> Same models, ~30-60x faster, validated against the established engines; trajeR/flexmix/ lcmm remain selectable as citable instruments. Breaking edge: default-engine calls that passed trajeR-specific arguments (method=) now need engine = “trajeR”.</p></li>
+<li><p><strong>Demo-data covariates stay inert (decided 2026-07-13).</strong> Regenerating the fixtures so x1 drives membership would cascade into every baked number (tests, vignette, benchmarks); the vignette’s small simulated covariate example states its truth inline and is the clearer demo. <code>x1</code>/<code>x2</code> being inert is documented as deliberate.</p></li>
 <li><p><strong>Name</strong> <code>gbtmkit</code> (confirmed free on CRAN/GitHub/Bioconductor).</p></li>
 <li><p><strong>Engine-agnostic</strong> architecture: one S3 adapter contract; trajeR first.</p></li>
 <li><p><strong>Both outcome types first-class</strong>: binary (LOGIT) and continuous (CNORM).</p></li>
@@ -63,7 +64,7 @@
 <ul><li>
 <strong>trajeR <code>hessian</code></strong>: only affects standard errors. Point estimates, BIC, and posterior diagnostics are identical with <code>hessian = FALSE</code> and ~2.6x faster, so the search runs Hessian-off and only the final model is refit with it.</li>
 <li>
-<strong>CNORM local optima</strong>: continuous fits fall into local optima under tight group separation (BIC under-selects). The synthetic continuous fixture uses wide separation; multi-start initialization noted as a future improvement.</li>
+<strong>CNORM local optima</strong>: continuous fits fall into local optima under tight group separation (BIC under-selects). The synthetic continuous fixture uses wide separation; multi-start initialisation noted as a future improvement.</li>
 <li>
 <strong>Binary is low-information</strong>: 4 binary occasions cap per-subject classification (~0.83) even when BIC recovers the right group count; the synthetic binary fixture uses wide separation so recovery is reliable.</li>
 </ul></div>
@@ -73,22 +74,22 @@
 <ul><li>
 <strong>Linear-only group-number selection under-selects on curved data</strong>: with cubic planted shapes, <code>select_n_groups(degree = 1)</code> picks 3 groups; degree 2 is needed for BIC to find the planted 4. Tests and the vignette select with <code>degree = 2</code>.</li>
 <li>
-<strong>Mixed per-group degrees are fragile in single-start fits</strong>: fixing <code>degrees = c(1, 3, 3, 1)</code> (the truth) pins each degree to an arbitrary initialization slot; with method “L” this lands in local optima (empty or merged groups) on both fixtures. Uniform <code>rep(3, 4)</code> recovers cleanly, so examples use it and per-group degrees are left to the shape search.</li>
+<strong>Mixed per-group degrees are fragile in single-start fits</strong>: fixing <code>degrees = c(1, 3, 3, 1)</code> (the truth) pins each degree to an arbitrary initialisation slot; with method “L” this lands in local optima (empty or merged groups) on both fixtures. Uniform <code>rep(3, 4)</code> recovers cleanly, so examples use it and per-group degrees are left to the shape search.</li>
 <li>
 <strong>Binary separation must stay wide even with 10 occasions</strong>: crossing trajectories put several groups at similar probabilities mid-study; below <code>sep = 3</code> (log-odds) the 4-group fit collapses. At <code>sep = 3</code> the full pipeline recovers 4 groups (0.89 assignment recovery, entropy 0.76).</li>
 <li>
 <strong>trajeR’s EMIRLS</strong> fails numerically (“solve(): solution not found”) on the 10-occasion binary fixture; <code><a href="reference/select_algorithm.html">select_algorithm()</a></code> records it and moves on, as designed.</li>
 </ul></div>
 <div class="section level2">
-<h2 id="findings-from-multi-start-initialization-2026-07-13-n_starts">Findings from multi-start initialization (2026-07-13, <code>n_starts</code>)<a class="anchor" aria-label="anchor" href="#findings-from-multi-start-initialization-2026-07-13-n_starts"></a></h2>
+<h2 id="findings-from-multi-start-initialisation-2026-07-13-n_starts">Findings from multi-start initialisation (2026-07-13, <code>n_starts</code>)<a class="anchor" aria-label="anchor" href="#findings-from-multi-start-initialisation-2026-07-13-n_starts"></a></h2>
 <ul><li>
-<strong>trajeR’s default initialization is deterministic</strong> (quantile-based): re-running with different seeds gives identical fits, so multi-start must supply <code>paraminit</code>. Its layout (from source, per Method): first ng entries are membership <em>logits vs group 1</em> for <code>"L"</code> but <em>probabilities</em> for <code>"EM"</code>/<code>"EMIRLS"</code>; then per-group trajectory coefficients; then per-group residual sd (CNORM; with <code>ssigma=TRUE</code> only the first is used).</li>
+<strong>trajeR’s default initialisation is deterministic</strong> (quantile-based): re-running with different seeds gives identical fits, so multi-start must supply <code>paraminit</code>. Its layout (from source, per Method): first ng entries are membership <em>logits vs group 1</em> for <code>"L"</code> but <em>probabilities</em> for <code>"EM"</code>/<code>"EMIRLS"</code>; then per-group trajectory coefficients; then per-group residual sd (CNORM; with <code>ssigma=TRUE</code> only the first is used).</li>
 <li>
-<strong>Parameter-space noise is useless; k-means partition starts work.</strong> Random jitter of the default init either falls back into the same basin or lands in garbage. Partitioning subjects with k-means on their outcome vectors and fitting per-cluster polynomial regressions reaches the EM-quality optimum with the fast “L” optimizer (CNORM rep(1,4): 52906 vs 53012 default), and <strong>rescues mixed per-group degrees</strong>: binary c(1,3,3,1) reaches BIC 17110 vs 18175 default – better than any uniform-degree fit (18080).</li>
+<strong>Parameter-space noise is useless; k-means partition starts work.</strong> Random jitter of the default init either falls back into the same basin or lands in garbage. Partitioning subjects with k-means on their outcome vectors and fitting per-cluster polynomial regressions reaches the EM-quality optimum with the fast “L” optimiser (CNORM rep(1,4): 52906 vs 53012 default), and <strong>rescues mixed per-group degrees</strong>: binary c(1,3,3,1) reaches BIC 17110 vs 18175 default – better than any uniform-degree fit (18080).</li>
 <li>
 <strong>lcmm gridsearch NSE</strong>: <code>gridsearch()</code> re-parses the <code>m</code> call, so the fitting function must be bound under a plain name in the calling frame, and the <code>random()</code> in the <code>B = random(minit)</code> it builds is a <em>syntactic sentinel</em> – lcmm detects it from the unevaluated call after evaluation fails, so no <code>random</code> function may exist in that frame.</li>
 <li>
-<strong>trajeR’s POIS initialization requires overdispersion</strong> (its qgamma-based init NaNs when var(Y) &lt;= mean(Y)) – relevant for tests that fabricate count data.</li>
+<strong>trajeR’s POIS initialisation requires overdispersion</strong> (its qgamma-based init NaNs when var(Y) &lt;= mean(Y)) – relevant for tests that fabricate count data.</li>
 </ul></div>
 <div class="section level2">
 <h2 id="findings-from-covariate-support-2026-07-13-gbtm_speccovariates">Findings from covariate support (2026-07-13, <code>gbtm_spec(covariates=)</code>)<a class="anchor" aria-label="anchor" href="#findings-from-covariate-support-2026-07-13-gbtm_speccovariates"></a></h2>
@@ -118,14 +119,18 @@
 <li>
 <strong>Speed</strong>: the binary 4-group quadratic fit that takes trajeR ~44 s runs in ~1.1 s single-start (~3.4 s with 3 starts) at a slightly <em>better</em> optimum. The root cause of trajeR’s slowness (profiled): ~99.7% of time inside its C++ likelihood at ~130 ms/eval vs &lt;1 ms vectorized.</li>
 <li>
-<strong>Parameterization</strong> (optim vector): group-major theta blocks (intercept + membership-covariate effects, group 1 reference), per-group beta = polynomial coefficients then tcov coefficients, gaussian log-sigma (1 value if ssigma else K). tcov enters as extra design columns, so it shares the beta code path; trajectories at tcov = 0 use only the poly part.</li>
+<strong>Parameterisation</strong> (optim vector): group-major theta blocks (intercept + membership-covariate effects, group 1 reference), per-group beta = polynomial coefficients then tcov coefficients, gaussian log-sigma (1 value if ssigma else K). tcov enters as extra design columns, so it shares the beta code path; trajectories at tcov = 0 use only the poly part.</li>
 <li>
 <strong>NA outcomes are masked, not dropped</strong> (unlike the long-format engines) – subjects need &gt;= 1 observed occasion.</li>
 <li>
 <strong>Censored normal (added 2026-07-14)</strong>: Tobit cells (y &lt;= ymin left-, y &gt;= ymax right-censored) with Mills-ratio gradients computed on the log scale; gradient matches numDeriv to ~1e-7 on censored data, recovers latent parameters through ~13% censoring, and the log-likelihood matches trajeR’s CNORM with explicit bounds exactly. Note trajeR <em>defaults</em> ymin/ymax to min/max of Y (treating the extremes as censored); the native engine censors only when the spec sets bounds explicitly.</li>
 <li>
+<strong>Multi-start starts</strong> (v0.3.0): start 1 is the deterministic quantile- intercept “default” init; starts &gt;= 2 are k-means partitions + per-cluster polynomial/GLM regressions (full coefficient starts, not just intercepts). The regression starts are what escape merged-group local optima on curved data: continuous <code>rep(3,4)</code> single-start collapses to 3 groups (BIC 54200), but n_starts &gt;= 2 finds the good optimum (BIC 47205, exactly matching trajeR) and perfect recovery.</li>
+<li>
+<strong>RNG-kind reproducibility trap (found + fixed 2026-07-14)</strong>: multi-start runs through <code>.fit_map</code> -&gt; <code>future.apply(future.seed = TRUE)</code>, which switches the RNG to L’Ecuyer-CMRG. A bare <code>set.seed(v)</code> inside the worker then seeds <em>that</em> stream, so <code>kmeans</code> produced different partitions under a future plan vs a plain call – the same seed gave different fits in <code>devtools::test()</code> vs interactively. Fix: seed with an explicit <code>kind = "Mersenne-Twister"</code> (see <code>seed_start()</code> in <code>.fit_gbtmkit</code>). Lesson for any future engine doing RNG in a <code>.fit_map</code> worker: pin the kind.</li>
+<li>
 <strong>Not yet</strong>: beta family.</li>
-<li>trajeR remains the default engine deliberately: baked outputs, established citations, and censoring support.</li>
+<li>The native engine is the default from v0.3.0; trajeR/flexmix/lcmm remain selectable as established, citable instruments (a reviewer may ask for one).</li>
 </ul></div>
 <div class="section level2">
 <h2 id="findings-from-parallelization-2026-07-13-fit_map-via-futureapply">Findings from parallelization (2026-07-13, <code>.fit_map</code> via future.apply)<a class="anchor" aria-label="anchor" href="#findings-from-parallelization-2026-07-13-fit_map-via-futureapply"></a></h2>
@@ -135,11 +140,11 @@
 <li>
 <strong>Seeded determinism holds under any plan</strong> (each task set.seed()s itself; verified bit-identical BICs sequential vs multicore).</li>
 <li>
-<strong>trajeR speed dead ends, measured</strong>: BLAS threading is irrelevant (44.0 s vs 43.6 s at 1 vs 8 OpenBLAS threads – per-subject matrices too small), and <code>itermax</code> has no “loose search” headroom (the optimizer self-terminates at ~50-60 iterations; itermax 60/100/400 identical, 30 truncates to a worse BIC).</li>
+<strong>trajeR speed dead ends, measured</strong>: BLAS threading is irrelevant (44.0 s vs 43.6 s at 1 vs 8 OpenBLAS threads – per-subject matrices too small), and <code>itermax</code> has no “loose search” headroom (the optimiser self-terminates at ~50-60 iterations; itermax 60/100/400 identical, 30 truncates to a worse BIC).</li>
 <li>
 <strong>Tests use <code>plan(multicore)</code></strong> (fork): multisession workers cannot loadNamespace a devtools::load_all package; fork inherits it. Guarded by <code><a href="https://parallelly.futureverse.org/reference/supportsMulticore.html" class="external-link">future::supportsMulticore()</a></code> (unavailable on Windows/RStudio).</li>
 <li>
-<strong>Warm starts in the shape search: tried and REJECTED (negative result, 2026-07-13).</strong> Initializing each trajeR candidate from the incumbent’s parameters (coefficient blocks padded/truncated) looks great per move – 1.8-3.3x faster and often better BIC when the incumbent is good (it pins group identities to the degree slots). But in the actual stepwise search it is poison: the search starts from the <em>linear</em> incumbent, warm candidates inherit that poor basin, near-converged starting points kill exploration, and the search stalled at rep(1,4) (BIC 17637 vs cold 17117) despite being 14.7x faster. Do not re-implement as a default; if ever revisited, it must be best-of(cold, warm) per candidate, which forfeits the speedup.</li>
+<strong>Warm starts in the shape search: tried and REJECTED (negative result, 2026-07-13).</strong> Initialising each trajeR candidate from the incumbent’s parameters (coefficient blocks padded/truncated) looks great per move – 1.8-3.3x faster and often better BIC when the incumbent is good (it pins group identities to the degree slots). But in the actual stepwise search it is poison: the search starts from the <em>linear</em> incumbent, warm candidates inherit that poor basin, near-converged starting points kill exploration, and the search stalled at rep(1,4) (BIC 17637 vs cold 17117) despite being 14.7x faster. Do not re-implement as a default; if ever revisited, it must be best-of(cold, warm) per candidate, which forfeits the speedup.</li>
 <li>Remaining (unimplemented) speed ideas: subsample-based search; hybrid workflow (select K with flexmix, fit with trajeR).</li>
 </ul></div>
 <div class="section level2">
@@ -182,9 +187,9 @@
 <ul><li>
 <strong>Source of truth</strong>: <code>vignettes/getting-started.Rmd.orig</code> (executable, <code>.Rbuildignore</code>d).</li>
 <li>
-<strong>Shipped file</strong>: <code>vignettes/getting-started.Rmd</code> (static: outputs baked in and <code>vignettes/getting-started-*.png</code> figures beside it, committed to git; builds in seconds). A knitr output/message hook in the <code>.orig</code> strips trajeR’s optimizer chatter; <code>fig.path</code> is a file prefix because R CMD check flags a <code>vignettes/figure/</code> directory as a knitr leftover.</li>
+<strong>Shipped file</strong>: <code>vignettes/getting-started.Rmd</code> (static: outputs baked in and <code>vignettes/getting-started-*.png</code> figures beside it, committed to git; builds in seconds). A knitr output/message hook in the <code>.orig</code> strips trajeR’s optimiser chatter; <code>fig.path</code> is a file prefix because R CMD check flags a <code>vignettes/figure/</code> directory as a knitr leftover.</li>
 <li>
-<strong>Regenerate</strong> with <code>Rscript data-raw/precompile-vignette.R</code> after editing the <code>.orig</code> or when demonstrated behavior changes, and commit the <code>.orig</code>, the regenerated <code>.Rmd</code>, and the figures together.</li>
+<strong>Regenerate</strong> with <code>Rscript data-raw/precompile-vignette.R</code> after editing the <code>.orig</code> or when demonstrated behaviour changes, and commit the <code>.orig</code>, the regenerated <code>.Rmd</code>, and the figures together.</li>
 <li>Bug-fix verification does NOT require re-knitting: tests and direct runs verify code; the vignette is refreshed only when its shown outputs matter.</li>
 </ul><p>The pkgdown workflow likewise builds with <code>examples = FALSE</code> (the reference examples are real fits, ~50 min on a runner; pages show the code without executed output). Since the examples are <code>\donttest</code>, nothing runs them automatically anymore – <strong>run <code>devtools::run_examples()</code> locally before a release</strong> (and after touching any roxygen example).</p>
 </div>
@@ -195,7 +200,7 @@
 <code>test_algo[1:2]</code> dropping the third algorithm from the BIC comparison.</li>
 <li>Out-of-bounds <code>test_algo[i]</code> in the group loop.</li>
 <li>Silently dropped failed fits (<code>.errorhandling = "remove"</code>) -&gt; failures are now recorded as <code>NA</code> with a warning.</li>
-<li>Mis-applied entropy (Shannon of proportions) -&gt; standard normalized classification entropy in [0, 1].</li>
+<li>Mis-applied entropy (Shannon of proportions) -&gt; standard normalised classification entropy in [0, 1].</li>
 </ul></div>
 <div class="section level2">
 <h2 id="history-chronological">History (chronological)<a class="anchor" aria-label="anchor" href="#history-chronological"></a></h2>
@@ -306,7 +311,7 @@
 <strong>v0.1.0</strong>: README scope section (“does / does not do”), version bump, tag</td>
 </tr><tr><td>ddde39b</td>
 <td>2026-07-13</td>
-<td>Multi-start initialization (<code>n_starts</code>): k-means starts for trajeR, native for flexmix/lcmm</td>
+<td>Multi-start initialisation (<code>n_starts</code>): k-means starts for trajeR, native for flexmix/lcmm</td>
 </tr><tr><td>1882db3</td>
 <td>2026-07-13</td>
 <td>Class-membership covariates (<code>gbtm_spec(covariates=)</code>) on all three engines</td>
@@ -378,7 +383,7 @@
 <h2 id="possible-next-steps-not-done">Possible next steps (not done)<a class="anchor" aria-label="anchor" href="#possible-next-steps-not-done"></a></h2>
 <ul><li>Consider a CRAN submission.</li>
 <li>Optional: bump <code>JamesIves/github-pages-deploy-action</code> to clear its Node 20 deprecation warning.</li>
-</ul><p>Done along the way: v0.1.0 tag, flexmix + lcmm adapters, multi-start initialization, class-membership covariates, <code><a href="reference/benchmark_engines.html">benchmark_engines()</a></code>, <code><a href="reference/grolts_report.html">grolts_report()</a></code>, precomputed vignette (see History).</p>
+</ul><p>Done along the way: v0.1.0 tag, flexmix + lcmm adapters, multi-start initialisation, class-membership covariates, <code><a href="reference/benchmark_engines.html">benchmark_engines()</a></code>, <code><a href="reference/grolts_report.html">grolts_report()</a></code>, precomputed vignette (see History).</p>
 </div>
 </div>
 

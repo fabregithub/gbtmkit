@@ -52,9 +52,7 @@ attribute `"recommended"` (its first row, or `NULL` if none qualify) and
 data("sim_binary", package = "gbtmkit")
 spec <- gbtm_spec(sim_binary, paste0("y", 1:10),
                   paste0("t", 1:10), id = "id", family = "binomial")
-if (requireNamespace("trajeR", quietly = TRUE)) {
-  sh <- evaluate_shapes(spec, n_groups = 4, method = "L", verbose = FALSE)
-  apply_grolts_criteria(sh)
-}
+sh <- evaluate_shapes(spec, n_groups = 4, verbose = FALSE)
+apply_grolts_criteria(sh)
 # }
 ```

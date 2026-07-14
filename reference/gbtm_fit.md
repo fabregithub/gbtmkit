@@ -49,7 +49,7 @@ gbtm_fit(
 
   Estimation method; must be one of
   [`gbtm_engine_methods()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_engine_methods.md)
-  for the chosen engine (ignored by engines with a single optimizer).
+  for the chosen engine (ignored by engines with a single optimiser).
 
 - hessian:
 
@@ -58,7 +58,7 @@ gbtm_fit(
 
 - itermax:
 
-  Maximum optimizer iterations.
+  Maximum optimiser iterations.
 
 - seed:
 
@@ -66,14 +66,14 @@ gbtm_fit(
 
 - n_starts:
 
-  Number of initializations to try; the best fit by BIC is kept. The
-  first start is the engine's default initialization; additional starts
+  Number of initialisations to try; the best fit by BIC is kept. The
+  first start is the engine's default initialisation; additional starts
   are engine-specific (trajeR and the native gbtmkit engine: k-means
-  partition starting values; flexmix: fresh random EM initializations;
+  partition starting values; flexmix: fresh random EM initialisations;
   lcmm:
   [`lcmm::gridsearch()`](https://cecileproust-lima.github.io/lcmm/reference/gridsearch.html)).
   Mixture fits can land in local optima – empty or merged groups are the
-  telltale sign – and `n_starts` greater than 1 is the standard defense.
+  telltale sign – and `n_starts` greater than 1 is the standard defence.
   Independent starts run in parallel under a
   [`future::plan()`](https://future.futureverse.org/reference/plan.html)
   when the future.apply package is installed; with a `seed`, results are

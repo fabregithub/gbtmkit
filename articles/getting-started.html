@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gbtmkit</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,21 +68,20 @@
 <!-- vignettes/getting-started.Rmd is GENERATED from getting-started.Rmd.orig
      by data-raw/precompile-vignette.R: edit the .orig and re-run that script;
      do not edit the generated file. -->
-<p><code>gbtmkit</code> turns group-based trajectory modeling (GBTM)
+<p><code>gbtmkit</code> turns group-based trajectory modelling (GBTM)
 into a reproducible pipeline that follows the GRoLTS reporting
-checklist. Estimation is delegated to interchangeable backends –
-<code>trajeR</code> (the default), <code>flexmix</code>,
-<code>lcmm</code>, and a built-in native engine (<code>"gbtmkit"</code>)
-– behind one interface: every fitting function takes an
-<code>engine</code> argument, and the fit diagnostics (entropy, APPA,
-OCC, group proportions) are computed the same way regardless of engine,
-for binary and continuous outcomes alike.</p>
-<p>The examples below all use the default
-<code>engine = "trajeR"</code>; the <a href="#choosing-an-engine">Choosing an engine</a> section at the end
+checklist. Estimation is delegated to interchangeable backends – a
+built-in native engine (<code>"gbtmkit"</code>, the default) and the
+established <code>trajeR</code>, <code>flexmix</code>, and
+<code>lcmm</code> packages – behind one interface: every fitting
+function takes an <code>engine</code> argument, and the fit diagnostics
+(entropy, APPA, OCC, group proportions) are computed the same way
+regardless of engine, for binary and continuous outcomes alike.</p>
+<p>The examples below all use the default native engine; the <a href="#choosing-an-engine">Choosing an engine</a> section at the end
 compares and benchmarks the backends and shows how to switch. Along the
 way we turn the finished result into a GRoLTS reporting aid
 (<code><a href="../reference/grolts_report.html">grolts_report()</a></code>), escape a local optimum with multi-start
-initialization (<code>n_starts</code>), and predict group membership
+initialisation (<code>n_starts</code>), and predict group membership
 from covariates (<code>gbtm_spec(covariates = ...)</code>).</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/fabregithub/gbtmkit" class="external-link">gbtmkit</a></span><span class="op">)</span></span></code></pre></div>
@@ -150,52 +149,51 @@ quick.</p>
 <span>  candidates <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">5</span>,     <span class="co"># consider 2 to 5 groups</span></span>
 <span>  degree     <span class="op">=</span> <span class="fl">2</span>,       <span class="co"># quadratic while choosing the number of groups --</span></span>
 <span>                        <span class="co"># with curved shapes, linear-only selection under-selects</span></span>
-<span>  method     <span class="op">=</span> <span class="st">"L"</span>,     <span class="co"># fix the algorithm (skip stage 1) for speed</span></span>
 <span>  max_degree <span class="op">=</span> <span class="fl">3</span>,       <span class="co"># allow up to cubic in the shape search</span></span>
 <span>  seed       <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  verbose    <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">res</span></span>
 <span><span class="co">#&gt; &lt;gbtm_result&gt;</span></span>
-<span><span class="co">#&gt;   engine/family : trajeR / binomial</span></span>
-<span><span class="co">#&gt;   method        : L</span></span>
+<span><span class="co">#&gt;   engine/family : gbtmkit / binomial</span></span>
+<span><span class="co">#&gt;   method        : &lt;default&gt;</span></span>
 <span><span class="co">#&gt;   groups        : 4</span></span>
-<span><span class="co">#&gt;   degrees       : 2, 3, 1, 3</span></span>
+<span><span class="co">#&gt;   degrees       : 3, 2, 3, 1</span></span>
 <span><span class="co">#&gt;   GRoLTS criteria met: TRUE</span></span>
-<span><span class="co">#&gt;   entropy       : 0.762  BIC: 17116.7</span></span></code></pre></div>
+<span><span class="co">#&gt;   entropy       : 0.754  BIC: 17141.7</span></span></code></pre></div>
 <p>The pipeline recovers the four planted groups. Everything each stage
 produced is kept on the result object:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">res</span><span class="op">$</span><span class="va">group_selection</span>      <span class="co"># BIC for each candidate number of groups</span></span>
 <span><span class="co">#&gt; &lt;gbtm_selection&gt; stage=n_groups  by=BIC</span></span>
 <span><span class="co">#&gt;  n_groups   degrees      bic      aic   ok</span></span>
-<span><span class="co">#&gt;         2       2,2 17422.92 17385.72 TRUE</span></span>
-<span><span class="co">#&gt;         3     2,2,2 17452.17 17393.73 TRUE</span></span>
-<span><span class="co">#&gt;         4   2,2,2,2 17168.99 17089.29 TRUE</span></span>
-<span><span class="co">#&gt;         5 2,2,2,2,2 17197.93 17096.98 TRUE</span></span>
+<span><span class="co">#&gt;         2       2,2 17422.92 17385.73 TRUE</span></span>
+<span><span class="co">#&gt;         3     2,2,2 17275.73 17217.28 TRUE</span></span>
+<span><span class="co">#&gt;         4   2,2,2,2 17168.92 17089.22 TRUE</span></span>
+<span><span class="co">#&gt;         5 2,2,2,2,2 17198.17 17097.22 TRUE</span></span>
 <span><span class="co">#&gt;   best: 4</span></span></code></pre></div>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
 <span><span class="co">#&gt; === gbtm pipeline result ===</span></span>
 <span><span class="co">#&gt; &lt;gbtm_result&gt;</span></span>
-<span><span class="co">#&gt;   engine/family : trajeR / binomial</span></span>
-<span><span class="co">#&gt;   method        : L</span></span>
+<span><span class="co">#&gt;   engine/family : gbtmkit / binomial</span></span>
+<span><span class="co">#&gt;   method        : &lt;default&gt;</span></span>
 <span><span class="co">#&gt;   groups        : 4</span></span>
-<span><span class="co">#&gt;   degrees       : 2, 3, 1, 3</span></span>
+<span><span class="co">#&gt;   degrees       : 3, 2, 3, 1</span></span>
 <span><span class="co">#&gt;   GRoLTS criteria met: TRUE</span></span>
-<span><span class="co">#&gt;   entropy       : 0.762  BIC: 17116.7</span></span>
+<span><span class="co">#&gt;   entropy       : 0.754  BIC: 17141.7</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Group diagnostics:</span></span>
 <span><span class="co">#&gt;  group n_assigned prop_assigned prop_model mismatch  appa    occ</span></span>
-<span><span class="co">#&gt;      1        325         0.217      0.197   -0.019 0.862 25.333</span></span>
-<span><span class="co">#&gt;      2        290         0.193      0.217    0.023 0.902 33.189</span></span>
-<span><span class="co">#&gt;      3        572         0.381      0.358   -0.023 0.891 14.634</span></span>
-<span><span class="co">#&gt;      4        313         0.209      0.228    0.019 0.866 21.945</span></span>
+<span><span class="co">#&gt;      1        337         0.225      0.207   -0.017 0.866 24.618</span></span>
+<span><span class="co">#&gt;      2        290         0.193      0.211    0.018 0.878 26.756</span></span>
+<span><span class="co">#&gt;      3        303         0.202      0.221    0.019 0.864 22.516</span></span>
+<span><span class="co">#&gt;      4        570         0.380      0.361   -0.019 0.897 15.395</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Assigned group sizes:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   1   2   3   4 </span></span>
-<span><span class="co">#&gt; 325 290 572 313</span></span></code></pre></div>
+<span><span class="co">#&gt; 337 290 303 570</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="inspect-and-plot">Inspect and plot<a class="anchor" aria-label="anchor" href="#inspect-and-plot"></a>
@@ -206,10 +204,10 @@ trajectories with the observed per-group means overlaid.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">res</span><span class="op">$</span><span class="va">diagnostics</span><span class="op">$</span><span class="va">groups</span></span>
 <span><span class="co">#&gt;   group n_assigned prop_assigned prop_model    mismatch      appa      occ</span></span>
-<span><span class="co">#&gt; 1     1        325     0.2166667  0.1973879 -0.01927876 0.8616925 25.33329</span></span>
-<span><span class="co">#&gt; 2     2        290     0.1933333  0.2166825  0.02334920 0.9017755 33.18889</span></span>
-<span><span class="co">#&gt; 3     3        572     0.3813333  0.3583779 -0.02295544 0.8909961 14.63429</span></span>
-<span><span class="co">#&gt; 4     4        313     0.2086667  0.2275517  0.01888500 0.8660335 21.94462</span></span></code></pre></div>
+<span><span class="co">#&gt; 1     1        337     0.2246667  0.2073538 -0.01731287 0.8655933 24.61843</span></span>
+<span><span class="co">#&gt; 2     2        290     0.1933333  0.2113103  0.01797694 0.8775822 26.75647</span></span>
+<span><span class="co">#&gt; 3     3        303     0.2020000  0.2207788  0.01877885 0.8644891 22.51587</span></span>
+<span><span class="co">#&gt; 4     4        570     0.3800000  0.3605571 -0.01944292 0.8967039 15.39547</span></span></code></pre></div>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_trajectories.html">plot_trajectories</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">final_fit</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
@@ -221,13 +219,13 @@ plot of chunk unnamed-chunk-8
 column) is in <code>res$assignment</code>:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">assignment</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   id group           p1           p2           p3           p4</span></span>
-<span><span class="co">#&gt; 1  1     3 7.128253e-10 4.486503e-04 9.472586e-01 0.0522927836</span></span>
-<span><span class="co">#&gt; 2  2     1 9.470205e-01 4.553914e-02 3.593663e-08 0.0074403597</span></span>
-<span><span class="co">#&gt; 3  3     3 6.537871e-11 5.160593e-05 9.423786e-01 0.0575698258</span></span>
-<span><span class="co">#&gt; 4  4     1 9.602393e-01 2.927954e-02 2.435747e-08 0.0104811684</span></span>
-<span><span class="co">#&gt; 5  5     2 3.073100e-03 9.962652e-01 1.342337e-05 0.0006482664</span></span>
-<span><span class="co">#&gt; 6  6     3 2.151267e-10 1.157310e-04 9.264874e-01 0.0733968257</span></span></code></pre></div>
+<span><span class="co">#&gt;   id group           p1           p2          p3           p4</span></span>
+<span><span class="co">#&gt; 1  1     4 5.846693e-09 5.315735e-04 0.051537591 9.479308e-01</span></span>
+<span><span class="co">#&gt; 2  2     1 9.300871e-01 6.282380e-02 0.007089053 4.094335e-08</span></span>
+<span><span class="co">#&gt; 3  3     4 5.291590e-10 7.767643e-05 0.056226553 9.436958e-01</span></span>
+<span><span class="co">#&gt; 4  4     1 9.312346e-01 5.878013e-02 0.009985201 2.896705e-08</span></span>
+<span><span class="co">#&gt; 5  5     2 1.596779e-02 9.829723e-01 0.001033636 2.631241e-05</span></span>
+<span><span class="co">#&gt; 6  6     4 1.724421e-09 1.782099e-04 0.071815472 9.280063e-01</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="report-against-the-grolts-checklist">Report against the GRoLTS checklist<a class="anchor" aria-label="anchor" href="#report-against-the-grolts-checklist"></a>
@@ -255,32 +253,32 @@ a Markdown appendix for supplementary material.</p>
 <span><span class="co">#&gt;       Per-wave proportions: 0.59, 0.58, 0.57, 0.58, 0.58, 0.57, 0.53, 0.51,</span></span>
 <span><span class="co">#&gt;       0.47, 0.44.</span></span>
 <span><span class="co">#&gt;   [5] Software</span></span>
-<span><span class="co">#&gt;       R version 4.6.1 (2026-06-24); gbtmkit 0.2.0; engine trajeR (trajeR</span></span>
-<span><span class="co">#&gt;       0.11.1), method 'L'.</span></span>
+<span><span class="co">#&gt;       R version 4.6.1 (2026-06-24); gbtmkit 0.3.0; engine gbtmkit (gbtmkit</span></span>
+<span><span class="co">#&gt;       0.3.0).</span></span>
 <span><span class="co">#&gt;   [7] Alternative trajectory shapes</span></span>
-<span><span class="co">#&gt;       15 polynomial shapes fitted (stepwise search, degrees 1..3 per</span></span>
-<span><span class="co">#&gt;       group); chosen degrees: 2, 3, 1, 3.</span></span>
+<span><span class="co">#&gt;       17 polynomial shapes fitted (stepwise search, degrees 1..3 per</span></span>
+<span><span class="co">#&gt;       group); chosen degrees: 3, 2, 3, 1.</span></span>
 <span><span class="co">#&gt;   [8] Covariates</span></span>
 <span><span class="co">#&gt;       No covariates were used.</span></span>
 <span><span class="co">#&gt;   [9] Starting values / iterations</span></span>
-<span><span class="co">#&gt;       Final fit: single (default) initialization; iteration cap 100.</span></span>
-<span><span class="co">#&gt;       (trajeR's default initialization is deterministic; additional starts</span></span>
-<span><span class="co">#&gt;       are k-means-based.)</span></span>
+<span><span class="co">#&gt;       Final fit: single (default) initialisation; iteration cap 100. (This</span></span>
+<span><span class="co">#&gt;       engine's default initialisation is deterministic; additional starts</span></span>
+<span><span class="co">#&gt;       are k-means partitions.)</span></span>
 <span><span class="co">#&gt;   [10] Model selection tools</span></span>
 <span><span class="co">#&gt;       Group number selected by BIC over 2..5 groups; shapes screened with</span></span>
 <span><span class="co">#&gt;       GRoLTS acceptance criteria (min class share &gt; 0.05, APPA &gt; 0.7, OCC</span></span>
 <span><span class="co">#&gt;       &gt;= 5).</span></span>
 <span><span class="co">#&gt;   [11] Number of models fitted</span></span>
-<span><span class="co">#&gt;       20 models fitted in total (0 algorithm comparison, 4 group-number</span></span>
-<span><span class="co">#&gt;       candidates, 15 shape-search fits, 1 final fit). A one-class solution</span></span>
+<span><span class="co">#&gt;       22 models fitted in total (0 algorithm comparison, 4 group-number</span></span>
+<span><span class="co">#&gt;       candidates, 17 shape-search fits, 1 final fit). A one-class solution</span></span>
 <span><span class="co">#&gt;       was NOT among the candidates -- consider adding candidates = 1:K.</span></span>
 <span><span class="co">#&gt;   [12] Cases per class</span></span>
-<span><span class="co">#&gt;       Final 4-group model: n per class = 325, 290, 572, 313 (proportions</span></span>
-<span><span class="co">#&gt;       0.22, 0.19, 0.38, 0.21). Per-candidate class sizes are not retained</span></span>
+<span><span class="co">#&gt;       Final 4-group model: n per class = 337, 290, 303, 570 (proportions</span></span>
+<span><span class="co">#&gt;       0.22, 0.19, 0.20, 0.38). Per-candidate class sizes are not retained</span></span>
 <span><span class="co">#&gt;       by the pipeline.</span></span>
 <span><span class="co">#&gt;   [13] Entropy</span></span>
-<span><span class="co">#&gt;       Normalized classification entropy: 0.762 (APPA per class: 0.86, 0.90,</span></span>
-<span><span class="co">#&gt;       0.89, 0.87).</span></span>
+<span><span class="co">#&gt;       Normalised classification entropy: 0.754 (APPA per class: 0.87, 0.88,</span></span>
+<span><span class="co">#&gt;       0.86, 0.90).</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; -- context supplied -- analyst completes --</span></span>
 <span><span class="co">#&gt;   [3c] Handling of missing data</span></span>
@@ -321,11 +319,14 @@ before moving on – this is exactly what the wrapper does internally.</p>
 <div class="section level3">
 <h3 id="stage-1-choose-the-estimation-algorithm">Stage 1: choose the estimation algorithm<a class="anchor" aria-label="anchor" href="#stage-1-choose-the-estimation-algorithm"></a>
 </h3>
-<p>trajeR offers <code>"L"</code>, <code>"EM"</code> and
-<code>"EMIRLS"</code>; the one with the lowest BIC is selected. (Engines
-with a single optimizer skip this stage.)</p>
+<p>This stage only applies to engines that offer several optimisers – of
+the four backends, only <code>trajeR</code> does (<code>"L"</code>,
+<code>"EM"</code>, <code>"EMIRLS"</code>); the one with the lowest BIC
+is selected. Single-optimiser engines (including the default native
+engine) skip this stage automatically.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">algo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_algorithm.html">select_algorithm</a></span><span class="op">(</span><span class="va">spec</span>, n_groups <span class="op">=</span> <span class="fl">2</span>, degrees <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">algo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_algorithm.html">select_algorithm</a></span><span class="op">(</span><span class="va">spec</span>, engine <span class="op">=</span> <span class="st">"trajeR"</span>, n_groups <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>                         degrees <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">algo</span></span>
 <span><span class="co">#&gt; &lt;gbtm_selection&gt; stage=algorithm  by=BIC</span></span>
 <span><span class="co">#&gt;  method       bic       aic   ok</span></span>
@@ -341,14 +342,14 @@ with a single optimizer skip this stage.)</p>
 Quadratic shapes are used while sweeping: with curved trajectories like
 these, linear-only selection under-selects the number of groups:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">groups</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_n_groups.html">select_n_groups</a></span><span class="op">(</span><span class="va">spec</span>, candidates <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">5</span>, degree <span class="op">=</span> <span class="fl">2</span>, method <span class="op">=</span> <span class="st">"L"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">groups</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_n_groups.html">select_n_groups</a></span><span class="op">(</span><span class="va">spec</span>, candidates <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">5</span>, degree <span class="op">=</span> <span class="fl">2</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">groups</span></span>
 <span><span class="co">#&gt; &lt;gbtm_selection&gt; stage=n_groups  by=BIC</span></span>
 <span><span class="co">#&gt;  n_groups   degrees      bic      aic   ok</span></span>
-<span><span class="co">#&gt;         2       2,2 17422.92 17385.72 TRUE</span></span>
-<span><span class="co">#&gt;         3     2,2,2 17452.17 17393.73 TRUE</span></span>
-<span><span class="co">#&gt;         4   2,2,2,2 17168.99 17089.29 TRUE</span></span>
-<span><span class="co">#&gt;         5 2,2,2,2,2 17197.93 17096.98 TRUE</span></span>
+<span><span class="co">#&gt;         2       2,2 17422.92 17385.73 TRUE</span></span>
+<span><span class="co">#&gt;         3     2,2,2 17275.73 17217.28 TRUE</span></span>
+<span><span class="co">#&gt;         4   2,2,2,2 17168.92 17089.22 TRUE</span></span>
+<span><span class="co">#&gt;         5 2,2,2,2,2 17198.17 17097.22 TRUE</span></span>
 <span><span class="co">#&gt;   best: 4</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -356,14 +357,13 @@ these, linear-only selection under-selects the number of groups:</p>
 </h3>
 <p>The polynomial shapes are searched for the chosen number of groups,
 then the GRoLTS acceptance criteria (PMS &gt; 0.05, APPA &gt; 0.70, OCC
-&gt;= 5) are applied. (The one-call pipeline above searched up to cubic;
-here we cap the search at quadratic to keep the vignette quick.)</p>
+&gt;= 5) are applied:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">shapes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/evaluate_shapes.html">evaluate_shapes</a></span><span class="op">(</span><span class="va">spec</span>, n_groups <span class="op">=</span> <span class="va">groups</span><span class="op">$</span><span class="va">best</span>, method <span class="op">=</span> <span class="st">"L"</span>,</span>
-<span>                          max_degree <span class="op">=</span> <span class="fl">2</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">shapes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/evaluate_shapes.html">evaluate_shapes</a></span><span class="op">(</span><span class="va">spec</span>, n_groups <span class="op">=</span> <span class="va">groups</span><span class="op">$</span><span class="va">best</span>,</span>
+<span>                          max_degree <span class="op">=</span> <span class="fl">3</span>, seed <span class="op">=</span> <span class="fl">1</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/apply_grolts_criteria.html">apply_grolts_criteria</a></span><span class="op">(</span><span class="va">shapes</span><span class="op">)</span></span>
-<span><span class="co">#&gt; &lt;gbtm_criteria&gt; PMS&gt;0.05, APPA&gt;0.70, OCC&gt;=5 | 5 shape(s) pass</span></span>
-<span><span class="co">#&gt;   recommended: degrees 2,2,1,1  (BIC 17157.6, entropy 0.751)</span></span></code></pre></div>
+<span><span class="co">#&gt; &lt;gbtm_criteria&gt; PMS&gt;0.05, APPA&gt;0.70, OCC&gt;=5 | 6 shape(s) pass</span></span>
+<span><span class="co">#&gt;   recommended: degrees 3,2,3,1  (BIC 17141.7, entropy 0.754)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="stage-4-fit-the-final-model">Stage 4: fit the final model<a class="anchor" aria-label="anchor" href="#stage-4-fit-the-final-model"></a>
@@ -372,34 +372,39 @@ here we cap the search at quadratic to keep the vignette quick.)</p>
 standard errors, and the diagnostics and per-subject assignment are read
 off it. Here we use the lowest-BIC shape found by the search:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_gbtm.html">fit_gbtm</a></span><span class="op">(</span><span class="va">spec</span>, n_groups <span class="op">=</span> <span class="va">groups</span><span class="op">$</span><span class="va">best</span>, degrees <span class="op">=</span> <span class="va">shapes</span><span class="op">$</span><span class="va">best</span>, method <span class="op">=</span> <span class="st">"L"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_gbtm.html">fit_gbtm</a></span><span class="op">(</span><span class="va">spec</span>, n_groups <span class="op">=</span> <span class="va">groups</span><span class="op">$</span><span class="va">best</span>, degrees <span class="op">=</span> <span class="va">shapes</span><span class="op">$</span><span class="va">best</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/gbtm_diagnostics.html">gbtm_diagnostics</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
-<span><span class="co">#&gt; &lt;gbtm_diagnostics&gt; groups=4  n=1500  entropy=0.751</span></span>
-<span><span class="co">#&gt;   BIC=17157.64  AIC=17088.56  logLik=-8531.28</span></span>
+<span><span class="co">#&gt; &lt;gbtm_diagnostics&gt; groups=4  n=1500  entropy=0.754</span></span>
+<span><span class="co">#&gt;   BIC=17141.73  AIC=17056.72  logLik=-8512.36</span></span>
 <span><span class="co">#&gt;  group n_assigned prop_assigned prop_model mismatch  appa    occ</span></span>
-<span><span class="co">#&gt;      1        292         0.195      0.220    0.026 0.872 24.154</span></span>
-<span><span class="co">#&gt;      2        290         0.193      0.207    0.014 0.867 24.913</span></span>
-<span><span class="co">#&gt;      3        582         0.388      0.366   -0.022 0.894 14.680</span></span>
-<span><span class="co">#&gt;      4        336         0.224      0.207   -0.017 0.869 25.385</span></span>
+<span><span class="co">#&gt;      1        337         0.225      0.207   -0.017 0.866 24.618</span></span>
+<span><span class="co">#&gt;      2        290         0.193      0.211    0.018 0.878 26.756</span></span>
+<span><span class="co">#&gt;      3        303         0.202      0.221    0.019 0.864 22.516</span></span>
+<span><span class="co">#&gt;      4        570         0.380      0.361   -0.019 0.897 15.395</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/gbtm_assign.html">gbtm_assign</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   id group          p1           p2           p3           p4</span></span>
-<span><span class="co">#&gt; 1  1     3 0.068521677 4.383472e-04 9.310400e-01 3.874436e-09</span></span>
-<span><span class="co">#&gt; 2  2     4 0.006976607 5.761473e-02 4.597202e-08 9.354086e-01</span></span>
-<span><span class="co">#&gt; 3  3     3 0.055095198 6.591163e-05 9.448389e-01 3.652009e-10</span></span>
-<span><span class="co">#&gt; 4  4     4 0.006236484 5.497547e-02 3.255112e-08 9.387880e-01</span></span>
-<span><span class="co">#&gt; 5  5     2 0.003693904 9.832119e-01 2.924786e-05 1.306498e-02</span></span>
-<span><span class="co">#&gt; 6  6     3 0.068865474 1.503810e-04 9.309841e-01 1.180727e-09</span></span></code></pre></div>
+<span><span class="co">#&gt;   id group           p1           p2          p3           p4</span></span>
+<span><span class="co">#&gt; 1  1     4 5.846693e-09 5.315735e-04 0.051537591 9.479308e-01</span></span>
+<span><span class="co">#&gt; 2  2     1 9.300871e-01 6.282380e-02 0.007089053 4.094335e-08</span></span>
+<span><span class="co">#&gt; 3  3     4 5.291590e-10 7.767643e-05 0.056226553 9.436958e-01</span></span>
+<span><span class="co">#&gt; 4  4     1 9.312346e-01 5.878013e-02 0.009985201 2.896705e-08</span></span>
+<span><span class="co">#&gt; 5  5     2 1.596779e-02 9.829723e-01 0.001033636 2.631241e-05</span></span>
+<span><span class="co">#&gt; 6  6     4 1.724421e-09 1.782099e-04 0.071815472 9.280063e-01</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
 <h2 id="continuous-outcomes">Continuous outcomes<a class="anchor" aria-label="anchor" href="#continuous-outcomes"></a>
 </h2>
 <p>The same pipeline handles continuous outcomes: switch the family to
-<code>"gaussian"</code> (mapped to a censored-normal model) and point
-the spec at a continuous dataset. <code>sim_continuous</code> has the
-same four shape types on a continuous scale.</p>
+<code>"gaussian"</code> and point the spec at a continuous dataset.
+<code>sim_continuous</code> has the same four shape types on a
+continuous scale. (Set <code>ymin</code>/<code>ymax</code> on the spec
+for censored, Tobit-style outcomes; the native engine and trajeR both
+support them.)</p>
 <p>We fit cubic shapes in all four groups (in a real analysis the shape
-search refines the per-group degrees, as above):</p>
+search refines the per-group degrees, as above), with
+<code>n_starts = 3</code>: from a single start this particular fit lands
+in a degenerate local optimum with an empty group – exactly the failure
+mode the next section demonstrates.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sim_continuous"</span>, package <span class="op">=</span> <span class="st">"gbtmkit"</span><span class="op">)</span></span>
 <span><span class="va">cspec</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gbtm_spec.html">gbtm_spec</a></span><span class="op">(</span></span>
@@ -409,7 +414,8 @@ search refines the per-group degrees, as above):</p>
 <span>  id       <span class="op">=</span> <span class="st">"id"</span>,</span>
 <span>  family   <span class="op">=</span> <span class="st">"gaussian"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="va">cfit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_gbtm.html">fit_gbtm</a></span><span class="op">(</span><span class="va">cspec</span>, n_groups <span class="op">=</span> <span class="fl">4</span>, degrees <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"L"</span><span class="op">)</span></span>
+<span><span class="va">cfit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_gbtm.html">fit_gbtm</a></span><span class="op">(</span><span class="va">cspec</span>, n_groups <span class="op">=</span> <span class="fl">4</span>, degrees <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span>,</span>
+<span>                 itermax <span class="op">=</span> <span class="fl">400</span>, seed <span class="op">=</span> <span class="fl">1</span>, n_starts <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/gbtm_diagnostics.html">gbtm_diagnostics</a></span><span class="op">(</span><span class="va">cfit</span><span class="op">)</span><span class="op">$</span><span class="va">entropy</span></span>
 <span><span class="co">#&gt; [1] 1</span></span></code></pre></div>
 <p><code><a href="../reference/plot_trajectories.html">plot_trajectories()</a></code> works the same way; for a continuous
@@ -424,29 +430,30 @@ plot of chunk unnamed-chunk-16
 </div>
 </div>
 <div class="section level2">
-<h2 id="local-optima-and-multi-start-initialization">Local optima and multi-start initialization<a class="anchor" aria-label="anchor" href="#local-optima-and-multi-start-initialization"></a>
+<h2 id="local-optima-and-multi-start-initialisation">Local optima and multi-start initialisation<a class="anchor" aria-label="anchor" href="#local-optima-and-multi-start-initialisation"></a>
 </h2>
 <p>Mixture fits can land in a degenerate local optimum – an empty or
 merged group is the telltale sign, and <code><a href="../reference/plot_trajectories.html">plot_trajectories()</a></code>
 / <code><a href="../reference/gbtm_predict.html">gbtm_predict()</a></code> warn when they see one. On this data,
-forcing <em>linear</em> shapes with the <code>"L"</code> optimizer does
-exactly that: one group comes out empty.</p>
+forcing <em>linear</em> shapes with the <code>"L"</code> optimiser does
+exactly that: one group comes out empty. (We use the trajeR engine here
+to demonstrate; its behaviour motivated the feature.)</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">bad</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gbtm_fit.html">gbtm_fit</a></span><span class="op">(</span><span class="va">cspec</span>, n_groups <span class="op">=</span> <span class="fl">4</span>, degrees <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"L"</span>,</span>
-<span>                itermax <span class="op">=</span> <span class="fl">300</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">bad</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gbtm_fit.html">gbtm_fit</a></span><span class="op">(</span><span class="va">cspec</span>, engine <span class="op">=</span> <span class="st">"trajeR"</span>, n_groups <span class="op">=</span> <span class="fl">4</span>, degrees <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span>,</span>
+<span>                method <span class="op">=</span> <span class="st">"L"</span>, itermax <span class="op">=</span> <span class="fl">300</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="../reference/gbtm_assign.html">gbtm_assign</a></span><span class="op">(</span><span class="va">bad</span><span class="op">)</span><span class="op">$</span><span class="va">group</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   1   2   3   4 </span></span>
 <span><span class="co">#&gt; 313   0 566 321</span></span></code></pre></div>
-<p>The standard defense is multi-start initialization:
+<p>The standard defence is multi-start initialisation:
 <code>n_starts</code> re-fits the model from several starting points and
-keeps the best BIC. (For trajeR, whose default initialization is
+keeps the best BIC. (For trajeR, whose default initialisation is
 deterministic, the extra starts come from k-means partitions of the
-subjects’ outcome vectors; flexmix re-runs its random EM initialization;
+subjects’ outcome vectors; flexmix re-runs its random EM initialisation;
 lcmm delegates to <code><a href="https://cecileproust-lima.github.io/lcmm/reference/gridsearch.html" class="external-link">lcmm::gridsearch()</a></code>.)</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">good</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gbtm_fit.html">gbtm_fit</a></span><span class="op">(</span><span class="va">cspec</span>, n_groups <span class="op">=</span> <span class="fl">4</span>, degrees <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"L"</span>,</span>
-<span>                 itermax <span class="op">=</span> <span class="fl">300</span>, seed <span class="op">=</span> <span class="fl">1</span>, n_starts <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">good</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gbtm_fit.html">gbtm_fit</a></span><span class="op">(</span><span class="va">cspec</span>, engine <span class="op">=</span> <span class="st">"trajeR"</span>, n_groups <span class="op">=</span> <span class="fl">4</span>, degrees <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span>,</span>
+<span>                 method <span class="op">=</span> <span class="st">"L"</span>, itermax <span class="op">=</span> <span class="fl">300</span>, seed <span class="op">=</span> <span class="fl">1</span>, n_starts <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="../reference/gbtm_assign.html">gbtm_assign</a></span><span class="op">(</span><span class="va">good</span><span class="op">)</span><span class="op">$</span><span class="va">group</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   1   2   3   4 </span></span>
@@ -505,15 +512,18 @@ exactly what the criterion is for.)</p>
 <div class="section level2">
 <h2 id="choosing-an-engine">Choosing an engine<a class="anchor" aria-label="anchor" href="#choosing-an-engine"></a>
 </h2>
-<p>Everything above used the default engine, <code>trajeR</code>.
+<p>Everything above used the default engine – the built-in native one.
 Estimation is pluggable: every fitting function
 (<code><a href="../reference/gbtm_fit.html">gbtm_fit()</a></code>, the stage functions, and
 <code><a href="../reference/run_gbtm_pipeline.html">run_gbtm_pipeline()</a></code>) takes an <code>engine</code> argument,
 and the registry tells you what each backend offers:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/gbtm_engines.html">gbtm_engines</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "trajeR"  "flexmix" "lcmm"    "gbtmkit"</span></span>
+<span><span class="co">#&gt; [1] "gbtmkit" "trajeR"  "flexmix" "lcmm"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fu"><a href="../reference/gbtm_engines.html">gbtm_engines</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">gbtm_engine_families</span><span class="op">)</span></span>
+<span><span class="co">#&gt; $gbtmkit</span></span>
+<span><span class="co">#&gt; [1] "binomial" "gaussian" "poisson" </span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $trajeR</span></span>
 <span><span class="co">#&gt; [1] "binomial" "gaussian" "poisson"  "beta"    </span></span>
 <span><span class="co">#&gt; </span></span>
@@ -522,12 +532,9 @@ and the registry tells you what each backend offers:</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $lcmm</span></span>
 <span><span class="co">#&gt; [1] "binomial" "gaussian"</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $gbtmkit</span></span>
-<span><span class="co">#&gt; [1] "binomial" "gaussian" "poisson"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fu"><a href="../reference/gbtm_engines.html">gbtm_engines</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">gbtm_engine_per_group_degrees</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  trajeR flexmix    lcmm gbtmkit </span></span>
-<span><span class="co">#&gt;    TRUE   FALSE   FALSE    TRUE</span></span></code></pre></div>
+<span><span class="co">#&gt; gbtmkit  trajeR flexmix    lcmm </span></span>
+<span><span class="co">#&gt;    TRUE    TRUE   FALSE   FALSE</span></span></code></pre></div>
 <p>The four backends make different trade-offs:</p>
 <table class="table">
 <colgroup>
@@ -540,43 +547,42 @@ and the registry tells you what each backend offers:</p>
 <thead><tr class="header">
 <th></th>
 <th>
-<code>trajeR</code> (default)</th>
+<code>gbtmkit</code> (native, default)</th>
+<th><code>trajeR</code></th>
 <th><code>flexmix</code></th>
 <th><code>lcmm</code></th>
-<th>
-<code>gbtmkit</code> (native)</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td>Families</td>
+<td>binomial, gaussian, poisson</td>
 <td>binomial, gaussian, poisson, beta</td>
 <td>binomial, gaussian, poisson</td>
 <td>binomial, gaussian</td>
-<td>binomial, gaussian, poisson</td>
 </tr>
 <tr class="even">
 <td>Optimizers</td>
+<td>BFGS (fixed)</td>
 <td>
 <code>"L"</code>, <code>"EM"</code>, <code>"EMIRLS"</code> (stage 1
 picks one)</td>
 <td>EM (fixed)</td>
 <td>Marquardt (fixed)</td>
-<td>BFGS (fixed)</td>
 </tr>
 <tr class="odd">
 <td>Per-group degrees</td>
 <td>yes</td>
-<td>no – one order for all groups</td>
-<td>no – one order for all groups</td>
 <td>yes</td>
+<td>no – one order for all groups</td>
+<td>no – one order for all groups</td>
 </tr>
 <tr class="even">
 <td>Notes</td>
+<td>built in, vectorized ML; NA-tolerant; censored normal</td>
 <td>reference GBTM implementation</td>
 <td>fast EM on large data</td>
 <td>
 <code>hlme()</code>; binary via a thresholds link</td>
-<td>built in, vectorized ML; NA-tolerant; censored normal</td>
 </tr>
 </tbody>
 </table>
@@ -588,7 +594,7 @@ suite). It is typically 10-100x faster than <code>trajeR</code> at
 matching or better optima. The three established packages remain
 available as citable instruments – useful when a reviewer asks for an
 established implementation.</p>
-<p>The pipeline adapts automatically: for a single-optimizer engine
+<p>The pipeline adapts automatically: for a single-optimiser engine
 stage 1 is skipped, and for a uniform-degree engine the stage-3 shape
 search sweeps uniform shapes (degree 1 for all groups, degree 2 for all
 groups, …) instead of per-group combinations.</p>
@@ -598,13 +604,13 @@ classification diagnostics – here the 4-group cubic model on the binary
 data:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/benchmark_engines.html">benchmark_engines</a></span><span class="op">(</span><span class="va">spec</span>, n_groups <span class="op">=</span> <span class="fl">4</span>, degrees <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span>,</span>
-<span>                  method <span class="op">=</span> <span class="st">"L"</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span>                  method <span class="op">=</span> <span class="st">"L"</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>   <span class="co"># method applies to trajeR only</span></span>
 <span><span class="co">#&gt; &lt;gbtm_benchmark&gt;  one model per engine, wall-clock seconds</span></span>
 <span><span class="co">#&gt;   engine   ok seconds      bic   loglik entropy min_appa groups_effective note</span></span>
-<span><span class="co">#&gt;   trajeR TRUE   50.59 17138.03 -8499.54    0.76     0.85                4     </span></span>
-<span><span class="co">#&gt;  flexmix TRUE    2.67 17182.07 -8499.69    0.75     0.85                4     </span></span>
-<span><span class="co">#&gt;     lcmm TRUE   33.42 17138.08 -8499.56    0.75     0.84                4     </span></span>
-<span><span class="co">#&gt;  gbtmkit TRUE    1.63 17138.46 -8499.76    0.75     0.85                4     </span></span>
+<span><span class="co">#&gt;  gbtmkit TRUE    1.60 17138.46 -8499.76    0.75     0.85                4     </span></span>
+<span><span class="co">#&gt;   trajeR TRUE   50.46 17138.03 -8499.54    0.76     0.85                4     </span></span>
+<span><span class="co">#&gt;  flexmix TRUE    2.74 17182.07 -8499.69    0.75     0.85                4     </span></span>
+<span><span class="co">#&gt;     lcmm TRUE   32.91 17138.08 -8499.56    0.75     0.84                4     </span></span>
 <span><span class="co">#&gt; Note: BIC/loglik are comparable only within an engine;</span></span>
 <span><span class="co">#&gt; compare engines on time and classification diagnostics.</span></span></code></pre></div>
 <p>All three engines find the same four groups with comparable

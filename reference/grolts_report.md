@@ -53,10 +53,7 @@ checklist.
 data("sim_binary", package = "gbtmkit")
 spec <- gbtm_spec(sim_binary, paste0("y", 1:10),
                   paste0("t", 1:10), id = "id", family = "binomial")
-if (requireNamespace("trajeR", quietly = TRUE)) {
-  res <- run_gbtm_pipeline(spec, candidates = 2:5, method = "L",
-                           seed = 1, verbose = FALSE)
-  grolts_report(res)
-}
+res <- run_gbtm_pipeline(spec, candidates = 2:5, seed = 1, verbose = FALSE)
+grolts_report(res)
 # }
 ```

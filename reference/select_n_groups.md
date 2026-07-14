@@ -58,7 +58,7 @@ select_n_groups(
 
 - by:
 
-  Criterion to minimize, `"bic"` (default) or `"aic"`.
+  Criterion to minimise, `"bic"` (default) or `"aic"`.
 
 - hessian, itermax, seed, ...:
 
@@ -77,7 +77,6 @@ groups), and the fitted models.
 data("sim_binary", package = "gbtmkit")
 spec <- gbtm_spec(sim_binary, paste0("y", 1:10),
                   paste0("t", 1:10), id = "id", family = "binomial")
-if (requireNamespace("trajeR", quietly = TRUE))
-  select_n_groups(spec, candidates = 2:5, degree = 2)
+select_n_groups(spec, candidates = 2:5, degree = 2)
 # }
 ```

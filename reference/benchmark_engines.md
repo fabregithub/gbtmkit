@@ -49,7 +49,7 @@ benchmark_engines(
 - method:
 
   Estimation method for engines that offer a choice (trajeR); ignored by
-  single-optimizer engines.
+  single-optimiser engines.
 
 - hessian, itermax, seed, ...:
 

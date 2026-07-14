@@ -1,6 +1,13 @@
 # Changelog
 
-## gbtmkit (development version)
+## gbtmkit 0.3.0
+
+- **The native engine is now the default**
+  ([`gbtm_engines()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_engines.md)
+  lists it first). Existing code that relied on the old default with
+  trajeR-specific arguments (e.g. `method = "L"`) must now pass
+  `engine = "trajeR"` explicitly; code without engine-specific arguments
+  keeps working and gets much faster.
 
 - New built-in estimation engine: `engine = "gbtmkit"` – a clean-room,
   fully vectorized maximum-likelihood implementation of Nagin-style GBTM
@@ -13,13 +20,19 @@
   `hessian = TRUE` (`fit$vcov`), and censored-normal (Tobit) outcomes
   via the spec’s `ymin`/`ymax` bounds – validated against trajeR’s CNORM
   (identical log-likelihood at the same parameters) and shown to recover
-  latent trajectory parameters through ~13% censoring. trajeR remains
-  the default engine; the three established packages stay available as
+  latent trajectory parameters through ~13% censoring. The three
+  established packages (trajeR, flexmix, lcmm) remain available as
   citable instruments.
+
+- Multi-start seeding now pins the RNG kind (Mersenne-Twister) inside
+  each start, so seeded results are identical whether or not a
+  [`future::plan()`](https://future.futureverse.org/reference/plan.html)
+  is active (`future.apply` uses L’Ecuyer-CMRG streams, which otherwise
+  changed the native engine’s k-means partitions).
 
 ## gbtmkit 0.2.0
 
-- Parallel execution of independent fits: multi-start initializations
+- Parallel execution of independent fits: multi-start initialisations
   (`n_starts`) and the candidate fits in
   [`select_n_groups()`](https://fabregithub.github.io/gbtmkit/reference/select_n_groups.md)
   /
@@ -75,10 +88,10 @@
   [`fit_gbtm()`](https://fabregithub.github.io/gbtmkit/reference/fit_gbtm.md),
   the stage functions, and
   [`run_gbtm_pipeline()`](https://fabregithub.github.io/gbtmkit/reference/run_gbtm_pipeline.md)):
-  multi-start initialization that keeps the best fit by BIC.
+  multi-start initialisation that keeps the best fit by BIC.
   Engine-specific starts: trajeR uses k-means partition starting values
-  (its default initialization is deterministic), flexmix re-runs its
-  random EM initialization, and lcmm delegates to
+  (its default initialisation is deterministic), flexmix re-runs its
+  random EM initialisation, and lcmm delegates to
   [`lcmm::gridsearch()`](https://cecileproust-lima.github.io/lcmm/reference/gridsearch.html).
   On the shipped fixtures this escapes the known single-start local
   optima (empty/merged groups) and makes mixed per-group degrees usable
@@ -91,12 +104,12 @@
   [`lcmm::hlme()`](https://cecileproust-lima.github.io/lcmm/reference/hlme.html)
   and binary outcomes to `lcmm::lcmm(link = "thresholds")`, both as
   latent class growth models (`random = ~ -1`) with the canonical
-  1-class-fit initialization. Single optimizer; uniform polynomial order
+  1-class-fit initialisation. Single optimiser; uniform polynomial order
   across groups (like flexmix).
 
 - Second estimation engine: `flexmix` (`engine = "flexmix"`), proving
-  the adapter interface generalizes. Supports binomial, gaussian, and
-  poisson families with a single EM optimizer; the polynomial order is
+  the adapter interface generalises. Supports binomial, gaussian, and
+  poisson families with a single EM optimiser; the polynomial order is
   shared by all groups
   ([`gbtm_engine_per_group_degrees()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_engine_per_group_degrees.md)),
   and
@@ -104,7 +117,7 @@
   sweeps uniform shapes for such engines.
 
 - First working version: an engine-agnostic pipeline for group-based
-  trajectory modeling (GBTM) that follows the GRoLTS reporting
+  trajectory modelling (GBTM) that follows the GRoLTS reporting
   checklist.
 
 - [`gbtm_spec()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_spec.md)

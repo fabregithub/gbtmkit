@@ -2,7 +2,7 @@
 
 Fits a fixed group number and shape under each candidate estimation
 method and picks the one with the lowest BIC. For engines with a single
-optimizer (see
+optimiser (see
 [`gbtm_engine_methods()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_engine_methods.md))
 this is a no-op that returns that method. The candidate fits are
 independent and run in parallel under a
@@ -53,7 +53,7 @@ select_algorithm(
 
 - by:
 
-  Criterion to minimize, `"bic"` (default) or `"aic"`.
+  Criterion to minimise, `"bic"` (default) or `"aic"`.
 
 - hessian, itermax, seed, ...:
 
@@ -75,6 +75,7 @@ data("sim_binary", package = "gbtmkit")
 spec <- gbtm_spec(sim_binary, paste0("y", 1:10),
                   paste0("t", 1:10), id = "id", family = "binomial")
 if (requireNamespace("trajeR", quietly = TRUE))
-  select_algorithm(spec, n_groups = 4, degrees = rep(1, 4))
+  select_algorithm(spec, engine = "trajeR", n_groups = 4,
+                   degrees = rep(1, 4))
 # }
 ```

@@ -1,6 +1,6 @@
 # gbtmkit
 
-**gbtmkit** turns group-based trajectory modeling (GBTM) into a
+**gbtmkit** turns group-based trajectory modelling (GBTM) into a
 reproducible, engine-agnostic pipeline that follows the
 [GRoLTS](https://doi.org/10.1080/10705511.2016.1247646) checklist
 (Guidelines for Reporting on Latent Trajectory Studies) by construction.
@@ -13,10 +13,11 @@ walkthrough and the full function reference.
 - **One workflow, any outcome.** Binary (LOGIT) and continuous (CNORM)
   outcomes run through the same specification; count and proportion
   families are mapped too.
-- **Four engines, one interface.** A built-in native engine (vectorized
-  maximum likelihood – typically 10-100x faster than `trajeR`, with
-  per-group degrees and NA-tolerant outcomes) plus three established
-  packages ([`trajeR`](https://cran.r-project.org/package=trajeR),
+- **Four engines, one interface.** A built-in native engine – the
+  default: vectorized maximum likelihood, typically 10-100x faster than
+  `trajeR`, with per-group degrees and NA-tolerant outcomes – plus three
+  established packages
+  ([`trajeR`](https://cran.r-project.org/package=trajeR),
   [`flexmix`](https://cran.r-project.org/package=flexmix), and
   [`lcmm`](https://cran.r-project.org/package=lcmm)) behind a small set
   of accessors, so the GRoLTS diagnostics and plotting work the same
@@ -43,8 +44,8 @@ walkthrough and the full function reference.
 remotes::install_github("fabregithub/gbtmkit")
 ```
 
-The native engine (`engine = "gbtmkit"`) has no extra dependencies. The
-established engines are optional:
+The native engine (`engine = "gbtmkit"`, the default) has no extra
+dependencies. The established engines are optional:
 
 ``` r
 
@@ -53,8 +54,8 @@ install.packages("flexmix")   # fast EM, one polynomial order for all groups
 install.packages("lcmm")      # hlme (gaussian) / thresholds link (binary)
 ```
 
-Pick the backend per fit with `engine = "trajeR"` (default),
-`"flexmix"`, `"lcmm"`, or `"gbtmkit"` in
+Pick the backend per fit with `engine = "gbtmkit"` (the default),
+`"trajeR"`, `"flexmix"`, or `"lcmm"` in
 [`gbtm_fit()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_fit.md)
 /
 [`run_gbtm_pipeline()`](https://fabregithub.github.io/gbtmkit/reference/run_gbtm_pipeline.md)
@@ -103,7 +104,7 @@ for a full walkthrough.
 **In scope.** Nagin-style GBTM (latent class growth analysis): each
 latent group follows its own polynomial trajectory over time, with *no*
 within-group random effects. On top of that one model class, gbtmkit
-standardizes the whole GRoLTS workflow: optimizer selection (for engines
+standardizes the whole GRoLTS workflow: optimiser selection (for engines
 that offer a choice), group-number selection by BIC, a bounded
 polynomial-shape search with GRoLTS acceptance criteria (PMS, APPA,
 OCC), the final fit with standard errors, and per-subject group
@@ -113,7 +114,7 @@ proportions (beta) on `trajeR` only. Covariates work on every engine:
 class-membership covariates (Nagin’s “risk factors”) via
 `gbtm_spec(covariates = ...)` and time-varying trajectory covariates
 with group-specific effects via `gbtm_spec(tcov = ...)` (fitted
-trajectories are reported at `tcov = 0`). Multi-start initialization
+trajectories are reported at `tcov = 0`). Multi-start initialisation
 (`n_starts`) guards against local optima.
 
 **Out of scope (currently).** - **Not growth mixture models.** There are

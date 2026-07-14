@@ -1,6 +1,8 @@
 # Registered estimation engines
 
-Registered estimation engines
+The first entry – the built-in native engine `"gbtmkit"` – is the
+default everywhere an `engine` argument exists. The established packages
+(trajeR, flexmix, lcmm) remain available as citable instruments.
 
 ## Usage
 

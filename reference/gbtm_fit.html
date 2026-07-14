@@ -11,7 +11,7 @@ rest of the pipeline reads through the engine-agnostic accessors
 
     <a class="navbar-brand me-2" href="../index.html">gbtmkit</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -85,7 +85,7 @@ rest of the pipeline reads through the engine-agnostic accessors
 
 <dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
 <dd><p>Estimation method; must be one of <code><a href="gbtm_engine_methods.html">gbtm_engine_methods()</a></code> for
-the chosen engine (ignored by engines with a single optimizer).</p></dd>
+the chosen engine (ignored by engines with a single optimiser).</p></dd>
 
 
 <dt id="arg-hessian">hessian<a class="anchor" aria-label="anchor" href="#arg-hessian"></a></dt>
@@ -94,7 +94,7 @@ the chosen engine (ignored by engines with a single optimizer).</p></dd>
 
 
 <dt id="arg-itermax">itermax<a class="anchor" aria-label="anchor" href="#arg-itermax"></a></dt>
-<dd><p>Maximum optimizer iterations.</p></dd>
+<dd><p>Maximum optimiser iterations.</p></dd>
 
 
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
@@ -102,13 +102,13 @@ the chosen engine (ignored by engines with a single optimizer).</p></dd>
 
 
 <dt id="arg-n-starts">n_starts<a class="anchor" aria-label="anchor" href="#arg-n-starts"></a></dt>
-<dd><p>Number of initializations to try; the best fit by BIC is
-kept. The first start is the engine's default initialization; additional
+<dd><p>Number of initialisations to try; the best fit by BIC is
+kept. The first start is the engine's default initialisation; additional
 starts are engine-specific (trajeR and the native gbtmkit engine:
 k-means partition starting values; flexmix: fresh random EM
-initializations; lcmm: <code><a href="https://cecileproust-lima.github.io/lcmm/reference/gridsearch.html" class="external-link">lcmm::gridsearch()</a></code>).
+initialisations; lcmm: <code><a href="https://cecileproust-lima.github.io/lcmm/reference/gridsearch.html" class="external-link">lcmm::gridsearch()</a></code>).
 Mixture fits can land in local optima – empty or merged groups are the
-telltale sign – and <code>n_starts</code> greater than 1 is the standard defense.
+telltale sign – and <code>n_starts</code> greater than 1 is the standard defence.
 Independent starts run in parallel under a <code><a href="https://future.futureverse.org/reference/plan.html" class="external-link">future::plan()</a></code> when the
 future.apply package is installed; with a <code>seed</code>, results are identical
 under any plan.</p></dd>

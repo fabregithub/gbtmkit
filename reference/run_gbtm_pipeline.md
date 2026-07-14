@@ -89,7 +89,7 @@ run_gbtm_pipeline(
   Passed to the underlying fitting calls in every stage. In particular
   `n_starts` (see
   [`gbtm_fit()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_fit.md))
-  applies multi-start initialization throughout; note it multiplies the
+  applies multi-start initialisation throughout; note it multiplies the
   cost of the shape search, which `max_fits`/`time_budget` still bound.
 
 ## Value
@@ -119,9 +119,7 @@ lowest-BIC shape and records `criteria_met = FALSE`.
 data("sim_binary", package = "gbtmkit")
 spec <- gbtm_spec(sim_binary, paste0("y", 1:10),
                   paste0("t", 1:10), id = "id", family = "binomial")
-if (requireNamespace("trajeR", quietly = TRUE)) {
-  res <- run_gbtm_pipeline(spec, candidates = 2:5, method = "L")
-  res
-}
+res <- run_gbtm_pipeline(spec, candidates = 2:5)
+res
 # }
 ```
