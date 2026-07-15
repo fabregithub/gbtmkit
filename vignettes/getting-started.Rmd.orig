@@ -176,14 +176,16 @@ what the wrapper does internally.
 
 ### Stage 1: choose the estimation algorithm
 
-This stage only applies to engines that offer several optimisers -- of the
-four backends, only `trajeR` does (`"L"`, `"EM"`, `"EMIRLS"`); the one with
-the lowest BIC is selected. Single-optimiser engines (including the default
-native engine) skip this stage automatically.
+This stage applies to engines that offer several optimisers. The default
+native engine offers two (`"BFGS"` and `"EM"`) and `trajeR` offers three
+(`"L"`, `"EM"`, `"EMIRLS"`); the lowest-BIC one is selected. `flexmix` and
+`lcmm` have a single optimiser and skip this stage automatically. BFGS and EM
+maximise the same likelihood; on this small model they reach the same BIC and
+the faster BFGS is kept, though on a harder model one can edge out the other
+(the pipeline above selected EM):
 
-```{r, eval = has_trajer}
-algo <- select_algorithm(spec, engine = "trajeR", n_groups = 2,
-                         degrees = c(1, 1))
+```{r}
+algo <- select_algorithm(spec, n_groups = 2, degrees = c(1, 1), seed = 1)
 algo
 ```
 
@@ -348,7 +350,7 @@ The four backends make different trade-offs:
 | | `gbtmkit` (native, default) | `trajeR` | `flexmix` | `lcmm` |
 |---|---|---|---|---|
 | Families | binomial, gaussian, poisson | binomial, gaussian, poisson, beta | binomial, gaussian, poisson | binomial, gaussian |
-| Optimizers | BFGS (fixed) | `"L"`, `"EM"`, `"EMIRLS"` (stage 1 picks one) | EM (fixed) | Marquardt (fixed) |
+| Optimisers | BFGS (default) or EM | `"L"`, `"EM"`, `"EMIRLS"` (stage 1 picks one) | EM (fixed) | Marquardt (fixed) |
 | Per-group degrees | yes | yes | no -- one order for all groups | no -- one order for all groups |
 | Notes | built in, vectorised ML; NA-tolerant; censored normal | reference GBTM implementation | fast EM on large data | `hlme()`; binary via a thresholds link |
 

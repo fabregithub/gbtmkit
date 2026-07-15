@@ -1,6 +1,6 @@
 Package: gbtmkit
 Title: Engine-Agnostic Pipeline for Group-Based Trajectory Modelling
-Version: 0.3.0
+Version: 0.3.0.9000
 Authors@R:
     person(given = "Shoji F.",
            family = "Nakayama",

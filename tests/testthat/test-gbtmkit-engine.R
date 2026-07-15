@@ -183,12 +183,82 @@ test_that("validation and capability advertising", {
   expect_true("gbtmkit" %in% gbtm_engines())
   expect_setequal(gbtm_engine_families("gbtmkit"),
                   c("binomial", "gaussian", "poisson"))
-  expect_true(is.na(gbtm_engine_methods("gbtmkit")))
+  expect_setequal(gbtm_engine_methods("gbtmkit"), c("BFGS", "EM"))
   expect_true(gbtm_engine_per_group_degrees("gbtmkit"))
 
+  # an unknown method is rejected; BFGS/EM are the only valid ones
   expect_error(gbtm_fit(bin_spec(50), engine = "gbtmkit", n_groups = 2,
                         degrees = c(1, 1), method = "L"),
-               "single optimiser")
+               "must be \"BFGS\" or \"EM\"")
+})
+
+test_that("EM optimiser converges to the same MLE as BFGS", {
+  skip_on_cran()
+  # binary and gaussian: EM and BFGS maximise the same likelihood
+  fb <- gbtm_fit(bin_spec(), engine = "gbtmkit", n_groups = 4,
+                 degrees = rep(2, 4), method = "BFGS", itermax = 500,
+                 seed = 1, n_starts = 3)
+  fe <- gbtm_fit(bin_spec(), engine = "gbtmkit", n_groups = 4,
+                 degrees = rep(2, 4), method = "EM", itermax = 500,
+                 seed = 1, n_starts = 3)
+  expect_equal(fe$method, "EM")
+  expect_valid_fit(fe, 4)
+  expect_equal(gbtm_loglik(fe), gbtm_loglik(fb), tolerance = 1e-3)
+
+  ge <- gbtm_fit(cont_spec(), engine = "gbtmkit", n_groups = 4,
+                 degrees = rep(3, 4), method = "EM", itermax = 500,
+                 seed = 1, n_starts = 3)
+  expect_valid_fit(ge, 4)
+  tab <- table(cont_spec()$data$true_group, gbtm_assign(ge)$group)
+  expect_equal(sum(apply(tab, 1, max)), 1200L)   # EM recovers the groups too
+})
+
+test_that("EM log-likelihood ascends monotonically", {
+  skip_on_cran()
+  ctx  <- gbtmkit:::.ngb_ctx(cont_spec(), rep(1, 4))
+  init <- gbtmkit:::.ngb_init(ctx, "default")
+  lls  <- vapply(1:8, function(m)
+    gbtmkit:::.ngb_em(init, ctx, maxiter = m, reltol = 0)$value, numeric(1))
+  expect_true(all(diff(lls) >= -1e-6))            # never decreases
+  expect_gt(lls[8], lls[1])                       # and actually climbs
+})
+
+test_that("EM handles membership covariates (matches BFGS)", {
+  skip_on_cran()
+  set.seed(42); n <- 600
+  x1 <- rnorm(n); x2 <- rbinom(n, 1, .5)
+  pr <- cbind(1, exp(-.5 + 1.2 * x1), exp(-.5 + 1.5 * x2)); pr <- pr / rowSums(pr)
+  grp <- sapply(seq_len(n), function(i) sample(3, 1, prob = pr[i, ]))
+  tt <- 1:6; mu <- rbind(10 + tt, 20 + 0 * tt, 30 - tt)
+  d <- data.frame(id = seq_len(n), x1 = x1, x2 = factor(ifelse(x2 == 1, "b", "a")))
+  d[paste0("y", 1:6)] <- as.data.frame(
+    t(sapply(seq_len(n), function(i) rnorm(6, mu[grp[i], ], 1.5))))
+  d[paste0("t", 1:6)] <- as.data.frame(matrix(rep(tt, each = n), n, 6))
+  spec <- gbtm_spec(d, paste0("y", 1:6), paste0("t", 1:6), id = "id",
+                    family = "gaussian", covariates = c("x1", "x2"))
+  fb <- gbtm_fit(spec, engine = "gbtmkit", n_groups = 3, degrees = rep(1, 3),
+                 method = "BFGS", seed = 1, n_starts = 2)
+  fe <- gbtm_fit(spec, engine = "gbtmkit", n_groups = 3, degrees = rep(1, 3),
+                 method = "EM", seed = 1, n_starts = 2)
+  expect_valid_fit(fe, 3)
+  expect_equal(gbtm_loglik(fe), gbtm_loglik(fb), tolerance = 1e-2)
+})
+
+test_that("EM is rejected for censored outcomes (BFGS only)", {
+  data("sim_continuous", package = "gbtmkit", envir = environment())
+  spec <- gbtm_spec(sim_continuous, paste0("y", 1:10), paste0("t", 1:10),
+                    id = "id", family = "gaussian", ymin = 10, ymax = 40)
+  expect_error(gbtm_fit(spec, engine = "gbtmkit", n_groups = 2,
+                        degrees = c(1, 1), method = "EM"),
+               "does not support censoring")
+})
+
+test_that("select_algorithm picks between BFGS and EM for the native engine", {
+  skip_on_cran()
+  sel <- select_algorithm(bin_spec(300), engine = "gbtmkit", n_groups = 3,
+                          degrees = rep(1, 3), seed = 1)
+  expect_setequal(sel$table$method, c("BFGS", "EM"))
+  expect_true(sel$best %in% c("BFGS", "EM"))
 })
 
 test_that("censored normal recovers latent parameters and matches trajeR", {

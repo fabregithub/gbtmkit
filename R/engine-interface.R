@@ -53,7 +53,7 @@ gbtm_engine_methods <- function(engine = gbtm_engines()) {
     trajeR  = c("L", "EM", "EMIRLS"),
     flexmix = NA_character_,
     lcmm    = NA_character_,
-    gbtmkit = NA_character_
+    gbtmkit = c("BFGS", "EM")
   )
 }
 

@@ -1,3 +1,19 @@
+# gbtmkit (development version)
+
+* The native engine gains an **EM optimiser**:
+  `gbtm_fit(engine = "gbtmkit", method = "EM")` runs
+  expectation-maximisation (monotone likelihood ascent; weighted-GLM
+  M-steps -- closed-form WLS for gaussian, IRLS for binomial/poisson; a
+  closed-form or weighted-multinomial membership step) as an alternative to
+  the default BFGS. Both maximise the same likelihood and converge to the
+  same MLE (verified on the fixtures); EM is more robust near degenerate
+  components, BFGS is faster. `gbtm_engine_methods("gbtmkit")` now returns
+  `c("BFGS", "EM")`, so `select_algorithm()` and the pipeline's stage-1
+  algorithm selection now work for the native engine -- the default
+  `run_gbtm_pipeline()` picks BFGS vs EM by BIC. EM covers
+  binomial/gaussian/poisson with membership and time-varying covariates;
+  censored-normal outcomes stay BFGS-only.
+
 # gbtmkit 0.3.0
 
 * **The native engine is now the default** (`gbtm_engines()` lists it first).

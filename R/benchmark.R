@@ -74,7 +74,10 @@ benchmark_engines <- function(spec,
         length(unique(degrees)) != 1L) {
       return(skip_row(eng, "requires uniform degrees"))
     }
-    eng_method <- if (all(is.na(gbtm_engine_methods(eng)))) NULL else method
+    # Forward `method` only to engines for which it is valid; others use their
+    # own default (e.g. `method = "L"` is a trajeR concept, not gbtmkit's).
+    eng_methods <- gbtm_engine_methods(eng)
+    eng_method  <- if (!is.null(method) && method %in% eng_methods) method else NULL
 
     t0 <- Sys.time()
     fit <- tryCatch(
