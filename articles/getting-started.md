@@ -99,11 +99,11 @@ res <- run_gbtm_pipeline(
 res
 #> <gbtm_result>
 #>   engine/family : gbtmkit / binomial
-#>   method        : <default>
+#>   method        : EM
 #>   groups        : 4
-#>   degrees       : 3, 2, 3, 1
+#>   degrees       : 1, 3, 3, 1
 #>   GRoLTS criteria met: TRUE
-#>   entropy       : 0.754  BIC: 17141.7
+#>   entropy       : 0.759  BIC: 17109.9
 ```
 
 The pipeline recovers the four planted groups. Everything each stage
@@ -114,10 +114,10 @@ produced is kept on the result object:
 res$group_selection      # BIC for each candidate number of groups
 #> <gbtm_selection> stage=n_groups  by=BIC
 #>  n_groups   degrees      bic      aic   ok
-#>         2       2,2 17422.92 17385.73 TRUE
-#>         3     2,2,2 17275.73 17217.28 TRUE
-#>         4   2,2,2,2 17168.92 17089.22 TRUE
-#>         5 2,2,2,2,2 17198.17 17097.22 TRUE
+#>         2       2,2 17422.92 17385.72 TRUE
+#>         3     2,2,2 17275.74 17217.30 TRUE
+#>         4   2,2,2,2 17168.93 17089.23 TRUE
+#>         5 2,2,2,2,2 17194.21 17093.26 TRUE
 #>   best: 4
 ```
 
@@ -127,23 +127,23 @@ summary(res)
 #> === gbtm pipeline result ===
 #> <gbtm_result>
 #>   engine/family : gbtmkit / binomial
-#>   method        : <default>
+#>   method        : EM
 #>   groups        : 4
-#>   degrees       : 3, 2, 3, 1
+#>   degrees       : 1, 3, 3, 1
 #>   GRoLTS criteria met: TRUE
-#>   entropy       : 0.754  BIC: 17141.7
+#>   entropy       : 0.759  BIC: 17109.9
 #> 
 #> Group diagnostics:
 #>  group n_assigned prop_assigned prop_model mismatch  appa    occ
-#>      1        337         0.225      0.207   -0.017 0.866 24.618
-#>      2        290         0.193      0.211    0.018 0.878 26.756
-#>      3        303         0.202      0.221    0.019 0.864 22.516
-#>      4        570         0.380      0.361   -0.019 0.897 15.395
+#>      1        333         0.222      0.204   -0.018 0.866 25.207
+#>      2        284         0.189      0.210    0.021 0.893 31.457
+#>      3        313         0.209      0.228    0.020 0.867 22.108
+#>      4        570         0.380      0.357   -0.023 0.891 14.738
 #> 
 #> Assigned group sizes:
 #> 
 #>   1   2   3   4 
-#> 337 290 303 570
+#> 333 284 313 570
 ```
 
 ## Inspect and plot
@@ -158,10 +158,10 @@ overlaid.
 
 res$diagnostics$groups
 #>   group n_assigned prop_assigned prop_model    mismatch      appa      occ
-#> 1     1        337     0.2246667  0.2073538 -0.01731287 0.8655933 24.61843
-#> 2     2        290     0.1933333  0.2113103  0.01797694 0.8775822 26.75647
-#> 3     3        303     0.2020000  0.2207788  0.01877885 0.8644891 22.51587
-#> 4     4        570     0.3800000  0.3605571 -0.01944292 0.8967039 15.39547
+#> 1     1        333     0.2220000  0.2038646 -0.01813543 0.8658558 25.20687
+#> 2     2        284     0.1893333  0.2102101  0.02087676 0.8933063 31.45717
+#> 3     3        313     0.2086667  0.2284620  0.01979536 0.8674872 22.10796
+#> 4     4        570     0.3800000  0.3574633 -0.02253669 0.8912919 14.73752
 ```
 
 ``` r
@@ -180,12 +180,12 @@ is in `res$assignment`:
 
 head(res$assignment)
 #>   id group           p1           p2          p3           p4
-#> 1  1     4 5.846693e-09 5.315735e-04 0.051537591 9.479308e-01
-#> 2  2     1 9.300871e-01 6.282380e-02 0.007089053 4.094335e-08
-#> 3  3     4 5.291590e-10 7.767643e-05 0.056226553 9.436958e-01
-#> 4  4     1 9.312346e-01 5.878013e-02 0.009985201 2.896705e-08
-#> 5  5     2 1.596779e-02 9.829723e-01 0.001033636 2.631241e-05
-#> 6  6     4 1.724421e-09 1.782099e-04 0.071815472 9.280063e-01
+#> 1  1     4 3.265315e-09 4.611098e-04 0.052880054 9.466588e-01
+#> 2  2     1 9.496915e-01 4.249617e-02 0.007812277 3.560491e-08
+#> 3  3     4 2.927023e-10 5.356235e-05 0.057881482 9.420650e-01
+#> 4  4     1 9.596223e-01 2.885852e-02 0.011519114 2.528171e-08
+#> 5  5     2 6.759531e-03 9.925507e-01 0.000676577 1.323316e-05
+#> 6  6     4 9.585742e-10 1.193279e-04 0.073931256 9.259494e-01
 ```
 
 ## Report against the GRoLTS checklist
@@ -216,11 +216,11 @@ grolts_report(res)
 #>       Per-wave proportions: 0.59, 0.58, 0.57, 0.58, 0.58, 0.57, 0.53, 0.51,
 #>       0.47, 0.44.
 #>   [5] Software
-#>       R version 4.6.1 (2026-06-24); gbtmkit 0.3.0; engine gbtmkit (gbtmkit
-#>       0.3.0).
+#>       R version 4.6.1 (2026-06-24); gbtmkit 0.3.0.9000; engine gbtmkit
+#>       (gbtmkit 0.3.0.9000), method 'EM'.
 #>   [7] Alternative trajectory shapes
 #>       17 polynomial shapes fitted (stepwise search, degrees 1..3 per
-#>       group); chosen degrees: 3, 2, 3, 1.
+#>       group); chosen degrees: 1, 3, 3, 1.
 #>   [8] Covariates
 #>       No covariates were used.
 #>   [9] Starting values / iterations
@@ -232,16 +232,16 @@ grolts_report(res)
 #>       GRoLTS acceptance criteria (min class share > 0.05, APPA > 0.7, OCC
 #>       >= 5).
 #>   [11] Number of models fitted
-#>       22 models fitted in total (0 algorithm comparison, 4 group-number
+#>       24 models fitted in total (2 algorithm comparison, 4 group-number
 #>       candidates, 17 shape-search fits, 1 final fit). A one-class solution
 #>       was NOT among the candidates -- consider adding candidates = 1:K.
 #>   [12] Cases per class
-#>       Final 4-group model: n per class = 337, 290, 303, 570 (proportions
-#>       0.22, 0.19, 0.20, 0.38). Per-candidate class sizes are not retained
+#>       Final 4-group model: n per class = 333, 284, 313, 570 (proportions
+#>       0.22, 0.19, 0.21, 0.38). Per-candidate class sizes are not retained
 #>       by the pipeline.
 #>   [13] Entropy
-#>       Normalised classification entropy: 0.754 (APPA per class: 0.87, 0.88,
-#>       0.86, 0.90).
+#>       Normalised classification entropy: 0.759 (APPA per class: 0.87, 0.89,
+#>       0.87, 0.89).
 #> 
 #> -- context supplied -- analyst completes --
 #>   [3c] Handling of missing data
@@ -283,22 +283,23 @@ the wrapper does internally.
 
 ### Stage 1: choose the estimation algorithm
 
-This stage only applies to engines that offer several optimisers – of
-the four backends, only `trajeR` does (`"L"`, `"EM"`, `"EMIRLS"`); the
-one with the lowest BIC is selected. Single-optimiser engines (including
-the default native engine) skip this stage automatically.
+This stage applies to engines that offer several optimisers. The default
+native engine offers two (`"BFGS"` and `"EM"`) and `trajeR` offers three
+(`"L"`, `"EM"`, `"EMIRLS"`); the lowest-BIC one is selected. `flexmix`
+and `lcmm` have a single optimiser and skip this stage automatically.
+BFGS and EM maximise the same likelihood; on this small model they reach
+the same BIC and the faster BFGS is kept, though on a harder model one
+can edge out the other (the pipeline above selected EM):
 
 ``` r
 
-algo <- select_algorithm(spec, engine = "trajeR", n_groups = 2,
-                         degrees = c(1, 1))
+algo <- select_algorithm(spec, n_groups = 2, degrees = c(1, 1), seed = 1)
 algo
 #> <gbtm_selection> stage=algorithm  by=BIC
-#>  method       bic       aic   ok
-#>       L  17980.01  17953.44 TRUE
-#>      EM 145507.87 145481.30 TRUE
-#>  EMIRLS 145739.37 145712.80 TRUE
-#>   best: L
+#>  method      bic      aic   ok
+#>    BFGS 17980.01 17953.44 TRUE
+#>      EM 17980.01 17953.45 TRUE
+#>   best: BFGS
 ```
 
 ### Stage 2: choose the number of groups
@@ -537,7 +538,7 @@ The four backends make different trade-offs:
 |  | `gbtmkit` (native, default) | `trajeR` | `flexmix` | `lcmm` |
 |----|----|----|----|----|
 | Families | binomial, gaussian, poisson | binomial, gaussian, poisson, beta | binomial, gaussian, poisson | binomial, gaussian |
-| Optimizers | BFGS (fixed) | `"L"`, `"EM"`, `"EMIRLS"` (stage 1 picks one) | EM (fixed) | Marquardt (fixed) |
+| Optimisers | BFGS (default) or EM | `"L"`, `"EM"`, `"EMIRLS"` (stage 1 picks one) | EM (fixed) | Marquardt (fixed) |
 | Per-group degrees | yes | yes | no – one order for all groups | no – one order for all groups |
 | Notes | built in, vectorised ML; NA-tolerant; censored normal | reference GBTM implementation | fast EM on large data | `hlme()`; binary via a thresholds link |
 
@@ -565,10 +566,10 @@ benchmark_engines(spec, n_groups = 4, degrees = rep(3, 4),
                   method = "L", seed = 1)   # method applies to trajeR only
 #> <gbtm_benchmark>  one model per engine, wall-clock seconds
 #>   engine   ok seconds      bic   loglik entropy min_appa groups_effective note
-#>  gbtmkit TRUE    1.60 17138.46 -8499.76    0.75     0.85                4     
-#>   trajeR TRUE   50.46 17138.03 -8499.54    0.76     0.85                4     
-#>  flexmix TRUE    2.74 17182.07 -8499.69    0.75     0.85                4     
-#>     lcmm TRUE   32.91 17138.08 -8499.56    0.75     0.84                4     
+#>  gbtmkit TRUE    1.63 17138.46 -8499.76    0.75     0.85                4     
+#>   trajeR TRUE   50.99 17138.03 -8499.54    0.76     0.85                4     
+#>  flexmix TRUE    2.40 17182.07 -8499.69    0.75     0.85                4     
+#>     lcmm TRUE   30.33 17138.08 -8499.56    0.75     0.84                4     
 #> Note: BIC/loglik are comparable only within an engine;
 #> compare engines on time and classification diagnostics.
 ```

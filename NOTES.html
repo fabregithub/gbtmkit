@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="index.html">gbtmkit</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -124,6 +124,8 @@
 <strong>NA outcomes are masked, not dropped</strong> (unlike the long-format engines) – subjects need &gt;= 1 observed occasion.</li>
 <li>
 <strong>Censored normal (added 2026-07-14)</strong>: Tobit cells (y &lt;= ymin left-, y &gt;= ymax right-censored) with Mills-ratio gradients computed on the log scale; gradient matches numDeriv to ~1e-7 on censored data, recovers latent parameters through ~13% censoring, and the log-likelihood matches trajeR’s CNORM with explicit bounds exactly. Note trajeR <em>defaults</em> ymin/ymax to min/max of Y (treating the extremes as censored); the native engine censors only when the spec sets bounds explicitly.</li>
+<li>
+<strong>EM optimiser</strong> (post-0.3.0): <code>method = "EM"</code> runs expectation-maximisation as an alternative to BFGS. E-step reuses the posterior computation; M-step is a per-class weighted GLM (<code>lm.wfit</code> for gaussian, <code>glm.fit(weights=)</code> for binomial/poisson, subject weights broadcast to the subject’s occasions) plus a membership update (closed-form <code>log(pi_k/pi_1)</code> without covariates, a small weighted-multinomial <code>optim</code> with them, reusing the <code>W - pi</code> score). Verified: monotone likelihood ascent, and EM converges to the <em>same</em> MLE as BFGS on binary/gaussian/covariate fixtures (diff &lt; 1e-3). This makes gbtmkit a two-optimiser engine, so <code>gbtm_engine_methods("gbtmkit")</code> returns <code>c("BFGS","EM")</code> and the pipeline’s stage-1 selection now runs for the native default (user-chosen: auto-select BFGS vs EM). Censored-normal is BFGS-only (the Tobit M-step is not a weighted GLM). Both optimisers reuse the same <code>par</code> layout, so accessors/<code>optimHess</code>/multi-start are unchanged.</li>
 <li>
 <strong>Multi-start starts</strong> (v0.3.0): start 1 is the deterministic quantile- intercept “default” init; starts &gt;= 2 are k-means partitions + per-cluster polynomial/GLM regressions (full coefficient starts, not just intercepts). The regression starts are what escape merged-group local optima on curved data: continuous <code>rep(3,4)</code> single-start collapses to 3 groups (BIC 54200), but n_starts &gt;= 2 finds the good optimum (BIC 47205, exactly matching trajeR) and perfect recovery.</li>
 <li>

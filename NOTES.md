@@ -198,6 +198,21 @@ written from the model equations – no code from GPL trajeR. Key facts:
   Note trajeR *defaults* ymin/ymax to min/max of Y (treating the
   extremes as censored); the native engine censors only when the spec
   sets bounds explicitly.
+- **EM optimiser** (post-0.3.0): `method = "EM"` runs
+  expectation-maximisation as an alternative to BFGS. E-step reuses the
+  posterior computation; M-step is a per-class weighted GLM (`lm.wfit`
+  for gaussian, `glm.fit(weights=)` for binomial/poisson, subject
+  weights broadcast to the subject’s occasions) plus a membership update
+  (closed-form `log(pi_k/pi_1)` without covariates, a small
+  weighted-multinomial `optim` with them, reusing the `W - pi` score).
+  Verified: monotone likelihood ascent, and EM converges to the *same*
+  MLE as BFGS on binary/gaussian/covariate fixtures (diff \< 1e-3). This
+  makes gbtmkit a two-optimiser engine, so
+  `gbtm_engine_methods("gbtmkit")` returns `c("BFGS","EM")` and the
+  pipeline’s stage-1 selection now runs for the native default
+  (user-chosen: auto-select BFGS vs EM). Censored-normal is BFGS-only
+  (the Tobit M-step is not a weighted GLM). Both optimisers reuse the
+  same `par` layout, so accessors/`optimHess`/multi-start are unchanged.
 - **Multi-start starts** (v0.3.0): start 1 is the deterministic
   quantile- intercept “default” init; starts \>= 2 are k-means
   partitions + per-cluster polynomial/GLM regressions (full coefficient
