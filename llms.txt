@@ -10,9 +10,9 @@ including the [Getting
 started](https://fabregithub.github.io/gbtmkit/articles/getting-started.html)
 walkthrough and the full function reference.
 
-- **One workflow, any outcome.** Binary (LOGIT) and continuous (CNORM)
-  outcomes run through the same specification; count and proportion
-  families are mapped too.
+- **One workflow, any outcome.** Binary and continuous outcomes run
+  through the same specification; count and proportion families are
+  mapped too.
 - **Four engines, one interface.** A built-in native engine – the
   default: vectorised maximum likelihood, typically 10-100x faster than
   `trajeR`, with per-group degrees and NA-tolerant outcomes – plus three
@@ -33,8 +33,8 @@ walkthrough and the full function reference.
   material).
 - **Built to scale.** The shape search fits with the Hessian off,
   defaults to a greedy stepwise strategy, and supports a time budget, a
-  fit cap, and on-disk checkpointing so large problems run unattended
-  and bounded.
+  fit cap and on-disk checkpointing so large problems run unattended and
+  bounded.
 
 ## Installation
 
@@ -55,7 +55,7 @@ install.packages("lcmm")      # hlme (gaussian) / thresholds link (binary)
 ```
 
 Pick the backend per fit with `engine = "gbtmkit"` (the default),
-`"trajeR"`, `"flexmix"`, or `"lcmm"` in
+`"trajeR"`, `"flexmix"` or `"lcmm"` in
 [`gbtm_fit()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_fit.md)
 /
 [`run_gbtm_pipeline()`](https://fabregithub.github.io/gbtmkit/reference/run_gbtm_pipeline.md)

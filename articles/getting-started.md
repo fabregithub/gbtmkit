@@ -4,7 +4,7 @@
 reproducible pipeline that follows the GRoLTS reporting checklist.
 Estimation is delegated to interchangeable backends – a built-in native
 engine (`"gbtmkit"`, the default) and the established `trajeR`,
-`flexmix`, and `lcmm` packages – behind one interface: every fitting
+`flexmix` and `lcmm` packages – behind one interface: every fitting
 function takes an `engine` argument, and the fit diagnostics (entropy,
 APPA, OCC, group proportions) are computed the same way regardless of
 engine, for binary and continuous outcomes alike.
@@ -14,7 +14,7 @@ engine](#choosing-an-engine) section at the end compares and benchmarks
 the backends and shows how to switch. Along the way we turn the finished
 result into a GRoLTS reporting aid
 ([`grolts_report()`](https://fabregithub.github.io/gbtmkit/reference/grolts_report.md)),
-escape a local optimum with multi-start initialisation (`n_starts`), and
+escape a local optimum with multi-start initialisation (`n_starts`) and
 predict group membership from covariates
 (`gbtm_spec(covariates = ...)`).
 
@@ -29,7 +29,7 @@ The package ships two entirely synthetic datasets with known
 ground-truth groups. `sim_binary` has a binary outcome measured on ten
 occasions, with four latent trajectory shapes of mixed polynomial order:
 a linear rising group, a cubic rise-peak-decline group, a cubic
-decline-trough-recovery group, and a linear falling group:
+decline-trough-recovery group and a linear falling group:
 
 ``` r
 
@@ -54,9 +54,9 @@ head(sim_binary)
 ## Describe the model with a spec
 
 [`gbtm_spec()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_spec.md)
-records *what* to model – the outcome and time columns (by name), the
-id, and the outcome family – and validates it, independent of which
-engine will fit it.
+records *what* to model – the outcome and time columns (by name), the id
+and the outcome family – and validates it, independent of which engine
+will fit it.
 
 ``` r
 
@@ -82,7 +82,7 @@ spec
 [`run_gbtm_pipeline()`](https://fabregithub.github.io/gbtmkit/reference/run_gbtm_pipeline.md)
 performs algorithm selection (when the engine offers a choice),
 group-number selection, the polynomial-shape search with GRoLTS
-acceptance criteria, and the final Hessian-on fit. Here we use a small
+acceptance criteria and the final Hessian-on fit. Here we use a small
 search to keep the vignette quick.
 
 ``` r
@@ -171,7 +171,7 @@ plot_trajectories(res$final_fit)
 
 ![Fitted group trajectories](getting-started-unnamed-chunk-8-1.png)
 
-plot of chunk unnamed-chunk-8
+Fitted group trajectories
 
 Per-subject group assignment (the analogue of exporting a group column)
 is in `res$assignment`:
@@ -194,8 +194,8 @@ head(res$assignment)
 maps the finished pipeline result onto the GRoLTS checklist (van de
 Schoot et al. 2017): items the pipeline can answer – time metric,
 software, the shape search, starting values, selection tools, class
-sizes, entropy – are filled in automatically, and items only you can
-know (the missing-data mechanism, what appears in the manuscript, syntax
+sizes, entropy – are filled in automatically and items only you can know
+(the missing-data mechanism, what appears in the manuscript, syntax
 availability) are flagged with whatever context the result contributes.
 Pass `file =` to also write the report as a Markdown appendix for
 supplementary material.
@@ -216,8 +216,8 @@ grolts_report(res)
 #>       Per-wave proportions: 0.59, 0.58, 0.57, 0.58, 0.58, 0.57, 0.53, 0.51,
 #>       0.47, 0.44.
 #>   [5] Software
-#>       R version 4.6.1 (2026-06-24); gbtmkit 0.3.0.9000; engine gbtmkit
-#>       (gbtmkit 0.3.0.9000), method 'EM'.
+#>       R version 4.6.1 (2026-06-24); gbtmkit 0.4.0; engine gbtmkit (gbtmkit
+#>       0.4.0), method 'EM'.
 #>   [7] Alternative trajectory shapes
 #>       17 polynomial shapes fitted (stepwise search, degrees 1..3 per
 #>       group); chosen degrees: 1, 3, 3, 1.
@@ -406,7 +406,7 @@ plot_trajectories(cfit)
 ![Fitted continuous group
 trajectories](getting-started-unnamed-chunk-16-1.png)
 
-plot of chunk unnamed-chunk-16
+Fitted continuous group trajectories
 
 ## Local optima and multi-start initialisation
 
@@ -504,10 +504,12 @@ exactly what the criterion is for.)
 
 ## Choosing an engine
 
-Everything above used the default engine – the built-in native one.
-Estimation is pluggable: every fitting function
+Most of the walkthrough above used the default native engine, switching
+to `trajeR` (the multi-start demo) and `flexmix` (the covariate demo)
+only where a section needed to show that engine’s behaviour. Estimation
+is pluggable: every fitting function
 ([`gbtm_fit()`](https://fabregithub.github.io/gbtmkit/reference/gbtm_fit.md),
-the stage functions, and
+the stage functions and
 [`run_gbtm_pipeline()`](https://fabregithub.github.io/gbtmkit/reference/run_gbtm_pipeline.md))
 takes an `engine` argument, and the registry tells you what each backend
 offers:
@@ -566,10 +568,10 @@ benchmark_engines(spec, n_groups = 4, degrees = rep(3, 4),
                   method = "L", seed = 1)   # method applies to trajeR only
 #> <gbtm_benchmark>  one model per engine, wall-clock seconds
 #>   engine   ok seconds      bic   loglik entropy min_appa groups_effective note
-#>  gbtmkit TRUE    1.63 17138.46 -8499.76    0.75     0.85                4     
-#>   trajeR TRUE   50.99 17138.03 -8499.54    0.76     0.85                4     
-#>  flexmix TRUE    2.40 17182.07 -8499.69    0.75     0.85                4     
-#>     lcmm TRUE   30.33 17138.08 -8499.56    0.75     0.84                4     
+#>  gbtmkit TRUE    1.61 17138.46 -8499.76    0.75     0.85                4     
+#>   trajeR TRUE   51.49 17138.03 -8499.54    0.76     0.85                4     
+#>  flexmix TRUE    2.51 17182.07 -8499.69    0.75     0.85                4     
+#>     lcmm TRUE   32.38 17138.08 -8499.56    0.75     0.84                4     
 #> Note: BIC/loglik are comparable only within an engine;
 #> compare engines on time and classification diagnostics.
 ```
@@ -596,6 +598,6 @@ sanity-check a fit from any engine.
   …), so additional backends can be added without changing the workflow.
 - **Built to scale.** The shape search runs the fits with the Hessian
   off (needed only for the final model’s standard errors), defaults to a
-  greedy stepwise strategy, and supports a `time_budget`, `max_fits`,
-  and on-disk `checkpoint`ing so large problems run unattended and
-  bounded. \`\`\`
+  greedy stepwise strategy, and supports a `time_budget`, `max_fits` and
+  on-disk `checkpoint`ing so large problems run unattended and bounded.
+  \`\`\`

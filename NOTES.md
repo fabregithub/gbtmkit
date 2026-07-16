@@ -392,6 +392,7 @@ Built step by step, confirming each stage, with `R CMD check` kept at
 | 65d9851 | 2026-07-15 | Native engine: EM optimiser alongside BFGS (`method = "EM"`) |
 | 9d765cb | 2026-07-15 | Record the EM-optimiser and British-follow-up commits in NOTES.md history |
 | b325016 | 2026-07-16 | **v0.4.0**: release cut (native EM optimiser); Description reflects four engines |
+| 8258432 | 2026-07-16 | Vignette: real figure captions (fig.cap); engine-scope prose fix; README comma tidy |
 
 ### Build stages (as executed)
 
