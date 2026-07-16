@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gbtmkit</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,7 +37,7 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="gbtmkit-development-version">gbtmkit (development version)<a class="anchor" aria-label="anchor" href="#gbtmkit-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.4.0" id="gbtmkit-040">gbtmkit 0.4.0<a class="anchor" aria-label="anchor" href="#gbtmkit-040"></a></h2>
 <ul><li>The native engine gains an <strong>EM optimiser</strong>: <code>gbtm_fit(engine = "gbtmkit", method = "EM")</code> runs expectation-maximisation (monotone likelihood ascent; weighted-GLM M-steps – closed-form WLS for gaussian, IRLS for binomial/poisson; a closed-form or weighted-multinomial membership step) as an alternative to the default BFGS. Both maximise the same likelihood and converge to the same MLE (verified on the fixtures); EM is more robust near degenerate components, BFGS is faster. <code>gbtm_engine_methods("gbtmkit")</code> now returns <code>c("BFGS", "EM")</code>, so <code><a href="../reference/select_algorithm.html">select_algorithm()</a></code> and the pipeline’s stage-1 algorithm selection now work for the native engine – the default <code><a href="../reference/run_gbtm_pipeline.html">run_gbtm_pipeline()</a></code> picks BFGS vs EM by BIC. EM covers binomial/gaussian/poisson with membership and time-varying covariates; censored-normal outcomes stay BFGS-only.</li>
 </ul></div>
     <div class="section level2">

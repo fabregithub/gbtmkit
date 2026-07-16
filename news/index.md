@@ -1,6 +1,6 @@
 # Changelog
 
-## gbtmkit (development version)
+## gbtmkit 0.4.0
 
 - The native engine gains an **EM optimiser**:
   `gbtm_fit(engine = "gbtmkit", method = "EM")` runs
