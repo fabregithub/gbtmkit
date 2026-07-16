@@ -14,7 +14,7 @@ for Reporting on Latent Trajectory Studies) by construction.
 [Getting started](https://fabregithub.github.io/gbtmkit/articles/getting-started.html)
 walkthrough and the full function reference.
 
-- **One workflow, any outcome.** Binary (LOGIT) and continuous (CNORM) outcomes
+- **One workflow, any outcome.** Binary and continuous outcomes
   run through the same specification; count and proportion families are mapped
   too.
 - **Four engines, one interface.** A built-in native engine -- the default:
@@ -33,7 +33,7 @@ walkthrough and the full function reference.
   auto-filling every item the pipeline can answer (with a Markdown export for
   supplementary material).
 - **Built to scale.** The shape search fits with the Hessian off, defaults to a
-  greedy stepwise strategy, and supports a time budget, a fit cap, and on-disk
+  greedy stepwise strategy, and supports a time budget, a fit cap and on-disk
   checkpointing so large problems run unattended and bounded.
 
 ## Installation
@@ -53,7 +53,7 @@ install.packages("lcmm")      # hlme (gaussian) / thresholds link (binary)
 ```
 
 Pick the backend per fit with `engine = "gbtmkit"` (the default),
-`"trajeR"`, `"flexmix"`, or `"lcmm"` in `gbtm_fit()` / `run_gbtm_pipeline()`
+`"trajeR"`, `"flexmix"` or `"lcmm"` in `gbtm_fit()` / `run_gbtm_pipeline()`
 -- and let
 `benchmark_engines()` time them on (a subsample of) your own data when speed
 matters.

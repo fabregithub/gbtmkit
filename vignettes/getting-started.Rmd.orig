@@ -56,7 +56,7 @@ knitr::knit_hooks$set(
 `gbtmkit` turns group-based trajectory modelling (GBTM) into a reproducible
 pipeline that follows the GRoLTS reporting checklist. Estimation is delegated
 to interchangeable backends -- a built-in native engine (`"gbtmkit"`, the
-default) and the established `trajeR`, `flexmix`, and `lcmm` packages --
+default) and the established `trajeR`, `flexmix` and `lcmm` packages --
 behind one interface: every fitting function takes an `engine` argument, and
 the fit diagnostics (entropy, APPA, OCC, group proportions) are computed the
 same way regardless of engine, for binary and continuous outcomes alike.
@@ -65,7 +65,7 @@ The examples below all use the default native engine; the
 [Choosing an engine](#choosing-an-engine) section at the end compares and
 benchmarks the backends and shows how to switch. Along the way we turn the
 finished result into a GRoLTS reporting aid (`grolts_report()`), escape a
-local optimum with multi-start initialisation (`n_starts`), and predict group
+local optimum with multi-start initialisation (`n_starts`) and predict group
 membership from covariates (`gbtm_spec(covariates = ...)`).
 
 ```{r setup}
@@ -77,7 +77,7 @@ library(gbtmkit)
 The package ships two entirely synthetic datasets with known ground-truth
 groups. `sim_binary` has a binary outcome measured on ten occasions, with four
 latent trajectory shapes of mixed polynomial order: a linear rising group, a
-cubic rise-peak-decline group, a cubic decline-trough-recovery group, and a
+cubic rise-peak-decline group, a cubic decline-trough-recovery group and a
 linear falling group:
 
 ```{r}
@@ -88,7 +88,7 @@ head(sim_binary)
 ## Describe the model with a spec
 
 `gbtm_spec()` records *what* to model -- the outcome and time columns (by name),
-the id, and the outcome family -- and validates it, independent of which engine
+the id and the outcome family -- and validates it, independent of which engine
 will fit it.
 
 ```{r}
@@ -106,7 +106,7 @@ spec
 
 `run_gbtm_pipeline()` performs algorithm selection (when the engine offers a
 choice), group-number selection, the polynomial-shape search with GRoLTS
-acceptance criteria, and the final Hessian-on fit. Here we use a small search to
+acceptance criteria and the final Hessian-on fit. Here we use a small search to
 keep the vignette quick.
 
 ```{r}
@@ -143,7 +143,7 @@ per-group means overlaid.
 res$diagnostics$groups
 ```
 
-```{r, eval = has_ggplot, fig.alt = "Fitted group trajectories"}
+```{r, eval = has_ggplot, fig.cap = "Fitted group trajectories", fig.alt = "Fitted group trajectories"}
 plot_trajectories(res$final_fit)
 ```
 
@@ -159,7 +159,7 @@ head(res$assignment)
 `grolts_report()` maps the finished pipeline result onto the GRoLTS checklist
 (van de Schoot et al. 2017): items the pipeline can answer -- time metric,
 software, the shape search, starting values, selection tools, class sizes,
-entropy -- are filled in automatically, and items only you can know (the
+entropy -- are filled in automatically and items only you can know (the
 missing-data mechanism, what appears in the manuscript, syntax availability)
 are flagged with whatever context the result contributes. Pass `file =` to
 also write the report as a Markdown appendix for supplementary material.
@@ -254,7 +254,7 @@ gbtm_diagnostics(cfit)$entropy
 lines and the observed points are on the outcome's own scale (means, not
 probabilities):
 
-```{r, eval = has_ggplot, fig.alt = "Fitted continuous group trajectories"}
+```{r, eval = has_ggplot, fig.cap = "Fitted continuous group trajectories", fig.alt = "Fitted continuous group trajectories"}
 plot_trajectories(cfit)
 ```
 
@@ -333,9 +333,10 @@ criterion is for.)
 
 ## Choosing an engine
 
-Everything above used the default engine -- the built-in native one.
-Estimation is pluggable:
-every fitting function (`gbtm_fit()`, the stage functions, and
+Most of the walkthrough above used the default native engine, switching to
+`trajeR` (the multi-start demo) and `flexmix` (the covariate demo) only where a
+section needed to show that engine's behaviour. Estimation is pluggable:
+every fitting function (`gbtm_fit()`, the stage functions and
 `run_gbtm_pipeline()`) takes an `engine` argument, and the registry tells you
 what each backend offers:
 
@@ -394,6 +395,6 @@ groups and shape *given* an engine; use the classification diagnostics
   additional backends can be added without changing the workflow.
 * **Built to scale.** The shape search runs the fits with the Hessian off
   (needed only for the final model's standard errors), defaults to a greedy
-  stepwise strategy, and supports a `time_budget`, `max_fits`, and on-disk
+  stepwise strategy, and supports a `time_budget`, `max_fits` and on-disk
   `checkpoint`ing so large problems run unattended and bounded.
 ```
