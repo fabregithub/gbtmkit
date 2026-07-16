@@ -346,6 +346,8 @@ throughout.
 | 72add36 | 2026-07-14 | **v0.3.0**: native engine as default; British English; RNG-reproducible multi-start |
 | 9ddb73a | 2026-07-14 | British English: catch remaining -ize words |
 | 65d9851 | 2026-07-15 | Native engine: EM optimiser alongside BFGS (`method = "EM"`) |
+| 9d765cb | 2026-07-15 | Record the EM-optimiser and British-follow-up commits in NOTES.md history |
+| b325016 | 2026-07-16 | **v0.4.0**: release cut (native EM optimiser); Description reflects four engines |
 
 ### Build stages (as executed)
 
